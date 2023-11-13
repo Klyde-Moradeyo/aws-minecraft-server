@@ -12,16 +12,16 @@ resource "aws_security_group" "minecraft_SG" {
     to_port     = 22
     protocol    = "tcp"
     description = "SSH"
-    cidr_blocks = [ var.allowed_cidrs ]
+    cidr_blocks = [var.allowed_cidrs]
   }
 
   # Ingress rule for Minecraft server
   ingress {
-    description      = "Minecraft Server"
-    from_port        = var.mc_port
-    to_port          = var.mc_port
-    protocol         = "tcp"
-    cidr_blocks      = [ var.allowed_cidrs ]
+    description = "Minecraft Server"
+    from_port   = var.mc_port
+    to_port     = var.mc_port
+    protocol    = "tcp"
+    cidr_blocks = [var.allowed_cidrs]
   }
 
   // Allow all outgoing traffic without any restrictions

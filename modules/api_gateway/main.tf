@@ -14,9 +14,9 @@ resource "aws_apigatewayv2_integration" "minecraft_lambda_integration" {
   description      = "Lambda integration for minecraft API Gateway"
   integration_type = "AWS_PROXY"
 
-  connection_type      = "INTERNET"
-  integration_method   = "POST"
-  integration_uri      = var.lambda_invoke_arn
+  connection_type        = "INTERNET"
+  integration_method     = "POST"
+  integration_uri        = var.lambda_invoke_arn
   payload_format_version = "2.0"
 }
 
@@ -39,8 +39,8 @@ resource "aws_lambda_permission" "minecraft_invoke_permission" {
 
 # Stage to deploy in
 resource "aws_apigatewayv2_stage" "minecraft_stage" {
-  api_id = aws_apigatewayv2_api.minecraft_http_api.id
-  name   = var.label_id
+  api_id      = aws_apigatewayv2_api.minecraft_http_api.id
+  name        = var.label_id
   auto_deploy = true
 }
 

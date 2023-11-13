@@ -7,10 +7,10 @@ data "aws_iam_policy_document" "assume_role_lambda" {
 
     principals {
       type        = "Service"
-      identifiers = [ "lambda.amazonaws.com" ]
+      identifiers = ["lambda.amazonaws.com"]
     }
 
-    actions = [ "sts:AssumeRole" ]
+    actions = ["sts:AssumeRole"]
   }
 }
 
@@ -49,11 +49,11 @@ resource "aws_iam_policy" "ssm_access" {
       #   ]
       # },
       {
-        Action   = [
+        Action = [
           "ssm:PutParameter",
           "ssm:GetParameter"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
           "arn:aws:ssm:*:847399026905:parameter/${var.bot_command_name}",
         ]

@@ -4,8 +4,8 @@
 resource "aws_ecr_repository" "mc_repository" {
   name                 = "${var.label_id}-${var.ecr_repo_name}"
   image_tag_mutability = "MUTABLE"
-  force_delete = false
-  
+  force_delete         = false
+
   image_scanning_configuration {
     scan_on_push = true
   }
@@ -21,7 +21,7 @@ resource "aws_ecr_lifecycle_policy" "delete_untagged_images" {
       {
         rulePriority = 1
         description  = "Expire untagged images"
-        selection    = {
+        selection = {
           tagStatus   = "untagged"
           countType   = "imageCountMoreThan"
           countNumber = 1

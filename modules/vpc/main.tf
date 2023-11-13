@@ -10,7 +10,7 @@ data "aws_vpc" "default" {
 data "aws_subnets" "default" {
   filter {
     name   = "vpc-id"
-    values = [ local.vpc_id ]
+    values = [local.vpc_id]
   }
 }
 
@@ -22,8 +22,8 @@ data "aws_security_group" "default" {
 
 
 locals {
-  vpc_id    = length(var.vpc_id) > 0 ? var.vpc_id : data.aws_vpc.default.id
-  subnet_id = length(var.subnet_id) > 0 ? var.subnet_id : sort(data.aws_subnets.default.ids)[0]
+  vpc_id            = length(var.vpc_id) > 0 ? var.vpc_id : data.aws_vpc.default.id
+  subnet_id         = length(var.subnet_id) > 0 ? var.subnet_id : sort(data.aws_subnets.default.ids)[0]
   security_group_id = data.aws_security_group.default.id
 }
 

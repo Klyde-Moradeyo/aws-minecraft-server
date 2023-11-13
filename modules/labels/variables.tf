@@ -20,6 +20,6 @@ variable "environment" {
 
 variable "tags" {
   description = "Any extra tags to assign to objects"
-  type        = map
+  type        = map(any)
   default     = {}
 }
