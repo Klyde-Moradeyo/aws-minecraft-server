@@ -165,3 +165,10 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+################
+#     Build    #
+################
+# lambda function payload
+lambda_function/package
+lambda_function_payload.zip
