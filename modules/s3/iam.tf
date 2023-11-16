@@ -4,7 +4,7 @@
 data "aws_caller_identity" "aws" {}
 
 locals {
-  user_name = split("/", data.aws_caller_identity.aws.arn)[2]
+  user_name = split("/", data.aws_caller_identity.aws.arn)[1]
 }
 
 resource "aws_iam_policy" "s3_bucket_access" {

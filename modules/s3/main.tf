@@ -1,8 +1,23 @@
 ########################
+#   Resource Naming    #
+########################
+module "resource_naming" {
+    source = "../resource-naming"
+    tags = var.tags
+}
+
+########################
 #       S3 Bucket      #
 ########################
+resource "random_string" "unique_bucket_suffix" {
+  length  = 8
+  special = false
+  upper   = false
+  numeric = false
+}
+
 locals {
-  s3_bucket_name = "${var.label_id}-${var.bucket_name}"
+  s3_bucket_name = "${var.bucket_name}-${module.resource_naming.name}-${random_string.unique_bucket_suffix.result}-s3"
 }
 
 resource "aws_s3_bucket" "mc_s3" {
@@ -10,7 +25,7 @@ resource "aws_s3_bucket" "mc_s3" {
 
   force_destroy = var.bucket_force_destroy
 
-  tags = var.label_tags
+  tags = var.tags
 }
 
 resource "aws_s3_bucket_public_access_block" "mc_s3_public_access_block" {

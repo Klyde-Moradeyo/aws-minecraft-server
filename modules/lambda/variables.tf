@@ -3,12 +3,12 @@
 ########################
 
 variable "label_id" {
-  description = "ID from labels module"
+  description = "ID from tags module"
   type        = string
 }
 
-variable "label_tags" {
-  description = "Tags from labels module"
+variable "tags" {
+  description = "Tags from tags module"
   type        = map(string)
 }
 
@@ -16,12 +16,12 @@ variable "label_tags" {
 #    Lambda Function   #
 ########################
 variable "lambda_runtime" {
-  description = "Tags from labels module"
+  description = "Tags from tags module"
   type        = string
 }
 
 variable "lambda_timeout" {
-  description = "Tags from labels module"
+  description = "Tags from tags module"
   type        = string
 }
 
@@ -45,24 +45,6 @@ variable "git_private_key_name" {
 
 variable "ec2_private_key_name" {
   description = "Private Key name for EC2 in Systems Manager Parameter Store"
-  type        = string
-}
-
-########################
-#         ECS          #
-########################
-variable "ecs_cluster_name" {
-  description = "ECS Cluster Name of the environment"
-  type        = string
-}
-
-variable "ecs_container_name" {
-  description = "ECS Container Name"
-  type        = string
-}
-
-variable "ecs_task_definition_family" {
-  description = "ECS Task Defintion Family"
   type        = string
 }
 

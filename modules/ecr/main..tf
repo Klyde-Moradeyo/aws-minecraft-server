@@ -1,8 +1,16 @@
 ########################
+#   Resource Naming    #
+########################
+module "resource_naming" {
+    source = "../resource-naming"
+    tags = var.tags
+}
+
+########################
 #         ECR          #
 ########################
 resource "aws_ecr_repository" "mc_repository" {
-  name                 = "${var.label_id}-${var.ecr_repo_name}"
+  name                 = "${module.resource_naming.name}-ecr-repo"
   image_tag_mutability = "MUTABLE"
   force_delete         = false
 

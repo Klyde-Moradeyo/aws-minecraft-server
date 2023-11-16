@@ -2,9 +2,7 @@
 #         EIP          #
 ########################
 resource "aws_eip" "mc_server_eip" {
-  vpc = true
+  domain = "vpc"
 
-  tags = var.label_tags
+  tags = var.tags
 }
-
-

@@ -13,9 +13,8 @@ data "aws_iam_policy_document" "assume_role_lambda" {
     actions = ["sts:AssumeRole"]
   }
 }
-
 resource "aws_iam_role" "iam_for_lambda" {
-  name               = "${var.label_id}-iam-for-lambda"
+  name               = "${module.resource_naming.name}-iam-for-lambda"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
@@ -31,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "ssm_access" {
 # IAM policy to allow Lambda to access specific 
 # SSM Parameter Store parameters
 resource "aws_iam_policy" "ssm_access" {
-  name        = "${var.label_id}-lambda-ssm-access"
+  name        = "${module.resource_naming.name}-iam-lambda-ssm-access"
   description = "IAM policy to allow Lambda access to specific SSM Parameter Store parameters"
 
   policy = jsonencode({
@@ -84,7 +83,7 @@ data "aws_iam_policy_document" "fargate_access" {
 }
 
 resource "aws_iam_policy" "lambda_fargate_access" {
-  name        = "${var.label_id}-lambda-fargate-access"
+  name        = "${module.resource_naming.name}-iam-lambda-fargate-access"
   description = "IAM policy to allow Lambda to manage Fargate tasks"
 
   policy = data.aws_iam_policy_document.fargate_access.json
@@ -116,8 +115,8 @@ data "aws_iam_policy_document" "cloudwatch_logs" {
 
 # IAM policy to allow Lambda to access CloudWatch Logs
 resource "aws_iam_policy" "lambda_cloudwatch_logs" {
-  name        = "${var.label_id}-lambda-cloudwatch-logs"
-  description = "IAM policy to allow Lambda to write to CloudWatch Logs"
+  name        = "${module.resource_naming.name}-lambda-cloudwatch-logs"
+  description = "IAM policy to allow ${module.resource_naming.name} Lambda to write to CloudWatch Logs"
 
   policy = data.aws_iam_policy_document.cloudwatch_logs.json
 }

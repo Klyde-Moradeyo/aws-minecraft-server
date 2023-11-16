@@ -1,14 +1,20 @@
 ########################
 #        VPC           #
 ########################
-variable "vpc_id" {
-  description = "VPC for security group"
-  type        = string
-  default     = ""
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  type = string
 }
 
-variable "subnet_id" {
-  description = "VPC subnet id to place the instance"
-  type        = string
-  default     = ""
+variable "subnet_cidrs" {
+  description = "List of CIDR blocks for the subnets"
+  type = string
+}
+
+########################
+#         Tags         #
+########################
+variable "tags" {
+  description = "Tags from tags module"
+  type        = map(string)
 }
