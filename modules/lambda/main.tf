@@ -25,6 +25,7 @@ resource "aws_lambda_function" "lambda_function" {
       MC_PORT           = var.mc_port
       GIT_PRIVATE_KEY   = "/${var.git_private_key_name}"
       EC2_PRIVATE_KEY   = "/${var.ec2_private_key_name}"
+      EC2_INSTANCE_ID   = var.ec2_instance_id
       BOT_COMMAND_NAME  = "/${var.bot_command_name}"
       SUBNET_ID         = var.subnet_id         # These vars need to be changed in lambda python
       SECURITY_GROUP_ID = var.security_group_id # These vars need to be changed in lambda python

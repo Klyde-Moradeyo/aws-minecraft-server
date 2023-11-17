@@ -75,6 +75,11 @@ variable "mc_port" {
   default     = 25565
 }
 
+variable "ec2_instance_id" {
+  description = "ec2 instance id to target"
+  type = string
+}
+
 
 
 
