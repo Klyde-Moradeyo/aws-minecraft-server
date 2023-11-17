@@ -12,22 +12,18 @@ class EnvironmentVariables:
         self.action = action
 
     def get_required_vars(self):
-        required_configs = [
+        required_configs = [    
                                 # Minecraft Specific Env Vars
                                 'MC_PORT', 'MC_SERVER_IP', 
 
                                 # Fargate Specific Env Vars
-                                'CLUSTER', 'CONTAINER_NAME',  # 'SUBNET_ID', 'SECURITY_GROUP_ID', -- To be removed
-                                'TASK_DEFINITION_NAME',
-
-                                # Terraform Cloud
-                                'TF_USER_TOKEN',
+                                'CLUSTER', 'CONTAINER_NAME', 'TASK_DEFINITION_NAME',
 
                                 # JOB to run
                                 'BOT_COMMAND_NAME',
                                 
                                 # Git
-                                'GIT_PRIVATE_KEY', 
+                                'GIT_PRIVATE_KEY', 'GIT_BRANCH'
                                 
                                 # EC2 SSH Access
                                 'EC2_PRIVATE_KEY'
