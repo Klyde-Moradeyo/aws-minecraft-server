@@ -1,6 +1,7 @@
 import boto3
 import time
 import json
+from config import *
 from botocore.exceptions import BotoCoreError, ClientError
 from utils.event_parser import APIEventParser
 from utils.env_manager import EnvironmentVariables
@@ -8,6 +9,10 @@ from utils.minecraft import MinecraftServer
 from utils.fargate import Fargate
 from utils.time_utils import seconds_to_minutes, DateTimeEncoder
 from utils.ssm import SSMUtil
+from utils.ec2 import EC2Util
+from utils.ssh import SSHUtil
+from utils.file_handler import write_to_tmp_file
+from utils.git import GitUtil
 from utils.logger import setup_logging
 
 class LambdaHandler:
@@ -24,11 +29,21 @@ class LambdaHandler:
         # Extract the action from the parsed event
         self.ACTION = event_body["action"]
 
-        # Get the environment variables specific to the action
+        # Get the environment
         self.envs = EnvironmentVariables(self.ACTION).get_vars()  # Get Environment Variables
 
         # Initialize SSM class
         self.ssm = SSMUtil()
+
+        # Initialize ec2 class
+        self.ec2_util = EC2Util(self.envs["EC2_INSTANCE_ID"], self.envs)
+
+        # Initialize SSH Util
+        ec2_username = "ubuntu"
+        ec2_private_key = self.ssh_util.get_param(self.envs["EC2_PRIVATE_KEY"])
+        ec2_private_key_path = write_to_tmp_file(ec2_private_key)
+        os.chmod(ec2_private_key_path, 0o600)
+        self.ssh_util = SSHUtil(self.envs["MACHINE_IP"], ec2_username, ec2_private_key_path)
     
     def execute_command(self):
         try:
@@ -95,11 +110,44 @@ class LambdaHandler:
         if self.mc_server_status["online"]:
             return {"STATUS": "MC_SERVER_UP", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY ONLINE"}
 
-        # Check if the ec2 instance exists
-        # if it exists ssh and check installations, 
-                    # -> if installations are not present install.sh
+        ssh_key_str = self.ssh_util.get_ssm_param(self.envs["GIT_PRIVATE_KEY"])
+        git_ssh_key_path = write_to_tmp_file(ssh_key_str)
 
-        # ssh and download the latest dependencies and then start the minecraft server
+        git_util = GitUtil(git_ssh_key_path)
+        git_util.clone(GIT_REPO_URL, GIT_REPO_NAME, self.envs("GIT_BRANCH"))
+
+        if self.ec2_util.instance_exists():
+            packages_installed = {
+                "docker": self.ssh_util.is_installed("docker", method="package"),
+                "docker-compose": self.ssh_util.is_installed("docker-compose", method="command"),
+                "git": self.ssh_util.is_installed("git", methid="package"),
+                "aws-cli": self.ssh_util.is_installed("aws", methid="package")
+            }
+
+            # If there are missing packages, install them
+            if not all(packages_installed):
+                # Create Logs and scripts folder
+                self.ssh_util.run_command("mkdir -p setup/logs setup/scripts", False)
+                
+                # Copy install script to machine
+                self.ssh_util.scp_to_machine(LOCAL_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_SCRIPT_PATH)
+
+                # Run install script
+                self.ssh_util.run_script(REMOTE_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_LOGS_PATH)
+
+            # Start ec2 instance
+            self.ec2_util.start_instance()
+
+            # check if ec2 instance is running
+            ec2_status = self.ec2_util.check_instance_status
+
+            # SSH and start docker compose containers
+
+            if ec2_status == "RUNNING":
+                return { 'STATUS': ec2_status, 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
+            else:
+                return { 'STATUS': ec2_status, 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
+            
 
     def handle_stop(self):
         # if not self.mc_server_status["online"]:
