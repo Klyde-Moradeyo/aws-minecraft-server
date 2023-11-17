@@ -146,6 +146,7 @@ module "lambda" {
   mc_port              = var.mc_port
   git_private_key_name = var.git_private_key_name
   ec2_private_key_name = module.ssm_mc_server_private_key.ssm_parameter_name
+  ec2_instance_id      = module.minecraft_server.ec2_instance_id
 
   # Module tags
   label_id   = module.tags.label_id
