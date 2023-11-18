@@ -7,6 +7,10 @@ on:
         description: 'Filter'
         type: string
         required: true
+      config_dir:
+        description: 'Lambda function files dir'
+        type: string
+        required: true
     secrets:
       gh_pat_token:
         required: true
@@ -61,20 +65,23 @@ jobs:
           echo "MCI_TAG=$MCI_TAG" >> $GITHUB_ENV
 
       - name: Build Docker image
+        working-directory: ${{ inputs.config_dir }}
         run: |
           ls -l
-          docker build -t aws_lambda_img lambda_function/. --build-arg version=${{ env.MCI_TAG }}
+          docker build -t aws_lambda_img . --build-arg version=${{ env.MCI_TAG }}
 
       - name: Run Docker image
+        working-directory: ${{ inputs.config_dir }}
         run: |
           docker run --name lambda_payload_builder aws_lambda_img
 
       - name: Copy and validate lambda payload
+        working-directory: ${{ inputs.config_dir }}
         run: |
-          lambda_function_payload_dir="./lambda_function/"
-          docker cp lambda_payload_builder:/app/lambda_function_payload.zip $lambda_function_payload_dir
+          lambda_function_payload_dir="./lambda/"
+          docker cp lambda_payload_builder:/app/lambda_function_payload.zip .
   
-          package_size=$(du -m "$lambda_function_payload_dir" | cut -f1)
+          package_size=$(du -m "lambda_function_payload.zip" | cut -f1)
           echo "payload size: $package_size mb"
           if (( package_size > 50 )); then
               echo -e "Error: \nThe lambda_function_payload is larger than 50 MB \nDoc: https://docs.aws.amazon.com/lambda/latest/dg/python-package.html"
@@ -85,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: lambda-artifact
-          path: ./lambda_function/lambda_function_payload.zip
+          path: ${{ inputs.config_dir }}/lambda_function_payload.zip
           
       - name: Tag Version
         if: inputs.filter == 'true'
