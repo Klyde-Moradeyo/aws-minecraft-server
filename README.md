@@ -1,1 +1,1 @@
-# aws-minecraft-server
+# AWS Minecraft Server Modules
