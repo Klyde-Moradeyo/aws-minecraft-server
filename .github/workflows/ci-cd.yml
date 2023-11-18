@@ -12,9 +12,6 @@ on:
       - ".github/workflows/ci-cd.yml"
   workflow_dispatch:
 
-env:
-  aws_region: "eu-west-2"
-
 jobs:
   set-env-vars:
     runs-on: ubuntu-latest
@@ -71,7 +68,7 @@ jobs:
     with:
       config_dir: ${{ needs.set-env-vars.outputs.tf_config_directory }}
       filter: ${{ needs.filter.outputs.terraform }}
-      aws_region: ${{ env.aws_region }}
+      aws_region: "eu-west-2"
     secrets:
       gh_pat_token: ${{ secrets.GH_PAT }}
       tf_api_token: ${{ secrets.TF_API_TOKEN }}
