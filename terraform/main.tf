@@ -2,7 +2,7 @@
 #       tags         #
 ########################
 module "tags" {
-  source = "../modules/tags"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/tags?ref=tf-modules"
 
   environment = var.git_branch
 }
@@ -11,14 +11,14 @@ module "tags" {
 #        VPC           #
 ########################
 module "vpc" {
-  source       = "../modules/vpc"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/vpc?ref=tf-modules"
   vpc_cidr     = "10.0.0.0/16"
   subnet_cidrs = "10.0.2.0/24"
   tags = module.tags.tags
 }
 
 module "security_group" {
-  source = "../modules/security-group"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/security-group?ref=tf-modules"
 
   vpc_id         = module.vpc.vpc_id
   tags = module.tags.tags
@@ -67,7 +67,7 @@ module "security_group" {
 #         EIP          #
 ########################
 module "eip" {
-  source = "../modules/eip"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/eip?ref=tf-modules"
 
   # Module tags
   tags = module.tags.tags
@@ -88,7 +88,7 @@ module "ec2_key_pair" {
 #    Systems Manager   #
 ########################
 module "ssm_mc_server_private_key" {
-  source = "../modules/ssm"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ssm?ref=tf-modules"
 
   parameter_name = "mc_server/private_key"
   parameter_type = "SecureString"
@@ -100,7 +100,7 @@ module "ssm_mc_server_private_key" {
 }
 
 module "ssm_bot_command" {
-  source = "../modules/ssm"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ssm?ref=tf-modules"
 
   parameter_name = var.bot_command_name
   parameter_type = "String"
@@ -114,7 +114,7 @@ module "ssm_bot_command" {
 #     API Gateway      #
 ########################
 module "api_gateway" {
-  source = "../modules/api_gateway"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/api-gateway?ref=tf-modules"
 
   # lambda integration
   lambda_function_name = module.lambda.lambda_function_name
@@ -129,7 +129,7 @@ module "api_gateway" {
 #    Lambda Function   #
 ########################
 module "lambda" {
-  source = "../modules/lambda"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/lambda?ref=tf-modules"
 
   # aws region
   aws_region = var.aws_region
@@ -161,7 +161,7 @@ module "lambda" {
 #       S3 Bucket      #
 ########################
 module "s3_mc_world" {
-  source = "../modules/s3"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/s3?ref=tf-modules"
 
   # S3 Bucket 
   bucket_name = "world-data"
@@ -172,7 +172,7 @@ module "s3_mc_world" {
 }
 
 module "s3_mc_server_assets" {
-  source = "../modules/s3"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/s3?ref=tf-modules"
 
   # S3 Bucket 
   bucket_name           = "mc-server-assets"
@@ -187,7 +187,7 @@ module "s3_mc_server_assets" {
 #    Minecraft Server EC2      #
 ################################
 module "minecraft_server" {
-  source = "../modules/ec2-instance"
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ec2-instance?ref=tf-modules"
 
   # EC2 Instance Config
   ami                     = var.ami
