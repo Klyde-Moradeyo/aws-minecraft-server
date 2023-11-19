@@ -7,8 +7,11 @@ def setup_logging():
     """
     # Get the root logger
     logger = logging.getLogger()
-    log_level = logger.setLevel(logging.INFO)  # or whichever level you desire
-
+    
+    # Set the logger level
+    log_level = logging.INFO
+    logger.setLevel(log_level)
+   
     # Ensure there is no duplicated handlers
     if not logger.handlers:
         # configure the handler and formatter at the root logger level
