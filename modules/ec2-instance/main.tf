@@ -39,7 +39,7 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "ec2_instance" {
   ami                    = data.aws_ami.ubuntu.image_id
   instance_type          = var.instance_type
-  key_name               = "${module.resource_naming.name}-key"
+  key_name               = var.instance_keypair
   iam_instance_profile   = aws_iam_instance_profile.mc.name
   vpc_security_group_ids = [var.security_group_id]
   subnet_id              = var.subnet_id
