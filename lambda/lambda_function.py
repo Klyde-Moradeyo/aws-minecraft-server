@@ -24,10 +24,10 @@ class LambdaHandler:
         # Parse the event
         event_parser = APIEventParser(event)
         event_body = event_parser.parse()
-        self.logger.info(f"Event Body: \n{event_body}")
 
         # Extract the action from the parsed event
         self.ACTION = event_body["action"]
+        self.logger.info(f"Running Action: {self.ACTION}")
 
         # Get the environment
         self.envs = EnvironmentVariables(self.ACTION).get_vars()  # Get Environment Variables
@@ -40,10 +40,13 @@ class LambdaHandler:
 
         # Initialize SSH Util
         ec2_username = "ubuntu"
-        ec2_private_key = self.ssh_util.get_param(self.envs["EC2_PRIVATE_KEY"])
-        ec2_private_key_path = write_to_tmp_file(ec2_private_key)
-        os.chmod(ec2_private_key_path, 0o600)
-        self.ssh_util = SSHUtil(self.envs["MACHINE_IP"], ec2_username, ec2_private_key_path)
+        SSM_EC2_PRIVATE_KEY = self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"])
+        SSM_EC2_PRIVATE_KEY_PATH = write_to_tmp_file(SSM_EC2_PRIVATE_KEY)
+        os.chmod(SSM_EC2_PRIVATE_KEY_PATH, 0o600)
+        self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], ec2_username, SSM_EC2_PRIVATE_KEY_PATH)
+
+        # Check If minecraft server is online/offline
+        self.mc_server_status = MinecraftServer(self.envs["MC_SERVER_IP"], self.envs["MC_PORT"]).check()
     
     def execute_command(self):
         try:
@@ -89,28 +92,11 @@ class LambdaHandler:
                 "body": json.dumps({"error": str(error)}, cls=DateTimeEncoder)
             }
         
-    def launch_new_fargate_task(self):
-        """
-        Launch a new Fargate task and return its status.
-        """
-        self.ssm.send_param(self.ACTION, "String", self.envs["BOT_COMMAND_NAME"])
-
-        # Launch Fargate Container
-        task_arn = self.tec_fargate.create_fargate_container()
-        self.logger.info(f"New Fargate task launched: {task_arn}")
-
-        # Confirm the task i running
-        task_status = self.tec_fargate.check_task_status(self.task_tags)
-        if task_status is None:
-            raise Exception(f"Error running Starting Task: {task_arn}")
-        
-        return task_arn, task_status
-        
     def handle_start(self):
         if self.mc_server_status["online"]:
             return {"STATUS": "MC_SERVER_UP", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY ONLINE"}
 
-        ssh_key_str = self.ssh_util.get_ssm_param(self.envs["GIT_PRIVATE_KEY"])
+        ssh_key_str = self.ssm.get_param(self.envs["SSM_GIT_PRIVATE_KEY"])
         git_ssh_key_path = write_to_tmp_file(ssh_key_str)
 
         git_util = GitUtil(git_ssh_key_path)
@@ -123,6 +109,7 @@ class LambdaHandler:
                 "git": self.ssh_util.is_installed("git", methid="package"),
                 "aws-cli": self.ssh_util.is_installed("aws", methid="package")
             }
+            self.logger.info(f"Packages Installed: {packages_installed}")
 
             # If there are missing packages, install them
             if not all(packages_installed):
@@ -187,6 +174,23 @@ class LambdaHandler:
         """
         Handle Minecraft world archive tasks. Wait for any running task to finish, then launch a new Fargate task.
         """
+        def launch_new_fargate_task(self):
+            """
+            Launch a new Fargate task and return its status.
+            """
+            self.ssm.send_param(self.ACTION, "String", self.envs["BOT_COMMAND_NAME"])
+
+            # Launch Fargate Container
+            task_arn = self.tec_fargate.create_fargate_container()
+            self.logger.info(f"New Fargate task launched: {task_arn}")
+
+            # Confirm the task i running
+            task_status = self.tec_fargate.check_task_status(self.task_tags)
+            if task_status is None:
+                raise Exception(f"Error running Starting Task: {task_arn}")
+            
+            return task_arn, task_status
+        
         task_name = "MC_WORLD_ARCHIVE"
         # If a task is currently running, wait for it to finish up to a time limit
         if self.is_task_running:
@@ -198,7 +202,7 @@ class LambdaHandler:
             while (time.time() - start_time) < time_limit:
                 self.is_task_running = self.tec_fargate.is_task_with_tags_exists(self.task_tags)
                 if not self.is_task_running:
-                    task_arn, task_status = self.launch_new_fargate_task()
+                    task_arn, task_status = launch_new_fargate_task()
                     return { "STATUS": task_name, "INFO": f"New Fargate task launched: {task_arn} | {task_status}" }
 
                 time.sleep(check_interval)
@@ -209,7 +213,7 @@ class LambdaHandler:
             return { "STATUS": f"MC_WORLD_ARCHIVE_FAILED_START", "INFO": f"Timed out" }
         
         # If no task is running, directly launch a new one
-        self.launch_new_fargate_task()
+        launch_new_fargate_task()
         return { "STATUS": task_name, 'COMMAND': self.ACTION, "INFO": f"New Fargate task launched: {task_arn} | {task_status}" }
     
     def handle_ping(self):
@@ -219,6 +223,8 @@ class LambdaHandler:
 
 # Where the magic happens
 def lambda_handler(event, context):
-    handler = LambdaHandler(event)
+    handler = LambdaHandler({
+            "action": "start",
+        })
     return handler.execute_command()
 

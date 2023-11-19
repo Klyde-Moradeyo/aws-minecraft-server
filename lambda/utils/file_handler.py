@@ -1,9 +1,6 @@
 import tempfile
 from utils.logger import setup_logging
 
-# Setting up logging
-logger = setup_logging()
-
 def convert_bytes(byte_value):
     # Conversion factors
     KB = 1024

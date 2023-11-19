@@ -88,8 +88,8 @@ class Fargate:
     def set_env_vars(self):
         environment_variables = [ 
             {'name': 'TF_USER_TOKEN', 'value': self.env_vars["TF_USER_TOKEN"] },
-            {'name': 'GIT_PRIVATE_KEY', 'value': self.env_vars["GIT_PRIVATE_KEY"] },
-            {'name': 'EC2_PRIVATE_KEY', 'value': self.env_vars["EC2_PRIVATE_KEY"] },
+            {'name': 'SSM_GIT_PRIVATE_KEY', 'value': self.env_vars["SSM_GIT_PRIVATE_KEY"] },
+            {'name': 'SSM_EC2_PRIVATE_KEY', 'value': self.env_vars["SSM_EC2_PRIVATE_KEY"] },
             {'name': 'BOT_COMMAND_NAME', 'value': self.env_vars["BOT_COMMAND_NAME"] },
             {'name': 'ENVIRONMENT', 'value': self.env_vars["TAG_ENVIRONMENT"] },
             ]

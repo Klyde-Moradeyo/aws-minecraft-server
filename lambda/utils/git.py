@@ -3,11 +3,9 @@ import subprocess
 from git import Repo
 from .logger import setup_logging
 
-# Setting up logging
-logger = setup_logging()
-
 class GitUtil:
     def __init__(self, ssh_key_path):
+        self.logger = setup_logging()
         self.ssh_key_path = ssh_key_path
         self.git_ssh_command = f"ssh -i {ssh_key_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
         os.environ['GIT_SSH_COMMAND'] = self.git_ssh_command
@@ -23,6 +21,7 @@ class GitUtil:
         """
         try:
             repo = Repo.clone_from(url=repo_url, to_path=target_directory, branch=branch)
+            self.logger.info(f"Cloned '{repo_url}' to '{target_directory}' on branch: '{branch}'")
         except Exception as e:
             raise Exception(f"Git clone failed:\n{str(e)}")
         
@@ -39,9 +38,9 @@ class GitUtil:
     #     """
     #     try:
     #         subprocess.check_call(['git', '-C', directory, 'checkout', branch])
-    #         logger.info(f"Checked out to '{branch}' in '{directory}'.")
+    #         self.logger.info(f"Checked out to '{branch}' in '{directory}'.")
     #     except subprocess.CalledProcessError as e:
-    #         logger.error(f"Failed to checkout to branch: '{branch}'. Error: {e}")
+    #         self.logger.error(f"Failed to checkout to branch: '{branch}'. Error: {e}")
     #         raise
         
     @staticmethod
