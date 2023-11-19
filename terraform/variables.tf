@@ -9,6 +9,14 @@ variable "aws_region" {
 }
 
 ########################
+#     Environment      #
+########################
+variable "git_branch" {
+  description = "The name of the Git branch to use"
+  type        = string
+}
+
+########################
 #    Lambda Function   #
 ########################
 variable "lambda_runtime" {
@@ -53,7 +61,7 @@ variable "terraform_token_name" {
   default     = "terraform-cloud-user-api"
 }
 
-variable "git_private_key_name" {
+variable "ssm_git_private_key_name" {
   description = "Private Key name for Github SSH in Systems Manager Parameter Store"
   type        = string
   default     = "dark-mango-bot-private-key"
