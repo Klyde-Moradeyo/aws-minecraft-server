@@ -10,3 +10,6 @@ EC2_SCRIPTS_PATH = os.path.join(GIT_REPO_NAME, "server", "scripts")
 LOCAL_INSTALL_SCRIPT_PATH = os.path.join(EC2_SCRIPTS_PATH, "install.sh")
 REMOTE_INSTALL_SCRIPT_PATH = "install/install.sh"
 REMOTE_INSTALL_LOGS_PATH = "install/install.log"
+
+# --- EC2 USERNAME ---
+EC2_USERNAME = "ubuntu"
