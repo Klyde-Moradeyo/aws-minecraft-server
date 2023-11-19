@@ -1,7 +1,9 @@
+import os
 import boto3
 from botocore.exceptions import ClientError
 from .env_manager import EnvironmentVariables
 from .logger import setup_logging
+from .file_handler import write_to_tmp_file
 
 class EC2Util:
     def __init__(self, instance_id, env_vars):
@@ -66,3 +68,8 @@ class EC2Util:
         except ClientError as e:
             self.logger.error(f"Error occurred while stopping the instance: {e}")
             raise
+
+    def write_ec2_ssh_key_to_file(self, ssh_key):
+        ec2_ssh_key_path = write_to_tmp_file(ssh_key)
+        os.chmod(ec2_ssh_key_path, 0o600)
+        return ec2_ssh_key_path
