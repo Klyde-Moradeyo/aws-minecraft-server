@@ -31,6 +31,23 @@ resource "aws_internet_gateway" "my_igw" {
 }
 
 ########################
+#      Route Table     #
+########################
+resource "aws_route_table" "my_route_table" {
+  vpc_id = aws_vpc.my_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.my_igw.id
+  }
+
+  tags = merge(var.tags, {
+    "Name" = "${module.resource_naming.name}-route-table"
+  })
+}
+
+
+########################
 #        Subnets       #
 ########################
 resource "aws_subnet" "my_subnet" {
