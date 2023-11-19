@@ -1,3 +1,3 @@
 locals {
-    standardized_name = var.tags["Name"]
+  standardized_name = var.tags["Name"]
 }

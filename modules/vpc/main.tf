@@ -2,8 +2,8 @@
 #   Resource Naming    #
 ########################
 module "resource_naming" {
-    source = "../resource-naming"
-    tags = var.tags
+  source = "../resource-naming"
+  tags   = var.tags
 }
 
 data "aws_availability_zones" "available" {

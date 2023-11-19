@@ -2,8 +2,8 @@
 #   Resource Naming    #
 ########################
 module "resource_naming" {
-    source = "../resource-naming"
-    tags = var.tags
+  source = "../resource-naming"
+  tags   = var.tags
 }
 
 ########################
@@ -21,25 +21,25 @@ resource "aws_lambda_function" "lambda_function" {
 
   environment {
     variables = {
-      MC_SERVER_IP      = var.mc_server_ip
-      MC_PORT           = var.mc_port
-      SSM_GIT_PRIVATE_KEY   = "/${var.ssm_git_private_key_name}"
-      SSM_EC2_PRIVATE_KEY   = "/${var.ssm_ec2_private_key_name}"
-      EC2_INSTANCE_ID   = var.ec2_instance_id
-      BOT_COMMAND_NAME  = "/${var.bot_command_name}"
-      SUBNET_ID         = var.subnet_id         # These vars need to be changed in lambda python
-      SECURITY_GROUP_ID = var.security_group_id # These vars need to be changed in lambda python
-      TF_USER_TOKEN     = var.terraform_token_name
-      GIT_BRANCH        = var.git_branch # github branch to use
+      MC_SERVER_IP        = var.mc_server_ip
+      MC_PORT             = var.mc_port
+      SSM_GIT_PRIVATE_KEY = "/${var.ssm_git_private_key_name}"
+      SSM_EC2_PRIVATE_KEY = "/${var.ssm_ec2_private_key_name}"
+      EC2_INSTANCE_ID     = var.ec2_instance_id
+      BOT_COMMAND_NAME    = "/${var.bot_command_name}"
+      SUBNET_ID           = var.subnet_id         # These vars need to be changed in lambda python
+      SECURITY_GROUP_ID   = var.security_group_id # These vars need to be changed in lambda python
+      TF_USER_TOKEN       = var.terraform_token_name
+      GIT_BRANCH          = var.git_branch # github branch to use
 
       # Tags
       TAGS_JSON = jsonencode(var.tags)
     }
   }
 
-  layers = [ 
+  layers = [
     local.git_lambda_layer_arn
-    ]
+  ]
 
   tags = var.tags
 }

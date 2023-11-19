@@ -37,10 +37,10 @@ resource "aws_iam_policy" "ssm_access" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action   = [
+        Action = [
           "ssm:GetParameter",
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
           "arn:aws:ssm:*:847399026905:parameter/${var.ssm_git_private_key_name}",
           "arn:aws:ssm:*:847399026905:parameter/${var.ssm_ec2_private_key_name}",

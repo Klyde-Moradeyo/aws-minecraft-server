@@ -2,8 +2,8 @@
 #   Resource Naming    #
 ########################
 module "resource_naming" {
-    source = "../resource-naming"
-    tags = var.tags
+  source = "../resource-naming"
+  tags   = var.tags
 }
 
 ########################
@@ -51,7 +51,7 @@ resource "null_resource" "delay_before_stop" {
   depends_on = [aws_instance.ec2_instance]
 
   provisioner "local-exec" {
-    command = "sleep 60"  # Delay in seconds
+    command = "sleep 60" # Delay in seconds
   }
 }
 

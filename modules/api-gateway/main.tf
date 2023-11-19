@@ -2,8 +2,8 @@
 #   Resource Naming    #
 ########################
 module "resource_naming" {
-    source = "../resource-naming"
-    tags = var.tags
+  source = "../resource-naming"
+  tags   = var.tags
 }
 
 ########################
@@ -17,9 +17,9 @@ resource "aws_apigatewayv2_api" "minecraft_http_api" {
 
 # Lambda integration for minecraft API Gateway
 resource "aws_apigatewayv2_integration" "minecraft_lambda_integration" {
-  api_id           = aws_apigatewayv2_api.minecraft_http_api.id
-  description      = "Lambda integration for ${module.resource_naming.name} API Gateway"
-  integration_type = "AWS_PROXY"
+  api_id                 = aws_apigatewayv2_api.minecraft_http_api.id
+  description            = "Lambda integration for ${module.resource_naming.name} API Gateway"
+  integration_type       = "AWS_PROXY"
   connection_type        = "INTERNET"
   integration_method     = "POST"
   integration_uri        = var.lambda_invoke_arn

@@ -85,7 +85,7 @@ variable "mc_port" {
 
 variable "ec2_instance_id" {
   description = "ec2 instance id to target"
-  type = string
+  type        = string
 }
 
 variable "aws_region" {

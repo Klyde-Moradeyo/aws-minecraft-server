@@ -11,12 +11,12 @@ variable "tags" {
 
 variable "ingress_rules" {
   type = list(object({
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    cidr_blocks = list(string)
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = list(string)
     ipv6_cidr_blocks = list(string)
-    description = string
+    description      = string
   }))
   description = "A list of ingress rules."
   default     = []
@@ -24,12 +24,12 @@ variable "ingress_rules" {
 
 variable "egress_rules" {
   type = list(object({
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    cidr_blocks = list(string)
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = list(string)
     ipv6_cidr_blocks = list(string)
-    description = string
+    description      = string
   }))
   description = "A list of egress rules."
   default     = []
