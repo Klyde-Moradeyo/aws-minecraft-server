@@ -17,6 +17,7 @@ class SSHUtil:
         """
         Establish an SSH connection and return the client with retries.
         """
+        self.logger.info(f"Establishing an SSH connection to '{self.username}@{self.machine_ip}'...")
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
