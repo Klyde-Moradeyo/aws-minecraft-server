@@ -9,6 +9,14 @@ variable "aws_region" {
 }
 
 ########################
+#     Environment      #
+########################
+variable "git_branch" {
+  description = "The name of the Git branch to use"
+  type        = string
+}
+
+########################
 #    Lambda Function   #
 ########################
 variable "lambda_runtime" {

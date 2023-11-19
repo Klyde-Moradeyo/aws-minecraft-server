@@ -4,7 +4,7 @@
 module "tags" {
   source = "../modules/tags"
 
-  environment = "prod-2"
+  environment = var.git_branch
 }
 
 ########################
@@ -131,6 +131,9 @@ module "api_gateway" {
 module "lambda" {
   source = "../modules/lambda"
 
+  # aws region
+  aws_region = var.aws_region
+
   # Lambda Config
   lambda_runtime = var.lambda_runtime
   lambda_timeout = var.lambda_timeout
@@ -147,6 +150,7 @@ module "lambda" {
   git_private_key_name = var.git_private_key_name
   ec2_private_key_name = module.ssm_mc_server_private_key.ssm_parameter_name
   ec2_instance_id      = module.minecraft_server.ec2_instance_id
+  git_branch           = var.git_branch
 
   # Module tags
   label_id   = module.tags.label_id

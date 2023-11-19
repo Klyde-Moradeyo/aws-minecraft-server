@@ -1,5 +1,5 @@
 # Use a base image that includes Python and necessary build tools
-FROM amazonlinux:2
+FROM public.ecr.aws/sam/build-python3.10:1.103.0-20231116223523
 
 # Install required dependencies
 RUN yum install -y \
@@ -26,7 +26,7 @@ RUN chmod 644 "lambda_function.py" "package"
 RUN chmod 755 "lambda_function.py" "package"
 
 # Copy lambda_function.py to the package directory
-RUN cp -r lambda_function.py utils package/
+RUN cp -r lambda_function.py utils config package/
 
 # Create the lambda zip file
 RUN (cd package && zip -r ../lambda_function_payload.zip .)

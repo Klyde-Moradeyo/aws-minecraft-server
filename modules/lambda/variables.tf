@@ -13,6 +13,14 @@ variable "tags" {
 }
 
 ########################
+#     Environment      #
+########################
+variable "git_branch" {
+  description = "The name of the Git branch to use"
+  type        = string
+}
+
+########################
 #    Lambda Function   #
 ########################
 variable "lambda_runtime" {
@@ -78,6 +86,12 @@ variable "mc_port" {
 variable "ec2_instance_id" {
   description = "ec2 instance id to target"
   type = string
+}
+
+variable "aws_region" {
+  description = "Region in which AWS Resources to be created"
+  type        = string
+  default     = "eu-west-2"
 }
 
 

@@ -30,16 +30,16 @@ resource "aws_lambda_function" "lambda_function" {
       SUBNET_ID         = var.subnet_id         # These vars need to be changed in lambda python
       SECURITY_GROUP_ID = var.security_group_id # These vars need to be changed in lambda python
       TF_USER_TOKEN     = var.terraform_token_name
+      GIT_BRANCH        = var.git_branch # github branch to use
 
       # Tags
       TAGS_JSON = jsonencode(var.tags)
     }
   }
 
-  # layers = [ 
-  #   local.git_lambda_layer_arn,
-  #   aws_lambda_layer_version.terraform_lambda_layer.arn
-  #   ]
+  layers = [ 
+    local.git_lambda_layer_arn
+    ]
 
   tags = var.tags
 }
@@ -47,9 +47,9 @@ resource "aws_lambda_function" "lambda_function" {
 ########################
 #     Lambda Layer     #
 ########################
-# locals {
-#   git_lambda_layer_arn = "arn:aws:lambda:${var.aws_region}:553035198032:layer:git-lambda2:8"
-# }
+locals {
+  git_lambda_layer_arn = "arn:aws:lambda:${var.aws_region}:553035198032:layer:git-lambda2:8"
+}
 
 # resource "aws_lambda_layer_version" "terraform_lambda_layer" {
 #   filename   = "${path.module}/../../lambda/terraform_layer.zip"  # Replace with your layer ZIP filename

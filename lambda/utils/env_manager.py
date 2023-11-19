@@ -17,13 +17,13 @@ class EnvironmentVariables:
                                 'MC_PORT', 'MC_SERVER_IP', 
 
                                 # Fargate Specific Env Vars
-                                'CLUSTER', 'CONTAINER_NAME', 'TASK_DEFINITION_NAME',
+                                # 'CLUSTER', 'CONTAINER_NAME', 'TASK_DEFINITION_NAME',
 
                                 # JOB to run
                                 'BOT_COMMAND_NAME',
                                 
                                 # Git
-                                'GIT_PRIVATE_KEY', 'GIT_BRANCH'
+                                'GIT_PRIVATE_KEY', 'GIT_BRANCH',
                                 
                                 # EC2 SSH Access
                                 'EC2_PRIVATE_KEY'
