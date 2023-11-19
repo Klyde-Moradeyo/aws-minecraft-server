@@ -60,9 +60,16 @@ resource "aws_subnet" "my_subnet" {
   })
 }
 
-# Update local values
-locals {
-  vpc_id    = aws_vpc.my_vpc.id
-  subnet_id = aws_subnet.my_subnet.id
-  igw_id    = aws_internet_gateway.my_igw.id
+### Subnet and Route Table Association ###
+resource "aws_route_table_association" "my_subnet_association" {
+  subnet_id      = aws_subnet.my_subnet.id
+  route_table_id = aws_route_table.my_route_table.id
 }
+
+locals {
+  vpc_id         = aws_vpc.my_vpc.id
+  subnet_id      = aws_subnet.my_subnet.id
+  igw_id         = aws_internet_gateway.my_igw.id
+  route_table_id = aws_route_table.my_route_table.id
+}
+
