@@ -13,6 +13,14 @@ variable "tags" {
 }
 
 ########################
+#     Environment      #
+########################
+variable "git_branch" {
+  description = "The name of the Git branch to use"
+  type        = string
+}
+
+########################
 #    Lambda Function   #
 ########################
 variable "lambda_runtime" {
@@ -38,12 +46,12 @@ variable "terraform_token_name" {
   type        = string
 }
 
-variable "git_private_key_name" {
+variable "ssm_git_private_key_name" {
   description = "Private Key name for Github SSH in Systems Manager Parameter Store"
   type        = string
 }
 
-variable "ec2_private_key_name" {
+variable "ssm_ec2_private_key_name" {
   description = "Private Key name for EC2 in Systems Manager Parameter Store"
   type        = string
 }
@@ -78,6 +86,12 @@ variable "mc_port" {
 variable "ec2_instance_id" {
   description = "ec2 instance id to target"
   type = string
+}
+
+variable "aws_region" {
+  description = "Region in which AWS Resources to be created"
+  type        = string
+  default     = "eu-west-2"
 }
 
 

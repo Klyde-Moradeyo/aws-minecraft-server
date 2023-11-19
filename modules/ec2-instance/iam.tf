@@ -76,7 +76,7 @@ resource "aws_iam_role_policy" "mc_allow_ec2_to_asm" {
           "ssm:GetParameter",
         ]
         "Resource" = [
-          "arn:aws:ssm:*:847399026905:parameter/${var.git_private_key_name}",
+          "arn:aws:ssm:*:847399026905:parameter/${var.ssm_git_private_key_name}",
         ]
       }
     ]

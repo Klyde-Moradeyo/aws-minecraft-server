@@ -34,12 +34,12 @@ variable "aws_region" {
 ########################
 #    Systems Manager   #
 ########################
-variable "git_private_key_name" {
+variable "ssm_git_private_key_name" {
   description = "Private Key name for Github SSH in Systems Manager Parameter Store"
   type        = string
 }
 
-variable "ec2_private_key_name" {
+variable "ssm_ec2_private_key_name" {
   description = "Auto Generated Private key name in Systems Manager Parameter Store"
   type        = string
 }

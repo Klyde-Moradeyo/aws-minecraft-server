@@ -95,13 +95,13 @@ variable "instance_keypair" {
 ########################
 #    Systems Manager   #
 ########################
-variable "git_private_key_name" {
+variable "ssm_git_private_key_name" {
   description = "Private Key name for Github SSH in Systems Manager Parameter Store"
   type        = string
   default     = "dark-mango-bot-private-key"
 }
 
-variable "ec2_private_key_name" {
+variable "ssm_ec2_private_key_name" {
   description = "Private Key name for Github SSH in Systems Manager Parameter Store"
   type        = string
   default     = "/mc_server/private_key"

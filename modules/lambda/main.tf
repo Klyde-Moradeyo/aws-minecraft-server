@@ -23,23 +23,23 @@ resource "aws_lambda_function" "lambda_function" {
     variables = {
       MC_SERVER_IP      = var.mc_server_ip
       MC_PORT           = var.mc_port
-      GIT_PRIVATE_KEY   = "/${var.git_private_key_name}"
-      EC2_PRIVATE_KEY   = "/${var.ec2_private_key_name}"
+      SSM_GIT_PRIVATE_KEY   = "/${var.ssm_git_private_key_name}"
+      SSM_EC2_PRIVATE_KEY   = "/${var.ssm_ec2_private_key_name}"
       EC2_INSTANCE_ID   = var.ec2_instance_id
       BOT_COMMAND_NAME  = "/${var.bot_command_name}"
       SUBNET_ID         = var.subnet_id         # These vars need to be changed in lambda python
       SECURITY_GROUP_ID = var.security_group_id # These vars need to be changed in lambda python
       TF_USER_TOKEN     = var.terraform_token_name
+      GIT_BRANCH        = var.git_branch # github branch to use
 
       # Tags
       TAGS_JSON = jsonencode(var.tags)
     }
   }
 
-  # layers = [ 
-  #   local.git_lambda_layer_arn,
-  #   aws_lambda_layer_version.terraform_lambda_layer.arn
-  #   ]
+  layers = [ 
+    local.git_lambda_layer_arn
+    ]
 
   tags = var.tags
 }
@@ -47,9 +47,9 @@ resource "aws_lambda_function" "lambda_function" {
 ########################
 #     Lambda Layer     #
 ########################
-# locals {
-#   git_lambda_layer_arn = "arn:aws:lambda:${var.aws_region}:553035198032:layer:git-lambda2:8"
-# }
+locals {
+  git_lambda_layer_arn = "arn:aws:lambda:${var.aws_region}:553035198032:layer:git-lambda2:8"
+}
 
 # resource "aws_lambda_layer_version" "terraform_lambda_layer" {
 #   filename   = "${path.module}/../../lambda/terraform_layer.zip"  # Replace with your layer ZIP filename
