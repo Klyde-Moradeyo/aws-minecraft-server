@@ -53,11 +53,11 @@ class LambdaHandler:
             #     self.tec_fargate = Fargate(self.envs['CLUSTER'], self.envs)  # TEC means Terraform Execution Container
             #     self.task_tags = self.tec_fargate.get_task_tags()
             #     response = self.handle_mc_world_archive()
-            elif self.ACTION == 'start':
+            elif self.ACTION == "start":
                 response = self.handle_start()
-            elif self.ACTION == 'stop':
+            elif self.ACTION == "stop":
                 response = self.handle_stop()
-            elif self.ACTION == 'status':
+            elif self.ACTION == "status":
                 response = self.handle_server_status()
             else:
                 raise ValueError(f"Invalid command: {self.ACTION}")
@@ -140,6 +140,7 @@ class LambdaHandler:
             # Start docker compose from server folder
             if self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH):
                 self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose up -d --build")
+                self.logger.info("Started Minecraft Server!")
             else:
                 error_message = f"Could not start containers. No docker-compose yaml found in '{REMOTE_DOCKER_COMPOSE_CONFIG_PATH}'"
                 raise Exception(error_message)
@@ -241,10 +242,25 @@ def lambda_handler(event, context):
     handler = LambdaHandler(event)
     return handler.execute_command()
 
+import time
 event = {
-"body": "{\"action\": \"start\"}"
+    "body": "{\"action\": \"start\"}"
 }
-context=None
-print(lambda_handler(event, context))
+context = None
 
+# Start the timer
+start_time = time.time()
+
+response = lambda_handler(event, context)
+
+# Calculate the execution time
+execution_time = time.time() - start_time
+
+# Convert execution time to minutes and seconds
+minutes = int(execution_time // 60)
+seconds = int(execution_time % 60)
+
+# Print the results
+print("Response:", response)
+print(f"Execution time: {minutes} minutes {seconds} seconds")
  
