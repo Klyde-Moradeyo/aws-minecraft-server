@@ -146,15 +146,22 @@ class LambdaHandler:
                 raise Exception(error_message)
 
             return { 'STATUS': "MC_SERVER_STARTED", 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
+        else:
+            error_message = "EC2 Instance does not exist!"
+            raise Exception(error_message)
             
     def handle_stop(self):
+        if not self.mc_server_status["online"]:
+            return {"STATUS": "MC_SERVER_DOWN", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY OFFLINE"}
+        
+        # Start connection to ec2 instance
         ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
         self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
+
         print(self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH))
         if self.ec2_util.instance_exists():
+            
             self.ec2_util.stop_instance() # return error if it doesnt exist
-        # if not self.mc_server_status["online"]:
-        #     return {"STATUS": "MC_SERVER_DOWN", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY OFFLINE"}
         
         # Check if EC2 instance is in running state 
                     # if running -> Check if minecraft server is online 
