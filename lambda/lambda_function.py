@@ -39,7 +39,8 @@ class LambdaHandler:
         self.ec2_util = EC2Util(self.envs["EC2_INSTANCE_ID"], self.envs)
 
         # Check If minecraft server is online/offline
-        self.mc_server_status = MinecraftServer(self.envs["MC_SERVER_IP"], self.envs["MC_PORT"]).check()
+        self.mc_server = MinecraftServer(self.envs["MC_SERVER_IP"], self.envs["MC_PORT"])
+        self.mc_server_status = self.mc_server.check()
     
     def execute_command(self):
         try:
@@ -96,11 +97,13 @@ class LambdaHandler:
         git_util.clone(GIT_REPO_URL, GIT_REPO_NAME, self.envs["GIT_BRANCH"])
 
         if self.ec2_util.instance_exists():
-            # Start ec2 instance
             self.ec2_util.start_instance()
 
             ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
             self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
+
+            # Copy Latest Sever Folder to ec2 machine
+            self.ssh_util.scp_to_machine(LOCAL_SERVER_FOLDER_PATH, REMOTE_SERVER_FOLDER_PATH)
 
             packages_installed = { 
                 "docker": self.ssh_util.is_installed("docker", "docker -v"),
@@ -110,21 +113,23 @@ class LambdaHandler:
             }
 
             self.logger.info(f"Packages Installed: {packages_installed}")
-            self.logger.info(f"Type of packages_installed: {type(packages_installed)}")
 
             # If there are missing packages, install them
             if not all(packages_installed.values()):
-                # Create Logs and scripts folder
-                self.ssh_util.run_command("mkdir -p install/", False)
-
-                # Copy Helper Script
-                self.ssh_util.scp_to_machine(LOCAL_HELPER_SCRIPT_PATH, REMOTE_HELPER_SCRIPT_PATH)
-                
-                # Copy install script to machine
-                self.ssh_util.scp_to_machine(LOCAL_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_SCRIPT_PATH)
-
+                self.logger.info("Packages missing: Executing Install script...")
                 # Run install script
                 self.ssh_util.run_script(REMOTE_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_LOGS_PATH)
+                packages_installed = { 
+                    "docker": self.ssh_util.is_installed("docker", "docker -v"),
+                    "docker-compose": self.ssh_util.is_installed("docker-compose", "docker compose version"),
+                    "git": self.ssh_util.is_installed("git", "git --version"),
+                    "aws-cli": self.ssh_util.is_installed("aws-cli", "aws --version")
+                }
+                self.logger.info(f"Packages Installed: {packages_installed}")
+
+                # Check if install script was successful
+                if not all(packages_installed.values()):
+                    return "error!!!!!!!!!!!!"
 
             # SSH and start docker compose containers
 
@@ -224,3 +229,10 @@ def lambda_handler(event, context):
     handler = LambdaHandler(event)
     return handler.execute_command()
 
+event = {
+"body": "{\"action\": \"start\"}"
+}
+context=None
+print(lambda_handler(event, context))
+
+ 

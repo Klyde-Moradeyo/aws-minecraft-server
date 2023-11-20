@@ -91,17 +91,49 @@ class SSHUtil:
 
     def scp_to_machine(self, local_path, remote_path):
         """
-        Copy a local file or directory to a remote machine via SCP.
+        Copy a local directory recursively to a remote machine via SCP.
         """
         if not self.ssh:
             raise ConnectionError(f"Unable to establish SSH connection to {self.machine_ip}.")
 
-        with paramiko.SFTPClient.from_transport(self.ssh.get_transport()) as scp:
+        with paramiko.SFTPClient.from_transport(self.ssh.get_transport()) as sftp:
             try:
-                scp.put(local_path, remote_path)
+                # Check if local_path is a directory
+                if os.path.isdir(local_path):
+                    # Recursively upload the directory
+                    self._recursive_upload(sftp, local_path, remote_path)
+                else:
+                    # It's a file, just upload it
+                    sftp.put(local_path, remote_path)
             except Exception as e:
-                self.logger.error(f"Error copying {local_path} to {remote_path} on {self.machine_ip}: {str(e)}")
+                self.logger.error(f"Error copying '{local_path}' to '{remote_path}' on '{self.machine_ip}': {str(e)}")
                 raise
+
+    def _recursive_upload(self, sftp, local_path, remote_path):
+        """
+        Recursively upload a directory to the remote server.
+        """
+        # Create the remote directory if it does not exist
+        try:
+            sftp.listdir(remote_path)
+        except IOError:
+            sftp.mkdir(remote_path)
+
+        for item in os.listdir(local_path):
+            local_item_path = os.path.join(local_path, item)
+            remote_item_path = os.path.join(remote_path, item)
+
+            if os.path.isdir(local_item_path):
+                # Create the remote subdirectory, ignore error if it already exists
+                try:
+                    sftp.mkdir(remote_item_path)
+                except IOError:
+                    pass
+                # Recurse into the directory
+                self._recursive_upload(sftp, local_item_path, remote_item_path)
+            else:
+                # It's a file, upload it
+                sftp.put(local_item_path, remote_item_path)
 
     def read_file_output(self, file_path):
         """
