@@ -24,10 +24,20 @@ apt_get() {
 # Dependencies Install #
 ########################
 function install_dependencies {
-  add-apt-repository -y universe # Ensure the universe repository is enabled for access to additional packages
-  apt-get update
-  apt-get install -y sudo apt-utils
+  echo "Installing dependencies..."
+
+  # Check if sudo is installed, install it if it's not
+  if ! command -v sudo &> /dev/null; then
+    echo "sudo not found. Installing sudo..."
+    add-apt-repository -y universe
+    apt-get install -y sudo
+  else
+    echo "sudo is already installed."
+  fi
+  
+  apt_get update -y
   apt_get install -y \
+    apt-utils \
     lsof \
     apt-transport-https \
     ca-certificates \
