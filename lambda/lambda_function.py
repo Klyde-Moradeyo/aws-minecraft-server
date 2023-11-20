@@ -103,15 +103,14 @@ class LambdaHandler:
             self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
 
             packages_installed = { 
-                "docker": self.ssh_util.is_installed("docker", method="package"),
-                "docker-compose": self.ssh_util.is_installed("docker-compose", method="command"),
-                "git": self.ssh_util.is_installed("git", method="package"),
-                "aws-cli": self.ssh_util.is_installed("aws", method="package")
+                "docker": self.ssh_util.is_installed("docker", "docker -v"),
+                "docker-compose": self.ssh_util.is_installed("docker-compose", "docker compose version"),
+                "git": self.ssh_util.is_installed("git", "git --version"),
+                "aws-cli": self.ssh_util.is_installed("aws-cli", "aws --version")
             }
+
             self.logger.info(f"Packages Installed: {packages_installed}")
             self.logger.info(f"Type of packages_installed: {type(packages_installed)}")
-
-            print(all(packages_installed))
 
             # If there are missing packages, install them
             if not all(packages_installed.values()):

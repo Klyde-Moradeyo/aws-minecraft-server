@@ -120,19 +120,13 @@ class SSHUtil:
                 self.logger.error(f"Error while reading file '{file_path}': {e}")
                 raise
 
-    def is_installed(self, name, method='package'):
+    def is_installed(self, name, version_command):
         """
-        Check if a package or command is installed on the remote machine.
+        Check if a package or command is installed on the remote machine by running its version command.
         """
-        if method == 'package':
-            # Check for package installation
-            command = f"dpkg-query -W -f='${{Status}}' {name} 2>/dev/null | grep -q 'install ok installed'"
-        elif method == 'command':
-            # Check if a command is available
-            command = f"command -v {name} >/dev/null 2>&1"
-
         try:
-            self.run_command(command)
+            # Run the version command for the given software
+            self.run_command(f"{version_command} >/dev/null 2>&1")
             self.logger.info(f"'{name}' is installed.")
             return True
         except Exception:
