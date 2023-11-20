@@ -35,7 +35,7 @@ output "security_group_id" {
 ########################
 #       S3 Bucket      #
 ########################
-output "mc_s3_bucket_name" {
+output "s3_mc_world_bucket_name" {
   description = "The name of the Minecraft S3 bucket"
   value       = module.s3_mc_world.s3_bucket_name
 }
@@ -45,9 +45,14 @@ output "mc_s3_bucket_arn" {
   value       = module.s3_mc_world.s3_bucket_arn
 }
 
-output "mc_s3_bucket_uri" {
+output "s3_mc_world_bucket_name_uri" {
   description = "The S3 uri of the minecraft world data"
   value       = module.s3_mc_world.s3_bucket_uri
+}
+
+output "s3_mc_server_assets_uri" {
+  description = "The S3 uri of the minecraft world data"
+  value       = module.s3_mc_server_assets.s3_bucket_uri
 }
 
 # output "mc_archive_s3_bucket_uri" {

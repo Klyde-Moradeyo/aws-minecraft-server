@@ -73,7 +73,7 @@ variable "ssm_git_private_key_name" {
 variable "instance_type" {
   description = "EC2 Instance Type"
   type        = string
-  default = "t4g.small" 
+  default     = "t4g.small"
   # default = "t4g.2xlarge" 
   # default = "t4g.xlarge" 
   // For tests: default =  "t2.medium" | https://amazon-aws-ec2-pricing-comparison.pcapps.com/

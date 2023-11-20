@@ -11,34 +11,34 @@ module "tags" {
 #        VPC           #
 ########################
 module "vpc" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/vpc?ref=tf-modules"
+  source       = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/vpc?ref=tf-modules"
   vpc_cidr     = "10.0.0.0/16"
   subnet_cidrs = "10.0.2.0/24"
-  tags = module.tags.tags
+  tags         = module.tags.tags
 }
 
 module "security_group" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/security-group?ref=tf-modules"
 
-  vpc_id         = module.vpc.vpc_id
-  tags = module.tags.tags
+  vpc_id = module.vpc.vpc_id
+  tags   = module.tags.tags
 
   ingress_rules = [
     {
-      from_port   = 22
-      to_port     = 22
-      protocol    = "tcp"
-      cidr_blocks = [var.allowed_cidrs]
+      from_port        = 22
+      to_port          = 22
+      protocol         = "tcp"
+      cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
-      description = "SSH access from anywhere"
+      description      = "SSH access from anywhere"
     },
     {
-      from_port   = var.mc_port
-      to_port     = var.mc_port
-      protocol    = "tcp"
-      cidr_blocks = [var.allowed_cidrs]
+      from_port        = var.mc_port
+      to_port          = var.mc_port
+      protocol         = "tcp"
+      cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
-      description = "Minecraft Server Port"
+      description      = "Minecraft Server Port"
     }
     # Promtheus Metrics
     # {
@@ -53,12 +53,12 @@ module "security_group" {
 
   egress_rules = [
     {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
-      description = "Allow all outbound traffic"
+      description      = "Allow all outbound traffic"
     },
   ]
 }
@@ -95,8 +95,8 @@ module "ssm_mc_server_private_key" {
   value          = module.ec2_key_pair.private_key_pem
 
   # Module tags
-  label_id   = module.tags.label_id
-  tags = module.tags.tags
+  label_id = module.tags.label_id
+  tags     = module.tags.tags
 }
 
 module "ssm_bot_command" {
@@ -106,8 +106,8 @@ module "ssm_bot_command" {
   parameter_type = "String"
 
   # Module tags
-  label_id   = module.tags.label_id
-  tags = module.tags.tags
+  label_id = module.tags.label_id
+  tags     = module.tags.tags
 }
 
 ########################
@@ -121,8 +121,8 @@ module "api_gateway" {
   lambda_invoke_arn    = module.lambda.lambda_function_invoke_arn
 
   # Module tags
-  label_id   = module.tags.label_id
-  tags = module.tags.tags
+  label_id = module.tags.label_id
+  tags     = module.tags.tags
 }
 
 ########################
@@ -143,18 +143,20 @@ module "lambda" {
   terraform_token_name = var.terraform_token_name
 
   # Lambda Environment vars
-  subnet_id            = module.vpc.subnet_id
-  security_group_id    = module.security_group.security_group_id
-  mc_server_ip         = module.eip.eip_public_ip
-  mc_port              = var.mc_port
-  ssm_git_private_key_name = var.ssm_git_private_key_name
-  ssm_ec2_private_key_name = module.ssm_mc_server_private_key.ssm_parameter_name
-  ec2_instance_id      = module.minecraft_server.ec2_instance_id
-  git_branch           = var.git_branch
+  subnet_id                      = module.vpc.subnet_id
+  security_group_id              = module.security_group.security_group_id
+  mc_server_ip                   = module.eip.eip_public_ip
+  mc_port                        = var.mc_port
+  ssm_git_private_key_name       = var.ssm_git_private_key_name
+  ssm_ec2_private_key_name       = module.ssm_mc_server_private_key.ssm_parameter_name
+  ec2_instance_id                = module.minecraft_server.ec2_instance_id
+  git_branch                     = var.git_branch
+  s3_minecraft_world_bucket_url  = module.s3_mc_world.s3_bucket_uri
+  s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.s3_bucket_uri
 
   # Module tags
-  label_id   = module.tags.label_id
-  tags = module.tags.tags
+  label_id = module.tags.label_id
+  tags     = module.tags.tags
 }
 
 ########################
@@ -167,8 +169,8 @@ module "s3_mc_world" {
   bucket_name = "world-data"
 
   # Module tags
-  label_id   = module.tags.label_id
-  tags = module.tags.tags
+  label_id = module.tags.label_id
+  tags     = module.tags.tags
 }
 
 module "s3_mc_server_assets" {
@@ -179,8 +181,8 @@ module "s3_mc_server_assets" {
   version_config_status = "Enabled"
 
   # Module tags
-  label_id   = module.tags.label_id
-  tags = module.tags.tags
+  label_id = module.tags.label_id
+  tags     = module.tags.tags
 }
 
 ################################
@@ -204,7 +206,7 @@ module "minecraft_server" {
 
   # IAM
   ssm_git_private_key_name = var.ssm_git_private_key_name
-  mc_s3_bucket_arn     = module.s3_mc_world.s3_bucket_arn
+  mc_s3_bucket_arn         = module.s3_mc_world.s3_bucket_arn
 
   # Public IP
   public_ip = module.eip.eip_public_ip
