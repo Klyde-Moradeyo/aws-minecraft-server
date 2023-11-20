@@ -26,7 +26,10 @@ class EnvironmentVariables:
                                 'SSM_GIT_PRIVATE_KEY', 'GIT_BRANCH',
                                 
                                 # EC2 Instance
-                                'SSM_EC2_PRIVATE_KEY', 'EC2_INSTANCE_ID'
+                                'SSM_EC2_PRIVATE_KEY', 'EC2_INSTANCE_ID',
+
+                                # S3
+                                'S3_MC_ASSETS_URI', 'S3_MC_WORLD_URI'
                             ]
         return required_configs
 

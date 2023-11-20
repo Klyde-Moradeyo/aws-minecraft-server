@@ -13,6 +13,7 @@ from utils.ec2 import EC2Util
 from utils.ssh import SSHUtil
 from utils.file_handler import write_to_tmp_file
 from utils.git import GitUtil
+from utils.s3 import check_s3_object_exists
 from utils.logger import setup_logging
 
 class LambdaHandler:
@@ -30,6 +31,7 @@ class LambdaHandler:
 
         # Get the environment
         self.envs = EnvironmentVariables(self.ACTION).get_vars()  # Get Environment Variables
+        self.MINECRAFT_WORLD_PATH = f"{self.envs['S3_MC_WORLD_URI']}/minecraft-world"
 
         # Initialize SSM class
         self.ssm = SSMUtil()
@@ -130,6 +132,10 @@ class LambdaHandler:
                     failed_packages = [pkg for pkg, installed in packages_installed.items() if not installed]
                     error_message = f"Failed to install packages: {', '.join(failed_packages)}"
                     raise Exception(error_message)
+                
+            # Copy S3 minecraft world to local machine if exist
+            if check_s3_object_exists(self.envs['S3_MC_WORLD_URI'], self.MINECRAFT_WORLD_PATH):
+                self.ssh_util.run_command(f"aws s3 cp '{self.MINECRAFT_WORLD_PATH}' '{REMOTE_MINECRAFT_WORLD_PATH}'")
 
             # Start docker compose from server folder
             if self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH):
@@ -154,15 +160,26 @@ class LambdaHandler:
 
         print(self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH))
         if self.ec2_util.instance_exists():
-            
-            self.ec2_util.stop_instance() # return error if it doesnt exist
+            # Stop EC2 instance
+            self.ec2_util.stop_instance()
+
+            # Shutdown minecraft server
+            self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
+            self.logger.info("Stopped all EC2 containers")
+
+            # Shutdown minecraft server
+            self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
+            self.logger.info("Stopped all EC2 containers")
+
+        else:
+            error_message = "EC2 Instance does not exist!"
+            raise Exception(error_message)
         
         # Check if EC2 instance is in running state 
                     # if running -> Check if minecraft server is online 
                                 # -> if online: ssh into the machine and backup the filesd
                                 # -> if offline: notify user and admin that an error has occured
                     # if stopped -> infrom user that it has already been stopped
-        return
 
 
     def handle_server_backup_status(self):
