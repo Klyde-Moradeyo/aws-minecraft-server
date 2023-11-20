@@ -164,3 +164,27 @@ class SSHUtil:
         except Exception:
             self.logger.info(f"'{name}' is not installed.")
             return False
+        
+    def file_exists(self, file_path):
+        """
+        Check if a file exists on the remote machine.
+        """
+        if not self.ssh:
+            raise ConnectionError(f"Unable to establish SSH connection to {self.machine_ip}.")
+
+        try:
+            # Run 'test -f' command to check if file exists
+            stdin, stdout, stderr = self.ssh.exec_command(f"test -f {file_path}")
+            
+            # Get the command's exit status
+            exit_status = stdout.channel.recv_exit_status()
+
+            if exit_status == 0:
+                self.logger.info(f"File '{file_path}' exists on '{self.machine_ip}'.")
+                return True
+            else:
+                self.logger.info(f"File '{file_path}' does not exist on '{self.machine_ip}'.")
+                return False
+        except Exception as e:
+            self.logger.error(f"Error while checking if file '{file_path}' exists on '{self.machine_ip}': {e}")
+            raise

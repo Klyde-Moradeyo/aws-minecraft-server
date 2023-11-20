@@ -27,7 +27,6 @@ class LambdaHandler:
 
         # Extract the action from the parsed event
         self.ACTION = event_body["action"]
-        self.logger.info(f"Running Action: {self.ACTION}")
 
         # Get the environment
         self.envs = EnvironmentVariables(self.ACTION).get_vars()  # Get Environment Variables
@@ -132,6 +131,7 @@ class LambdaHandler:
                     return "error!!!!!!!!!!!!"
 
             # SSH and start docker compose containers
+            self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH)
 
             if "ec2_status" == "RUNNING":
                 return { 'STATUS': "ec2_status", 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
@@ -140,6 +140,11 @@ class LambdaHandler:
             
 
     def handle_stop(self):
+        ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
+        self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
+        print(self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH))
+        if self.ec2_util.instance_exists():
+            self.ec2_util.stop_instance() # return error if it doesnt exist
         # if not self.mc_server_status["online"]:
         #     return {"STATUS": "MC_SERVER_DOWN", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY OFFLINE"}
         
