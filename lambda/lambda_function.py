@@ -122,13 +122,6 @@ class LambdaHandler:
                 self.logger.info("Packages missing: Executing Install script...")
                 # Run install script
                 self.ssh_util.run_script(REMOTE_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_LOGS_PATH)
-                packages_installed = { 
-                    "docker": self.ssh_util.is_installed("docker", "docker -v"),
-                    "docker-compose": self.ssh_util.is_installed("docker-compose", "docker compose version"),
-                    "git": self.ssh_util.is_installed("git", "git --version"),
-                    "aws-cli": self.ssh_util.is_installed("aws-cli", "aws --version")
-                }
-                self.logger.info(f"Packages Installed: {packages_installed}")
 
                 # Check if install script was successful
                 if not all(get_packages_install(self.ssh_util).values()):
