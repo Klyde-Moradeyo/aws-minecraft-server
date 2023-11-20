@@ -31,7 +31,7 @@ class EC2Util:
         """
         try:
             self.client.describe_instances(InstanceIds=[self.instance_id])
-            self.logger.info("EC2 Instance Exists!")
+            self.logger.info(f"EC2 Instance '{self.instance_id}' Exists!")
             return True
         except ClientError as e:
             if 'InvalidInstanceID.NotFound' in str(e):

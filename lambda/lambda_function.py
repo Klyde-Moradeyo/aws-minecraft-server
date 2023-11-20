@@ -98,26 +98,28 @@ class LambdaHandler:
         if self.ec2_util.instance_exists():
             # Start ec2 instance
             self.ec2_util.start_instance()
-            
-            # check if ec2 instance is running
-            ec2_status = self.ec2_util.check_instance_status
 
-            print(ec2_status)
             ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
             self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
 
-            packages_installed = {
+            packages_installed = { 
                 "docker": self.ssh_util.is_installed("docker", method="package"),
                 "docker-compose": self.ssh_util.is_installed("docker-compose", method="command"),
                 "git": self.ssh_util.is_installed("git", method="package"),
                 "aws-cli": self.ssh_util.is_installed("aws", method="package")
             }
             self.logger.info(f"Packages Installed: {packages_installed}")
+            self.logger.info(f"Type of packages_installed: {type(packages_installed)}")
+
+            print(all(packages_installed))
 
             # If there are missing packages, install them
-            if not all(packages_installed):
+            if not all(packages_installed.values()):
                 # Create Logs and scripts folder
-                self.ssh_util.run_command("mkdir -p setup/logs setup/scripts", False)
+                self.ssh_util.run_command("mkdir -p install/", False)
+
+                # Copy Helper Script
+                self.ssh_util.scp_to_machine(LOCAL_HELPER_SCRIPT_PATH, REMOTE_HELPER_SCRIPT_PATH)
                 
                 # Copy install script to machine
                 self.ssh_util.scp_to_machine(LOCAL_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_SCRIPT_PATH)
@@ -127,10 +129,10 @@ class LambdaHandler:
 
             # SSH and start docker compose containers
 
-            if ec2_status == "RUNNING":
-                return { 'STATUS': ec2_status, 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
+            if "ec2_status" == "RUNNING":
+                return { 'STATUS': "ec2_status", 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
             else:
-                return { 'STATUS': ec2_status, 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
+                return { 'STATUS': "ec2_status", 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
             
 
     def handle_stop(self):
