@@ -38,13 +38,6 @@ class LambdaHandler:
         # Initialize ec2 class
         self.ec2_util = EC2Util(self.envs["EC2_INSTANCE_ID"], self.envs)
 
-        # Initialize SSH Util
-        ec2_username = "ubuntu"
-        SSM_EC2_PRIVATE_KEY = self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"])
-        SSM_EC2_PRIVATE_KEY_PATH = write_to_tmp_file(SSM_EC2_PRIVATE_KEY)
-        os.chmod(SSM_EC2_PRIVATE_KEY_PATH, 0o600)
-        self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], ec2_username, SSM_EC2_PRIVATE_KEY_PATH)
-
         # Check If minecraft server is online/offline
         self.mc_server_status = MinecraftServer(self.envs["MC_SERVER_IP"], self.envs["MC_PORT"]).check()
     
@@ -65,7 +58,7 @@ class LambdaHandler:
             elif self.ACTION == 'stop':
                 response = self.handle_stop()
             elif self.ACTION == 'status':
-                response = self.handle_status()
+                response = self.handle_server_status()
             else:
                 raise ValueError(f"Invalid command: {self.ACTION}")
             
@@ -100,14 +93,24 @@ class LambdaHandler:
         git_ssh_key_path = write_to_tmp_file(ssh_key_str)
 
         git_util = GitUtil(git_ssh_key_path)
-        git_util.clone(GIT_REPO_URL, GIT_REPO_NAME, self.envs("GIT_BRANCH"))
+        git_util.clone(GIT_REPO_URL, GIT_REPO_NAME, self.envs["GIT_BRANCH"])
 
         if self.ec2_util.instance_exists():
+            # Start ec2 instance
+            self.ec2_util.start_instance()
+            
+            # check if ec2 instance is running
+            ec2_status = self.ec2_util.check_instance_status
+
+            print(ec2_status)
+            ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
+            self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
+
             packages_installed = {
                 "docker": self.ssh_util.is_installed("docker", method="package"),
                 "docker-compose": self.ssh_util.is_installed("docker-compose", method="command"),
-                "git": self.ssh_util.is_installed("git", methid="package"),
-                "aws-cli": self.ssh_util.is_installed("aws", methid="package")
+                "git": self.ssh_util.is_installed("git", method="package"),
+                "aws-cli": self.ssh_util.is_installed("aws", method="package")
             }
             self.logger.info(f"Packages Installed: {packages_installed}")
 
@@ -121,12 +124,6 @@ class LambdaHandler:
 
                 # Run install script
                 self.ssh_util.run_script(REMOTE_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_LOGS_PATH)
-
-            # Start ec2 instance
-            self.ec2_util.start_instance()
-
-            # check if ec2 instance is running
-            ec2_status = self.ec2_util.check_instance_status
 
             # SSH and start docker compose containers
 
@@ -223,8 +220,6 @@ class LambdaHandler:
 
 # Where the magic happens
 def lambda_handler(event, context):
-    handler = LambdaHandler({
-            "action": "start",
-        })
+    handler = LambdaHandler(event)
     return handler.execute_command()
 

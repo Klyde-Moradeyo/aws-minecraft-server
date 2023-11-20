@@ -39,7 +39,7 @@ module "security_group" {
       cidr_blocks = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
       description = "Minecraft Server Port"
-    },
+    }
     # Promtheus Metrics
     # {
     #   from_port   = 9090
