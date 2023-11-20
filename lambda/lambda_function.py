@@ -26,7 +26,7 @@ class LambdaHandler:
         event_body = event_parser.parse()
 
         # Extract the action from the parsed event
-        self.ACTION = event_body["action"]
+        self.ACTION = event_body["action"] 
 
         # Get the environment
         self.envs = EnvironmentVariables(self.ACTION).get_vars()  # Get Environment Variables
@@ -86,6 +86,17 @@ class LambdaHandler:
             }
         
     def handle_start(self):
+        # Function to check check installtions in remote machine
+        def get_packages_install(ssh):
+            packages_installed = { 
+                "docker": ssh.is_installed("docker", "docker -v"),
+                "docker-compose": ssh.is_installed("docker-compose", "docker compose version"),
+                "git": ssh.is_installed("git", "git --version"),
+                "aws-cli": ssh.is_installed("aws-cli", "aws --version")
+            }
+            self.logger.info(f"Packages Installed: {packages_installed}")
+            return packages_installed
+        
         if self.mc_server_status["online"]:
             return {"STATUS": "MC_SERVER_UP", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY ONLINE"}
 
@@ -96,25 +107,18 @@ class LambdaHandler:
         git_util.clone(GIT_REPO_URL, GIT_REPO_NAME, self.envs["GIT_BRANCH"])
 
         if self.ec2_util.instance_exists():
+            # Start EC2 instance
             self.ec2_util.start_instance()
 
+            # Create SSH Connection
             ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
             self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
 
             # Copy Latest Sever Folder to ec2 machine
             self.ssh_util.scp_to_machine(LOCAL_SERVER_FOLDER_PATH, REMOTE_SERVER_FOLDER_PATH)
 
-            packages_installed = { 
-                "docker": self.ssh_util.is_installed("docker", "docker -v"),
-                "docker-compose": self.ssh_util.is_installed("docker-compose", "docker compose version"),
-                "git": self.ssh_util.is_installed("git", "git --version"),
-                "aws-cli": self.ssh_util.is_installed("aws-cli", "aws --version")
-            }
-
-            self.logger.info(f"Packages Installed: {packages_installed}")
-
             # If there are missing packages, install them
-            if not all(packages_installed.values()):
+            if not all(get_packages_install(self.ssh_util).values()):
                 self.logger.info("Packages missing: Executing Install script...")
                 # Run install script
                 self.ssh_util.run_script(REMOTE_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_LOGS_PATH)
@@ -127,18 +131,21 @@ class LambdaHandler:
                 self.logger.info(f"Packages Installed: {packages_installed}")
 
                 # Check if install script was successful
-                if not all(packages_installed.values()):
-                    return "error!!!!!!!!!!!!"
+                if not all(get_packages_install(self.ssh_util).values()):
+                    # Identify which packages failed to install
+                    failed_packages = [pkg for pkg, installed in packages_installed.items() if not installed]
+                    error_message = f"Failed to install packages: {', '.join(failed_packages)}"
+                    raise Exception(error_message)
 
-            # SSH and start docker compose containers
-            self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH)
-
-            if "ec2_status" == "RUNNING":
-                return { 'STATUS': "ec2_status", 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
+            # Start docker compose from server folder
+            if self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH):
+                self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose up -d --build")
             else:
-                return { 'STATUS': "ec2_status", 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
-            
+                error_message = f"Could not start containers. No docker-compose yaml found in '{REMOTE_DOCKER_COMPOSE_CONFIG_PATH}'"
+                raise Exception(error_message)
 
+            return { 'STATUS': "MC_SERVER_STARTED", 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
+            
     def handle_stop(self):
         ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
         self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
