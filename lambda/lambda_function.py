@@ -124,7 +124,8 @@ class LambdaHandler:
                 self.ssh_util.run_script(REMOTE_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_LOGS_PATH)
 
                 # Check if install script was successful
-                if not all(get_packages_install(self.ssh_util).values()):
+                packages_installed = get_packages_install(self.ssh_util).values()
+                if not packages_installed:
                     # Identify which packages failed to install
                     failed_packages = [pkg for pkg, installed in packages_installed.items() if not installed]
                     error_message = f"Failed to install packages: {', '.join(failed_packages)}"
