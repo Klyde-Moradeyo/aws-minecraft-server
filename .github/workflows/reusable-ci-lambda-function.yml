@@ -35,8 +35,16 @@ jobs:
           ls -l 
           # Get tags, filter those that start with MCI_, sort them and get the last one
           latest_tag=$(git tag | grep '^${{ env.GIT_TAG_PREFIX }}_' | sort -t. -k1,1n -k2,2n -k3,3n | tail -n1)
+          
+          # Check if latest_tag is empty
+          if [[ -z "$latest_tag" ]]; then
+            echo "No existing MCI tags found. Setting default tag."
+            latest_tag="${{ env.GIT_TAG_PREFIX }}_0.0.0"
+          fi
+      
           echo "Latest Version: $latest_tag"
           echo "MCI_TAG=$latest_tag" >> $GITHUB_ENV
+        
 
       - name: Increment Lambda MCI Tag
         if: inputs.filter == 'true'
