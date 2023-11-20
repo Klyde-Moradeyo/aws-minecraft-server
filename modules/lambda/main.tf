@@ -31,6 +31,8 @@ resource "aws_lambda_function" "lambda_function" {
       SECURITY_GROUP_ID   = var.security_group_id # These vars need to be changed in lambda python
       TF_USER_TOKEN       = var.terraform_token_name
       GIT_BRANCH          = var.git_branch # github branch to use
+      S3_MC_WORLD_URI = var.s3_minecraft_world_bucket_url
+      S3_MC_ASSETS_URI = var.s3_minecraft_assets_bucket_url
 
       # Tags
       TAGS_JSON = jsonencode(var.tags)

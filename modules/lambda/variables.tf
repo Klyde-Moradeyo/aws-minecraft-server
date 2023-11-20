@@ -1,7 +1,16 @@
+
+########################
+#          AWS         #
+########################
+variable "aws_region" {
+  description = "Region in which AWS Resources to be created"
+  type        = string
+  default     = "eu-west-2"
+}
+
 ########################
 #         Tags         #
 ########################
-
 variable "label_id" {
   description = "ID from tags module"
   type        = string
@@ -83,16 +92,28 @@ variable "mc_port" {
   default     = 25565
 }
 
+########################
+#     EC2 Instance     #
+########################
 variable "ec2_instance_id" {
   description = "ec2 instance id to target"
   type        = string
 }
 
-variable "aws_region" {
-  description = "Region in which AWS Resources to be created"
+########################
+#       S3 Bucket      #
+########################
+variable "s3_minecraft_world_bucket_url" {
+  description = "Minecraft world bucket URI"
   type        = string
-  default     = "eu-west-2"
 }
+
+variable "s3_minecraft_assets_bucket_url" {
+  description = "Minecraft assets bucket URI"
+  type        = string
+}
+
+
 
 
 
