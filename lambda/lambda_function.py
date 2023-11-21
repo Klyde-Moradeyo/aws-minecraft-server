@@ -7,7 +7,7 @@ from utils.ec2 import EC2Util
 from utils.env_manager import EnvironmentVariables
 from utils.event_parser import APIEventParser
 from utils.fargate import Fargate
-from utils.file_handler import write_to_tmp_file
+from utils.file_handler import write_to_tmp_file, generate_env_file
 from utils.git import GitUtil
 from utils.logger import setup_logging
 from utils.minecraft import MinecraftServer
@@ -138,6 +138,22 @@ class LambdaHandler:
             if check_s3_object_exists(self.envs['S3_MC_WORLD_URI'], self.MINECRAFT_WORLD_PATH):
                 self.ssh_util.run_command(f"aws s3 cp '{self.MINECRAFT_WORLD_PATH}' '{REMOTE_MINECRAFT_WORLD_PATH}'")
 
+            # Generate Server Config and Copy to Remote machine
+            # Generate MEMORY, ICON, WORLD(this should start from above)
+            server_config = self.mc_server.initialize_server_config(REMOTE_BASE_CONFIG_PATH, REMOTE_TEMPLATE_CONFIG_PATH)
+            self.ssh_util.scp_to_machine(server_config, REMOTE_MC_SERVER_ENV_FILE_PATH)
+
+            # Generate Monitoring Config and Copy to Remote machine
+            monitor_config = { 
+                "RCON_PORT": self.envs["RCON_PORT"], 
+                "API_URL": self.envs["API_URL"], 
+                "SSM_API_KEY_PATH": self.envs["SSM_API_KEY_PATH"], 
+                "RCON_PASS": None, # Generate RCON Pass
+                "PROMETHEUS_PORT": self.envs["PROMETHEUS_PORT"], 
+            }
+            monitor_config = generate_env_file(monitor_config)
+            self.ssh_util.scp_to_machine(monitor_config, REMOTE_MC_MONITOR_ENV_FILE_PATH)
+
             # Start docker compose from server folder
             if self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH):
                 self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose up -d --build")
@@ -152,26 +168,29 @@ class LambdaHandler:
             raise Exception(error_message)
             
     def handle_stop(self):
-        if not self.mc_server_status["online"]:
-            return {"STATUS": "MC_SERVER_DOWN", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY OFFLINE"}
-        
         # Start connection to ec2 instance
         ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
         self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
 
         print(self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH))
         if self.ec2_util.instance_exists():
-            # Stop EC2 instance
-            self.ec2_util.stop_instance()
+            if self.ec2_util.check_instance_status() == "RUNNING":
+                if not self.mc_server_status["online"]:
+                    return {"STATUS": "MC_SERVER_DOWN", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY OFFLINE"}
+                
+                # Stop EC2 instance
+                self.ec2_util.stop_instance()
 
-            # Shutdown minecraft server
-            self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
-            self.logger.info("Stopped all EC2 containers")
+                # Shutdown minecraft server
+                self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
+                self.logger.info("Stopped all EC2 containers")
 
-            # Shutdown minecraft server
-            self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
-            self.logger.info("Stopped all EC2 containers")
-
+                # Shutdown minecraft server
+                self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
+                self.logger.info("Stopped all EC2 containers")
+            else:
+                error_message = "EC2 Instance is not Running?"
+                raise Exception(error_message)
         else:
             error_message = "EC2 Instance does not exist!"
             raise Exception(error_message)

@@ -9,14 +9,24 @@ GIT_REPO_URL = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git"
 LOCAL_SERVER_FOLDER_PATH = os.path.join(GIT_REPO_NAME, "server")
 REMOTE_SERVER_FOLDER_PATH = "server"
 
-REMOTE_MINECRAFT_WORLD_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/minecraft-data/world"
+# --- Server Config Paths ---
+REMOTE_CONFIG_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/config"
+REMOTE_BASE_CONFIG_PATH = f"{REMOTE_CONFIG_PATH}/base.json"
+REMOTE_TEMPLATE_CONFIG_PATH = f"{REMOTE_CONFIG_PATH}/template.json"
 
+REMOTE_MC_SERVER_ENV_FILE_PATH = f"{REMOTE_CONFIG_PATH}/.server-env"
+REMOTE_MC_MONITOR_ENV_FILE_PATH = f"{REMOTE_CONFIG_PATH}/.monitoring-env"
+
+# --- Server Scripts Paths ---
 REMOTE_HELPER_SCRIPT_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/scripts/helper.sh"
 
 REMOTE_INSTALL_SCRIPT_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/scripts/install.sh"
 REMOTE_INSTALL_LOGS_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/scripts/install.log"
 
 REMOTE_DOCKER_COMPOSE_CONFIG_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/docker-compose.yml"
+
+# --- Minecraft World Paths ---
+REMOTE_MINECRAFT_WORLD_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/minecraft-data/world"
 
 # --- EC2 USERNAME ---
 EC2_USERNAME = "ubuntu"

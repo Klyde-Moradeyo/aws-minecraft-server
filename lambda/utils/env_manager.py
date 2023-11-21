@@ -29,7 +29,10 @@ class EnvironmentVariables:
                                 'SSM_EC2_PRIVATE_KEY', 'EC2_INSTANCE_ID',
 
                                 # S3
-                                'S3_MC_ASSETS_URI', 'S3_MC_WORLD_URI'
+                                'S3_MC_ASSETS_URI', 'S3_MC_WORLD_URI',
+
+                                # API
+                                'API_URL', 'SSM_API_KEY_PATH'
                             ]
         return required_configs
 
