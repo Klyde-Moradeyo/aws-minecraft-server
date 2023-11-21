@@ -115,7 +115,7 @@ module "ssm_api_gw_key" {
 
   parameter_name = "api_gateway_key"
   parameter_type = "String"
-  value          = null
+  value          = "null"
 
   # Module tags
   label_id = module.tags.label_id
