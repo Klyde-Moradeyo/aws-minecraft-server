@@ -1,0 +1,17 @@
+{
+    "EULA": "TRUE",
+    "MOTD": "Mango Minecraft Server",
+    "TZ": "Europe/London",
+    "MAX_PLAYERS": "20",
+    "VIEW_DISTANCE": "10",
+    "OPS": "No one",
+    "ENABLE_WHITELIST": "FALSE",
+    "ENFORCE_WHITELIST": "FALSE",
+    "ANNOUNCE_PLAYER_ACHIEVEMENTS": "true",
+    "ENABLE_COMMAND_BLOCK": "false",
+    "LOG_TIMESTAMP": "true"
+    // Additional configurations and placeholders can be added below
+    // "MEMORY": "2G", // Generate formula for calculating Memory
+    // "ICON": "xxICONxx" // Generate Custom Icon
+    // "WORLD": "xxICONxx" // First time world
+}
