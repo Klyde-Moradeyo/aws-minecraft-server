@@ -1,20 +1,21 @@
-import boto3
-import time
 import json
-from config import *
+import time
+import boto3
 from botocore.exceptions import BotoCoreError, ClientError
-from utils.event_parser import APIEventParser
-from utils.env_manager import EnvironmentVariables
-from utils.minecraft import MinecraftServer
-from utils.fargate import Fargate
-from utils.time_utils import seconds_to_minutes, DateTimeEncoder
-from utils.ssm import SSMUtil
+from config import *
 from utils.ec2 import EC2Util
-from utils.ssh import SSHUtil
+from utils.env_manager import EnvironmentVariables
+from utils.event_parser import APIEventParser
+from utils.fargate import Fargate
 from utils.file_handler import write_to_tmp_file
 from utils.git import GitUtil
-from utils.s3 import check_s3_object_exists
 from utils.logger import setup_logging
+from utils.minecraft import MinecraftServer
+from utils.s3 import check_s3_object_exists
+from utils.ssh import SSHUtil
+from utils.ssm import SSMUtil
+from utils.time_utils import seconds_to_minutes, DateTimeEncoder
+
 
 class LambdaHandler:
     def __init__(self, event):
