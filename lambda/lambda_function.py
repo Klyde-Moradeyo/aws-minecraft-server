@@ -222,7 +222,7 @@ class LambdaHandler:
                 self.ssh_util.run_command(f"find '{REMOTE_SERVER_FOLDER_PATH}' -path '{REMOTE_SCRIPT_LOGS_PATH}' -prune -o -print0 | xargs -0 rm -rf") 
 
                 # Stop EC2 instance
-                # self.ec2_util.stop_instance()
+                self.ec2_util.stop_instance()
                 return { 'STATUS': "MC_SERVER_STOPPED", 'COMMAND': self.ACTION, "INFO": "STOPPED MINECRAFT SERVER" } 
             else:
                 error_message = "EC2 Instance is not Running?"
