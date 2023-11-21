@@ -153,8 +153,8 @@ class LambdaHandler:
             # Generate Monitoring Config and Copy to Remote machine
             monitor_config = { 
                 "RCON_PORT": self.envs["RCON_PORT"], 
-                "API_URL": self.envs["API_URL"], 
-                "SSM_API_KEY_PATH": self.envs["SSM_API_KEY_PATH"], 
+                "API_GW_URL": self.envs["API_GW_URL"], 
+                "SSM_API_KEY": self.envs["SSM_API_KEY"], 
                 "RCON_PASS": None, # Generate RCON Pass
                 "PROMETHEUS_PORT": self.envs["PROMETHEUS_PORT"], 
             }

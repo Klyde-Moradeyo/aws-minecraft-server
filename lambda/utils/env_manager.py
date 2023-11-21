@@ -32,7 +32,7 @@ class EnvironmentVariables:
                                 'S3_MC_ASSETS_URI', 'S3_MC_WORLD_URI',
 
                                 # API
-                                'API_URL', 'SSM_API_KEY_PATH'
+                                'API_GW_URL', 'SSM_API_KEY'
                             ]
         return required_configs
 
