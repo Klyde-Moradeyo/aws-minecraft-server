@@ -22,7 +22,7 @@ class S3Util:
         """
         Get the S3 path for the server's assets.
         """
-        return f"{self.MC_ASSETS_URI}/{self.server_template}"
+        return f"{self.MC_ASSETS_URI}/{self.server_template}/assets"
     
     def get_archive_mc_world_path(self):
         """
