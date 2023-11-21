@@ -9,5 +9,6 @@
     "ENFORCE_WHITELIST": "FALSE",
     "ANNOUNCE_PLAYER_ACHIEVEMENTS": "true",
     "ENABLE_COMMAND_BLOCK": "false",
-    "LOG_TIMESTAMP": "true"
+    "LOG_TIMESTAMP": "true",
+    "SAVE_MINECRAFT_WORLD": "true"
 }
