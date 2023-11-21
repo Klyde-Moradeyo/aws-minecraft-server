@@ -13,23 +13,26 @@ class APIEventParser:
         # For debuging later
         # self.logger.info(f"query params: {self.parse_query_parameters(event)}")
         # self.logger.info(f"path params: \n{self.parse_path_parameters(event)}")
-        self.logger.info(f"body: \n{format_dictionary(self.body)}")
+        self.logger.info(f"body: {format_dictionary(self.body)}")
 
     def parse(self):
-        action = self.extract_key("action")
+        action = self.extract_key("action", required=True)
+        server_template = self.extract_key("server_template", required=False)
 
         return {
             "action": action,
+            "server_template": server_template  # This will be None if not provided
         }
 
-    def extract_key(self, key):
+    def extract_key(self, key, required=True):
         """
-        Extract a specific key from the body.
+        Extract a specific key from the body. If the key is required and not found,
+        raise a ValueError. If the key is not required and not found, return None.
         """
         value = self.body.get(key)
-        if value is None:
+        if value is None and required:
             raise ValueError(f"Key '{key}' not found in input")
-        return value 
+        return value
 
     def _parse_body(self, event):
         """

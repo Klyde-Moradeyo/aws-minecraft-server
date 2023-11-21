@@ -18,7 +18,6 @@ def convert_megabytes(mb_value):
         "size_gb": size_gb
     }
 
-
 def write_to_tmp_file(content):
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp_file:
         temp_file.write(content)
@@ -45,10 +44,8 @@ class JSONHelper:
             with open(file_path, 'r') as file:
                 return json.load(file)
         except FileNotFoundError:
-            # Add appropriate logging here
             raise
         except json.JSONDecodeError:
-            # Add appropriate logging here
             raise
 
 

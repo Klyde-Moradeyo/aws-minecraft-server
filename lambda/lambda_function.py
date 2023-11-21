@@ -29,6 +29,7 @@ class LambdaHandler:
 
         # Extract the action from the parsed event
         self.ACTION = event_body["action"] 
+        self.server_template = event_body["server_template"]
 
         # Get the environment
         self.envs = EnvironmentVariables(self.ACTION).get_vars()  # Get Environment Variables
@@ -41,7 +42,7 @@ class LambdaHandler:
         self.ec2_util = EC2Util(self.envs["EC2_INSTANCE_ID"], self.envs)
 
         # Check If minecraft server is online/offline
-        self.mc_server = MinecraftServer(self.envs["MC_SERVER_IP"], self.envs["MC_PORT"])
+        self.mc_server = MinecraftServer(self.server_template, self.envs["MC_SERVER_IP"], self.envs["MC_PORT"])
         self.mc_server_status = self.mc_server.check()
     
     def execute_command(self):
@@ -100,6 +101,10 @@ class LambdaHandler:
             self.logger.info(f"Packages Installed: {packages_installed}")
             return packages_installed
         
+        if self.server_template == None:
+            error_message = "Template ID is Null. Cannot Start MC Server"
+            raise Exception(error_message)
+        
         if self.mc_server_status["online"]:
             return {"STATUS": "MC_SERVER_UP", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY ONLINE"}
 
@@ -142,21 +147,27 @@ class LambdaHandler:
                 self.ssh_util.run_command(f"aws s3 cp '{self.MINECRAFT_WORLD_PATH}' '{REMOTE_MINECRAFT_WORLD_PATH}'")
                 additional_configs["WORLD"] = CONTAINER_MINECRAFT_WORLD_PATH # Add world to config
 
-            # Calculcate Minecraft server's memory
+            # Calculcate Minecraft Server's available memory
             additional_configs["MEMORY"] = self.mc_server.get_memory(self.ssh_util)
+
+            # Select the server's icon
             additional_configs["ICON"] = self.mc_server.select_icon()
 
+            # Configure RCON
+            additional_configs["RCON_PORT"] = RCON_PORT
+            additional_configs["RCON_PASS"] = self.mc_server.generate_rcon_password(24)
+
             # Generate Server Config and Copy to Remote machine
-            server_config = self.mc_server.initialize_server_config(REMOTE_BASE_CONFIG_PATH, REMOTE_TEMPLATE_CONFIG_PATH, additional_configs)
+            server_config = self.mc_server.initialize_server_config(LOCAL_BASE_CONFIG_PATH, LOCAL_TEMPLATE_CONFIG_PATH, additional_configs)
             self.ssh_util.scp_to_machine(server_config, REMOTE_MC_SERVER_ENV_FILE_PATH)
 
             # Generate Monitoring Config and Copy to Remote machine
             monitor_config = { 
-                "RCON_PORT": self.envs["RCON_PORT"], 
-                "API_GW_URL": self.envs["API_GW_URL"], 
-                "SSM_API_KEY": self.envs["SSM_API_KEY"], 
-                "RCON_PASS": None, # Generate RCON Pass
-                "PROMETHEUS_PORT": self.envs["PROMETHEUS_PORT"], 
+                "RCON_PORT": additional_configs["RCON_PORT"], 
+                "RCON_PASS": additional_configs["RCON_PASS"],
+                "API_GW_URL": self.envs["API_GW_URL"],
+                "SSM_API_KEY": self.envs["SSM_API_KEY"],
+                "PROMETHEUS_PORT": None,
             }
             monitor_config = generate_env_file(monitor_config)
             self.ssh_util.scp_to_machine(monitor_config, REMOTE_MC_MONITOR_ENV_FILE_PATH)
@@ -289,7 +300,7 @@ def lambda_handler(event, context):
 
 import time
 event = {
-    "body": "{\"action\": \"start\"}"
+    "body": '{"action": "start", "server_template": "vanilla-survival"}'
 }
 context = None
 

@@ -10,10 +10,11 @@ LOCAL_SERVER_FOLDER_PATH = os.path.join(GIT_REPO_NAME, "server")
 REMOTE_SERVER_FOLDER_PATH = "server"
 
 # --- Server Config Paths ---
-REMOTE_CONFIG_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/config"
-REMOTE_BASE_CONFIG_PATH = f"{REMOTE_CONFIG_PATH}/base.json"
-REMOTE_TEMPLATE_CONFIG_PATH = f"{REMOTE_CONFIG_PATH}/template.json"
+LOCAL_TEMPLATES_PATH = os.path.join(LOCAL_SERVER_FOLDER_PATH, "config")
+LOCAL_BASE_CONFIG_PATH = os.path.join(LOCAL_TEMPLATES_PATH, "base.json")
+LOCAL_TEMPLATE_CONFIG_PATH = os.path.join(LOCAL_TEMPLATES_PATH, "template.json")
 
+REMOTE_CONFIG_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/config"
 REMOTE_MC_SERVER_ENV_FILE_PATH = f"{REMOTE_CONFIG_PATH}/.server-env"
 REMOTE_MC_MONITOR_ENV_FILE_PATH = f"{REMOTE_CONFIG_PATH}/.monitoring-env"
 
@@ -28,6 +29,12 @@ REMOTE_DOCKER_COMPOSE_CONFIG_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/docker-compose
 # --- Minecraft World Paths ---
 REMOTE_MINECRAFT_WORLD_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/minecraft-data/world"
 CONTAINER_MINECRAFT_WORLD_PATH = f"./data/world"
+
+# --- Minecraft Server Memory Buffer ---
+MEMORY_BUFFER = 0.75 # Allocate 75% of the operating systems memory just for minecraft
+
+# --- Minecraft Server RCON PORT  ---
+RCON_PORT = "25575"
 
 # --- EC2 USERNAME ---
 EC2_USERNAME = "ubuntu"
