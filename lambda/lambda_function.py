@@ -21,7 +21,7 @@ class LambdaHandler:
     def __init__(self, event):
         # Note: May also need to add to check fargate for if the required image is in ECR.
         # Setting up logging
-        self.logger = setup_logging() 
+        self.logger = setup_logging()
         
         # Parse the event
         event_parser = APIEventParser(event)
@@ -244,14 +244,17 @@ class LambdaHandler:
         return { 'STATUS': task_status, 'COMMAND': prev_command, "INFO": "RETRIEVED MINECRAFT SERVER STATUS"}
     
     def handle_server_status(self):
-        # Check if ec2 is running
-            # if it is running: 
-                    # -> Check if minecraft server is online
-                            # if mc server online -> inform user that it is online
-                            # if mc server offline -> check other container's health in the machine and then -> notify user and admin that an error has occured (admin gets more info through dm)
-            # if it is stopped:
-                    # inform user that it has stopped
-        return
+        if self.ec2_util.instance_exists():
+            if self.ec2_util.check_instance_status() == "running":
+                if self.mc_server_status["online"]:
+                    return { 'STATUS': "MC_SERVER_UP", 'COMMAND': self.ACTION, "INFO": "RETRIEVED MINECRAFT SERVER STATUS"}
+                else:
+                    return { 'STATUS': "PROVISIONING", 'COMMAND': self.ACTION, "INFO": "RETRIEVED MINECRAFT SERVER STATUS"}
+            else:
+                return { 'STATUS': "MC_SERVER_DOWN", 'COMMAND': self.ACTION, "INFO": "RETRIEVED MINECRAFT SERVER STATUS"}
+        else:
+            error_message = "EC2 Instance does not exist!"
+            raise Exception(error_message)
 
     def handle_mc_world_archive(self):
         """
@@ -308,26 +311,3 @@ class LambdaHandler:
 def lambda_handler(event, context):
     handler = LambdaHandler(event)
     return handler.execute_command()
-
-import time
-event = {
-    "body": '{"action": "stop", "server_template": "creative"}'
-}
-context = None
-
-# Start the timer
-start_time = time.time()
-
-response = lambda_handler(event, context)
-
-# Calculate the execution time
-execution_time = time.time() - start_time
-
-# Convert execution time to minutes and seconds
-minutes = int(execution_time // 60)
-seconds = int(execution_time % 60)
-
-# Print the results
-print("Response:", response)
-print(f"Execution time: {minutes} minutes {seconds} seconds")
- 
