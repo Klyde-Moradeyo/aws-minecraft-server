@@ -65,6 +65,19 @@ variable "ssm_ec2_private_key_name" {
   type        = string
 }
 
+variable "ssm_api_key_name" {
+  type        = string
+  description = "Name of the SSM parameter to store the API key"
+}
+
+########################
+#        API           #
+########################
+variable "api_gateway_url" {
+  type        = string
+  description = "URL of the API Gateway"
+}
+
 ########################
 #        VPC           #
 ########################

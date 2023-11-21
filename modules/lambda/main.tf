@@ -33,6 +33,8 @@ resource "aws_lambda_function" "lambda_function" {
       GIT_BRANCH          = var.git_branch # github branch to use
       S3_MC_WORLD_URI     = var.s3_minecraft_world_bucket_url
       S3_MC_ASSETS_URI    = var.s3_minecraft_assets_bucket_url
+      API_GW_URL          = var.api_gateway_url
+      SSM_API_KEY         = "/${var.ssm_api_key_name}"
 
       # Tags
       TAGS_JSON = jsonencode(var.tags)
