@@ -91,25 +91,35 @@ class MinecraftServer:
         self.logger.info("RCON password generated successfully.")
         return password
 
-    def initialize_server_config(self, base_config_path: str, template_config_path: str, additional_config: dict = None):
+    def get_server_config(self, base_config_path: str, template_config_path: str, additional_config: dict = None) -> dict:
+        """
+        Merge base, template, and additional configurations and return as a dictionary.
+        """
         # Load Base Config
         base_config = JSONHelper.read_json(base_config_path)
         
         # Load Selected Template
-        template_id = self.template_id
         template_config = JSONHelper.read_json(template_config_path)
-        templates = template_config.get("templates", {})
-        chosen_template = templates.get(template_id)
+        chosen_template = template_config.get("templates", {}).get(self.template_id, {})
 
         # Initialize additional_config if it's None
         if additional_config is None:
             additional_config = {}
 
-        # Merge base config and chosen template
-        if chosen_template:
-            # Merge with chosen template and then with additional configuration
-            # Note: Chosen Template and Additional Config will override base config
-            merged_config = {**base_config, **chosen_template, **additional_config}
-            file_path = generate_env_file(merged_config)
-            self.logger.info(f"Successfully Generated Config for '{template_id}'")
-            return file_path
+        # Merge base config, chosen template, and additional configuration
+        merged_config = {**base_config, **chosen_template, **additional_config}
+        self.logger.info(f"Retrieved template '{self.template_id}'")
+        print(merged_config) # debuging
+        return merged_config
+
+    def initialize_server_config(self, base_config_path: str, template_config_path: str, additional_config: dict = None):
+        """
+        Generate the server configuration file based on merged configuration.
+        """
+        # Get merged server configuration
+        merged_config = self.get_server_config(base_config_path, template_config_path, additional_config)
+
+        # Generate and write to environment file
+        file_path = generate_env_file(merged_config)
+        self.logger.info(f"Successfully Generated Config for '{self.template_id}'")
+        return file_path

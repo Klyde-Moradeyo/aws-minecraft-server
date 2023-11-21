@@ -74,10 +74,14 @@ class SSHUtil:
         # Convert args to a string
         args_str = ' '.join(args)
 
-        try: 
+        try:
+            # Create the directory for the log file
+            log_dir = os.path.dirname(log_file_path)
+            self.run_command(f"mkdir -p {log_dir}", capture_output=True)
+
             # Run the bash script and redirect its output to a log file
             stdin, stdout, stderr = self.ssh.exec_command(f"sudo bash {script_path} {args_str} > {log_file_path} 2>&1")
-            
+
             # Wait for the command to finish
             exit_status = stdout.channel.recv_exit_status()
 

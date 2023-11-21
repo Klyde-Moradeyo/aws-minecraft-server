@@ -11,7 +11,7 @@ from utils.file_handler import write_to_tmp_file, generate_env_file
 from utils.git import GitUtil
 from utils.logger import setup_logging
 from utils.minecraft import MinecraftServer
-from utils.s3 import check_s3_object_exists
+from utils.s3 import S3Util
 from utils.ssh import SSHUtil
 from utils.ssm import SSMUtil
 from utils.time_utils import seconds_to_minutes, DateTimeEncoder
@@ -33,13 +33,13 @@ class LambdaHandler:
 
         # Get the environment
         self.envs = EnvironmentVariables(self.ACTION).get_vars()  # Get Environment Variables
-        self.MINECRAFT_WORLD_PATH = f"{self.envs['S3_MC_WORLD_URI']}/minecraft-world"
 
         # Initialize SSM class
         self.ssm = SSMUtil()
 
         # Initialize ec2 class
         self.ec2_util = EC2Util(self.envs["EC2_INSTANCE_ID"], self.envs)
+        self.s3_util = S3Util(self.envs, self.server_template)
 
         # Check If minecraft server is online/offline
         self.mc_server = MinecraftServer(self.server_template, self.envs["MC_SERVER_IP"], self.envs["MC_PORT"])
@@ -143,9 +143,10 @@ class LambdaHandler:
             additional_configs = {}
         
             # Copy S3 minecraft world to local machine if exist
-            if check_s3_object_exists(self.envs['S3_MC_WORLD_URI'], self.MINECRAFT_WORLD_PATH):
-                self.ssh_util.run_command(f"aws s3 cp '{self.MINECRAFT_WORLD_PATH}' '{REMOTE_MINECRAFT_WORLD_PATH}'")
+            if self.ssh_util.run_command(f"aws s3 ls '{self.s3_util.get_minecraft_world_path()}/'", capture_output=True):
+                self.ssh_util.run_command(f"aws s3 cp '{self.s3_util.get_minecraft_world_path()}' '{REMOTE_MINECRAFT_WORLD_PATH}' --recursive")
                 additional_configs["WORLD"] = CONTAINER_MINECRAFT_WORLD_PATH # Add world to config
+                self.logger.info("Successfully Restored S3 Minecraft World")
 
             # Calculcate Minecraft Server's available memory
             additional_configs["MEMORY"] = self.mc_server.get_memory(self.ssh_util)
@@ -186,39 +187,49 @@ class LambdaHandler:
             raise Exception(error_message)
             
     def handle_stop(self):
-        # Start connection to ec2 instance
-        ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
-        self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
-
-        print(self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH))
         if self.ec2_util.instance_exists():
-            if self.ec2_util.check_instance_status() == "RUNNING":
+            if self.ec2_util.check_instance_status() == "running":
+                # Check if minecraft server is already offline
                 if not self.mc_server_status["online"]:
                     return {"STATUS": "MC_SERVER_DOWN", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY OFFLINE"}
                 
+                # Establish connection to Ec2 instance
+                ssh_key_str = self.ssm.get_param(self.envs["SSM_GIT_PRIVATE_KEY"])             
+                ec2_ssh_key_path = self.ec2_util.write_ec2_ssh_key_to_file(self.ssm.get_param(self.envs["SSM_EC2_PRIVATE_KEY"]))
+                self.ssh_util = SSHUtil(self.envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
+
+                # Shutdown minecraft server
+                self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
+                self.logger.info("Stopped all EC2 containers")
+
+                # Clone Git Repo
+                git_ssh_key_path = write_to_tmp_file(ssh_key_str)
+                git_util = GitUtil(git_ssh_key_path)
+                git_util.clone(GIT_REPO_URL, GIT_REPO_NAME, self.envs["GIT_BRANCH"])
+
+                # Back up the world to S3 Bucket
+                world_save_enabled_str = self.mc_server.get_server_config(LOCAL_BASE_CONFIG_PATH, LOCAL_TEMPLATE_CONFIG_PATH).get("SAVE_MINECRAFT_WORLD").lower()
+                world_save_enabled = world_save_enabled_str == 'true'
+                self.logger.info(f"World Save Enabled?: '{world_save_enabled}'")
+                if world_save_enabled:
+                    self.ssh_util.run_command(f"aws s3 cp '{REMOTE_MINECRAFT_WORLD_PATH}' '{self.s3_util.get_minecraft_world_path()}' --recursive")
+                    self.logger.info("Successfully Backed Up Minecraft World")
+                else:
+                    self.logger.info("World save is disabled...Skipping.")
+
+                # Delete all files from the ec2 machine excluding the scripts logs folder
+                # Note: this doesn't work as intended. Just purges everything
+                self.ssh_util.run_command(f"find '{REMOTE_SERVER_FOLDER_PATH}' -path '{REMOTE_SCRIPT_LOGS_PATH}' -prune -o -print0 | xargs -0 rm -rf") 
+
                 # Stop EC2 instance
-                self.ec2_util.stop_instance()
-
-                # Shutdown minecraft server
-                self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
-                self.logger.info("Stopped all EC2 containers")
-
-                # Shutdown minecraft server
-                self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
-                self.logger.info("Stopped all EC2 containers")
+                # self.ec2_util.stop_instance()
+                return { 'STATUS': "MC_SERVER_STOPPED", 'COMMAND': self.ACTION, "INFO": "STOPPED MINECRAFT SERVER" } 
             else:
                 error_message = "EC2 Instance is not Running?"
                 raise Exception(error_message)
         else:
             error_message = "EC2 Instance does not exist!"
             raise Exception(error_message)
-        
-        # Check if EC2 instance is in running state 
-                    # if running -> Check if minecraft server is online 
-                                # -> if online: ssh into the machine and backup the filesd
-                                # -> if offline: notify user and admin that an error has occured
-                    # if stopped -> infrom user that it has already been stopped
-
 
     def handle_server_backup_status(self):
         if self.is_task_running:
@@ -300,7 +311,7 @@ def lambda_handler(event, context):
 
 import time
 event = {
-    "body": '{"action": "start", "server_template": "vanilla-survival"}'
+    "body": '{"action": "stop", "server_template": "creative"}'
 }
 context = None
 
