@@ -10,8 +10,4 @@
     "ANNOUNCE_PLAYER_ACHIEVEMENTS": "true",
     "ENABLE_COMMAND_BLOCK": "false",
     "LOG_TIMESTAMP": "true"
-    // Additional configurations and placeholders can be added below
-    // "MEMORY": "2G", // Generate formula for calculating Memory
-    // "ICON": "xxICONxx" // Generate Custom Icon
-    // "WORLD": "xxICONxx" // First time world
 }
