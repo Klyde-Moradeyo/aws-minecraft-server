@@ -110,6 +110,18 @@ module "ssm_bot_command" {
   tags     = module.tags.tags
 }
 
+module "ssm_api_gw_key" {
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ssm?ref=tf-modules"
+
+  parameter_name = "api_gateway_key"
+  parameter_type = "String"
+  value          = null
+
+  # Module tags
+  label_id = module.tags.label_id
+  tags     = module.tags.tags
+}
+
 ########################
 #     API Gateway      #
 ########################
@@ -153,6 +165,8 @@ module "lambda" {
   git_branch                     = var.git_branch
   s3_minecraft_world_bucket_url  = module.s3_mc_world.s3_bucket_uri
   s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.s3_bucket_uri
+  api_gateway_url                = module.api_gateway.api_gateway_url
+  ssm_api_key_name               = module.ssm_api_gw_key.ssm_parameter_name
 
   # Module tags
   label_id = module.tags.label_id
