@@ -134,13 +134,20 @@ class LambdaHandler:
                     error_message = f"Failed to install packages: {', '.join(failed_packages)}"
                     raise Exception(error_message)
                 
+            # Define map for additonal configs
+            additional_configs = {}
+        
             # Copy S3 minecraft world to local machine if exist
             if check_s3_object_exists(self.envs['S3_MC_WORLD_URI'], self.MINECRAFT_WORLD_PATH):
                 self.ssh_util.run_command(f"aws s3 cp '{self.MINECRAFT_WORLD_PATH}' '{REMOTE_MINECRAFT_WORLD_PATH}'")
+                additional_configs["WORLD"] = CONTAINER_MINECRAFT_WORLD_PATH # Add world to config
+
+            # Calculcate Minecraft server's memory
+            additional_configs["MEMORY"] = self.mc_server.get_memory(self.ssh_util)
+            additional_configs["ICON"] = self.mc_server.select_icon()
 
             # Generate Server Config and Copy to Remote machine
-            # Generate MEMORY, ICON, WORLD(this should start from above)
-            server_config = self.mc_server.initialize_server_config(REMOTE_BASE_CONFIG_PATH, REMOTE_TEMPLATE_CONFIG_PATH)
+            server_config = self.mc_server.initialize_server_config(REMOTE_BASE_CONFIG_PATH, REMOTE_TEMPLATE_CONFIG_PATH, additional_configs)
             self.ssh_util.scp_to_machine(server_config, REMOTE_MC_SERVER_ENV_FILE_PATH)
 
             # Generate Monitoring Config and Copy to Remote machine

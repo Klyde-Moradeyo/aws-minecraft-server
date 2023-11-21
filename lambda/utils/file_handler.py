@@ -3,23 +3,21 @@ import json
 from utils.logger import setup_logging
 from typing import Dict, Any
 
-def convert_bytes(byte_value):
+def convert_megabytes(mb_value):
     # Conversion factors
-    KB = 1024
-    MB = KB ** 2
-    GB = KB ** 3
+    MB_TO_KB = 1024
+    MB_TO_GB = 1 / 1024
     
     # Calculate sizes
-    size_kb = byte_value / KB
-    size_mb = byte_value / MB
-    size_gb = byte_value / GB
+    size_kb = mb_value * MB_TO_KB
+    size_gb = mb_value * MB_TO_GB
     
     return {
-        "size_bytes": byte_value,
+        "size_mb": mb_value,
         "size_kb": size_kb,
-        "size_mb": size_mb,
         "size_gb": size_gb
     }
+
 
 def write_to_tmp_file(content):
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp_file:

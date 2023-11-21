@@ -27,6 +27,7 @@ REMOTE_DOCKER_COMPOSE_CONFIG_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/docker-compose
 
 # --- Minecraft World Paths ---
 REMOTE_MINECRAFT_WORLD_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/minecraft-data/world"
+CONTAINER_MINECRAFT_WORLD_PATH = f"./data/world"
 
 # --- EC2 USERNAME ---
 EC2_USERNAME = "ubuntu"
