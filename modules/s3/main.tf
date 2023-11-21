@@ -17,7 +17,7 @@ resource "random_string" "unique_bucket_suffix" {
 }
 
 locals {
-  s3_bucket_name = "${var.bucket_name}-${module.resource_naming.name}-${random_string.unique_bucket_suffix.result}-s3"
+  s3_bucket_name = "${module.resource_naming.name}-${var.bucket_name}-${random_string.unique_bucket_suffix.result}"
 }
 
 resource "aws_s3_bucket" "mc_s3" {
