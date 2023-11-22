@@ -181,6 +181,7 @@ module "s3_mc_world" {
 
   # S3 Bucket 
   bucket_name = "world-data"
+  version_config_status = "Enabled"
 
   # Module tags
   label_id = module.tags.label_id
