@@ -10,7 +10,7 @@ module "resource_naming" {
 #         ECR          #
 ########################
 resource "aws_ecr_repository" "mc_repository" {
-  name                 = "${module.resource_naming.name}-ecr-repo"
+  name                 = "${module.resource_naming.name}-${var.repo_name}-ecr"
   image_tag_mutability = "MUTABLE"
   force_delete         = false
 

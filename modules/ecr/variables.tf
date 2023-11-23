@@ -9,7 +9,7 @@ variable "tags" {
 ########################
 #         ECR          #
 ########################
-variable "ecr_repo_name" {
+variable "repo_name" {
   description = "ECR Repo Name"
   type        = string
 }
