@@ -17,6 +17,9 @@ module "vpc" {
   tags         = module.tags.tags
 }
 
+########################
+#    Security Group    #
+########################
 module "security_group" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/security-group?ref=tf-modules"
 
@@ -61,6 +64,50 @@ module "security_group" {
       description      = "Allow all outbound traffic"
     },
   ]
+}
+
+########################
+#         ECR          #
+########################
+module "mc_world_archive_ecs_registry" {
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ecr?ref=tf-modules"
+
+  repo_name = "world-archive"
+
+  # Module tags
+  tags = module.tags.tags
+}
+
+module "mc_monitoring_ecs_registry" {
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ecr?ref=tf-modules"
+
+  repo_name = "server-monitoring"
+
+  # Module tags
+  tags = module.tags.tags
+}
+
+########################
+#         ECS          #
+########################
+module "mc_world_archive_cluster" {
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ecs?ref=tf-modules"
+
+  aws_region = var.aws_region
+
+  # Task Resources
+  task_cpu_limit = "256"
+  task_memory_limit = "1024"
+  
+  # SSM
+  ssm_git_private_key_name = "dark-mango-bot-private-key"
+
+  # S3 
+  minecraft_world_s3_bucket = module.s3_mc_world.s3_bucket_arn
+  minecraft_assets_s3_bucket = module.s3_mc_server_assets.s3_bucket_arn
+
+  # Module tags
+  tags = module.tags.tags
 }
 
 ########################
