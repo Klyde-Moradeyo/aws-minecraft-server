@@ -24,7 +24,7 @@ variable "task_cpu_limit" {
 
 variable "task_memory_limit" {
   description = "Memory Resource limit for container and task level"
-  type        = string
+  type        = number
 }
 
 ########################
