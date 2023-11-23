@@ -93,7 +93,7 @@ resource "aws_iam_policy" "ecs_ssm_access" {
           "ssm:GetParameter"
         ]
         Resource = [
-          "arn:aws:ssm:*:847399026905:parameter/${var.git_private_key_name}"
+          "arn:aws:ssm:*:847399026905:parameter/${var.ssm_git_private_key_name}"
         ]
         Effect = "Allow"
       }

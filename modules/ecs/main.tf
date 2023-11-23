@@ -19,7 +19,7 @@ locals {
 ########################
 resource "aws_ecs_cluster" "my_cluster" {
   name = local.cluster_name
-  tags = var.label_tags
+  tags = var.tags
 }
 
 resource "aws_ecs_task_definition" "my_task" {
@@ -29,14 +29,14 @@ resource "aws_ecs_task_definition" "my_task" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
 
-  cpu    = var.ecs_cpu_limit
-  memory = var.ecs_memory_limit
+  cpu    = var.task_cpu_limit
+  memory = var.task_memory_limit
 
   container_definitions = jsonencode([{
     name      = local.container_name
     image     = "${data.aws_caller_identity.aws.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${local.container_name}:latest"
-    cpu       = var.ecs_cpu_limit
-    memory    = var.ecs_memory_limit
+    cpu       = var.task_cpu_limit
+    memory    = var.task_memory_limit
     essential = true
     portMappings = [
       {
@@ -54,6 +54,6 @@ resource "aws_ecs_task_definition" "my_task" {
     }
   }])
 
-  tags = var.label_tags
+  tags = var.tags
 }
 
