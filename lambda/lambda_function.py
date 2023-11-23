@@ -142,12 +142,19 @@ class LambdaHandler:
             # Define map for additonal configs
             additional_configs = {}
         
-            # Copy S3 minecraft world to local machine if exist
-            if self.ssh_util.run_command(f"aws s3 ls '{self.s3_util.get_minecraft_world_path()}/'", capture_output=True):
+            # Copy S3 minecraft world to ec2 machine if exist 
+            # Look into using boto3 for this
+            try:
+                s3_ls_output = self.ssh_util.run_command(f"aws s3 ls '{self.s3_util.get_minecraft_world_path()}/'", capture_output=True)
+            except Exception as e:
+                s3_ls_output = None
+                self.logger.info(f"Error retrieving S3 World Status Maybe the S3 Path doesn't exist? Continuing...")
+
+            if s3_ls_output:
                 self.ssh_util.run_command(f"aws s3 cp '{self.s3_util.get_minecraft_world_path()}' '{REMOTE_MINECRAFT_WORLD_PATH}' --recursive")
                 additional_configs["WORLD"] = CONTAINER_MINECRAFT_WORLD_PATH # Add world to config
                 self.logger.info("Successfully Restored S3 Minecraft World")
-
+            
             # Calculcate Minecraft Server's available memory
             additional_configs["MEMORY"] = self.mc_server.get_memory(self.ssh_util)
 
