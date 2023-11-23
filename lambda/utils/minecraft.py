@@ -67,11 +67,11 @@ class MinecraftServer:
         self.logger.info(f"Total RAM on the EC2 machine: '{ram_gb} GB' | '{ram_mb} MB'")
 
         # Ensuring at least 1 GB is left for the OS
-        memory_for_server_gb = max(ram_gb - 1, 1)  # Subtract 1 GB for the OS, but ensure at least 1 GB for the server
+        memory_for_server_gb = max(ram_gb - int(MIN_OS_MEMORY), int(MIN_OS_MEMORY))  # Subtract MIN_OS_MEMORY Gigabyte for the OS, but ensure at least MIN_OS_MEMORY Gigabyte for the server
 
         # Applying MEMORY_BUFFER to the adjusted memory value
         allocated_memory = round(memory_for_server_gb * MEMORY_BUFFER)
-        allocated_memory = f"{allocated_memory}G"  # Format for the environment variable
+        allocated_memory = f"{allocated_memory}G"  # 'G' at the end because it is the format for the minecraft server containers env vars
         self.logger.info(f"Minecraft Server will use '{allocated_memory}' memory")
         
         return allocated_memory
