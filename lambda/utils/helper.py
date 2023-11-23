@@ -8,7 +8,7 @@ def format_dictionary(data: dict) -> str:
     # Convert each key-value pair into a formatted string
     formatted_lines = []
     for key, value in data.items():
-        formatted_line = f"{key.capitalize()}: {value}"
+        formatted_line = f"{key}: {value}"
         formatted_lines.append(formatted_line)
 
     # Join all formatted lines into a single string

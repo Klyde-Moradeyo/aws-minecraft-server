@@ -19,10 +19,13 @@ class APIEventParser:
         action = self.extract_key("action", required=True)
         server_template = self.extract_key("server_template", required=False)
 
-        return {
+        body = {
             "action": action,
             "server_template": server_template  # This will be None if not provided
         }
+        self._log_body(body)
+
+        return body
 
     def extract_key(self, key, required=True):
         """
@@ -62,4 +65,11 @@ class APIEventParser:
         Extract path parameters from the event.
         """ 
         return event.get('pathParameters', {})
-        
+    
+    def _log_body(self, body) -> None:
+        """
+        Logs the Event Body.
+        """
+        self.logger.info(f"Received Event Body:")
+        for key, value in body.items():
+            self.logger.info(f"{key}: {value}") 

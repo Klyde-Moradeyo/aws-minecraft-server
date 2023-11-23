@@ -109,7 +109,6 @@ class MinecraftServer:
         # Merge base config, chosen template, and additional configuration
         merged_config = {**base_config, **chosen_template, **additional_config}
         self.logger.info(f"Retrieved template '{self.template_id}'")
-        print(merged_config) # debuging
         return merged_config
 
     def initialize_server_config(self, base_config_path: str, template_config_path: str, additional_config: dict = None):

@@ -210,7 +210,6 @@ class LambdaHandler:
                 # Back up the world to S3 Bucket
                 world_save_enabled_str = self.mc_server.get_server_config(LOCAL_BASE_CONFIG_PATH, LOCAL_TEMPLATE_CONFIG_PATH).get("SAVE_MINECRAFT_WORLD").lower()
                 world_save_enabled = world_save_enabled_str == 'true'
-                self.logger.info(f"World Save Enabled?: '{world_save_enabled}'")
                 if world_save_enabled:
                     self.ssh_util.run_command(f"aws s3 cp '{REMOTE_MINECRAFT_WORLD_PATH}' '{self.s3_util.get_minecraft_world_path()}' --recursive")
                     self.logger.info("Successfully Backed Up Minecraft World")
@@ -219,7 +218,8 @@ class LambdaHandler:
 
                 # Delete all files from the ec2 machine excluding the scripts logs folder
                 # Note: this doesn't work as intended. Just purges everything
-                self.ssh_util.run_command(f"find '{REMOTE_SERVER_FOLDER_PATH}' -path '{REMOTE_SCRIPT_LOGS_PATH}' -prune -o -print0 | xargs -0 rm -rf") 
+                self.ssh_util.run_command(f"find '{REMOTE_SERVER_FOLDER_PATH}' -path '{REMOTE_SCRIPT_LOGS_PATH}' -prune -o -print0 | xargs -0 rm -rf")
+                self.logger.info("Successfully Deleted Workspace")
 
                 # Stop EC2 instance
                 self.ec2_util.stop_instance()
