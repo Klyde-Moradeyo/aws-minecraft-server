@@ -21,15 +21,15 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
-  role       = aws_iam_role.ecs_task_execution_role.name
+  role = aws_iam_role.ecs_task_execution_role.name
 
   # Attach AWS managed policy to role for necessary ECS task execution permissions
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy" 
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 # ECR Pull image
 resource "aws_iam_policy" "ecs_ecr_pull_images" {
-  name   = "${local.cluster_name}-ecs-ecr-pull-images"
+  name = "${local.cluster_name}-ecs-ecr-pull-images"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -54,7 +54,7 @@ resource "aws_iam_role_policy_attachment" "ecs_ecr_pull_images_role_policy" {
 
 # Cloud Watch logs
 resource "aws_iam_policy" "ecs_cloudwatch_logs" {
-  name   = "${local.cluster_name}-logs"
+  name = "${local.cluster_name}-logs"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -73,7 +73,7 @@ resource "aws_iam_policy" "ecs_cloudwatch_logs" {
 
 # Cloud Watch Log Group
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
-  name = "/ecs/${local.cluster_name}"
+  name              = "/ecs/${local.cluster_name}"
   retention_in_days = 1
 }
 
@@ -84,7 +84,7 @@ resource "aws_iam_role_policy_attachment" "ecs_cloudwatch_logs_role_policy" {
 
 # SSM Parameter Access
 resource "aws_iam_policy" "ecs_ssm_access" {
-  name   = "${local.cluster_name}-ecs-ssm-access"
+  name = "${local.cluster_name}-ecs-ssm-access"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -95,7 +95,7 @@ resource "aws_iam_policy" "ecs_ssm_access" {
         Resource = [
           "arn:aws:ssm:*:847399026905:parameter/${var.git_private_key_name}"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
       }
     ]
   })
@@ -113,23 +113,23 @@ resource "aws_iam_policy" "mc_allow_ecs_to_s3" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = ["s3:ListBucket"]
+        Effect = "Allow"
+        Action = ["s3:ListBucket"]
         Resource = [
           var.minecraft_world_s3_bucket,
           var.minecraft_assets_s3_bucket
         ]
       },
       {
-        Effect   = "Allow"
-        Action   = ["s3:GetObject"]
+        Effect = "Allow"
+        Action = ["s3:GetObject"]
         Resource = [
           "${var.minecraft_world_s3_bucket}/*"
         ]
       },
       {
-        Effect   = "Allow"
-        Action   = [
+        Effect = "Allow"
+        Action = [
           "s3:PutObject",
           "s3:GetObject",
           "s3:DeleteObject"

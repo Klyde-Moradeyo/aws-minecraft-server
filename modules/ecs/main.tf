@@ -10,7 +10,7 @@ module "resource_naming" {
 data "aws_caller_identity" "aws" {}
 
 locals {
-  cluster_name = "${module.resource_naming.name}-cluster"
+  cluster_name   = "${module.resource_naming.name}-cluster"
   container_name = "${module.resource_naming.name}-world-archiver"
 }
 
@@ -33,11 +33,11 @@ resource "aws_ecs_task_definition" "my_task" {
   memory = var.ecs_memory_limit
 
   container_definitions = jsonencode([{
-    name             = local.container_name
-    image            = "${data.aws_caller_identity.aws.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${local.container_name}:latest"
-    cpu              = var.ecs_cpu_limit
-    memory           = var.ecs_memory_limit
-    essential        = true
+    name      = local.container_name
+    image     = "${data.aws_caller_identity.aws.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${local.container_name}:latest"
+    cpu       = var.ecs_cpu_limit
+    memory    = var.ecs_memory_limit
+    essential = true
     portMappings = [
       {
         containerPort = 8080
@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "my_task" {
     ]
     logConfiguration = {
       logDriver = "awslogs"
-      options   = {
+      options = {
         "awslogs-group"         = "/ecs/${local.cluster_name}"
         "awslogs-region"        = var.aws_region
         "awslogs-stream-prefix" = "ecs"

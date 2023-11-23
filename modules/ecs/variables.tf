@@ -33,7 +33,7 @@ variable "ecs_memory_limit" {
 
 variable "aws_region" {
   description = "Region in which AWS Resources to be created"
-  type = string
+  type        = string
 }
 
 ########################
