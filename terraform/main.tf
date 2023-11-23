@@ -96,8 +96,8 @@ module "mc_world_archive_cluster" {
   aws_region = var.aws_region
 
   # Task Resources
-  task_cpu_limit = "256"
-  task_memory_limit = "1024"
+  task_cpu_limit = 256
+  task_memory_limit = 1024
   
   # SSM
   ssm_git_private_key_name = "dark-mango-bot-private-key"
