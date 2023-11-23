@@ -108,7 +108,7 @@ resource "aws_iam_role_policy_attachment" "ecs_ssm_access_role_policy" {
 
 # S3 Access
 resource "aws_iam_policy" "mc_allow_ecs_to_s3" {
-  name = "${var.label_id}-ecs-allow-ecs-to-s3"
+  name = "${local.cluster_name}-ecs-allow-ecs-to-s3"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
