@@ -19,7 +19,7 @@ variable "aws_region" {
 ########################
 variable "task_cpu_limit" {
   description = "CPU Resource limit for container level and task level"
-  type        = string
+  type        = number
 }
 
 variable "task_memory_limit" {
