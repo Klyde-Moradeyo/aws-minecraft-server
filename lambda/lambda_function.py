@@ -174,11 +174,11 @@ class LambdaHandler:
             self.ssh_util.scp_to_machine(monitor_config, REMOTE_MC_MONITOR_ENV_FILE_PATH)
 
             # Start docker compose from server folder
-            if self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_CONFIG_PATH):
+            if self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_PATH):
                 self.ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose up -d --build")
                 self.logger.info("Started Minecraft Server!")
             else:
-                error_message = f"Could not start containers. No docker-compose yaml found in '{REMOTE_DOCKER_COMPOSE_CONFIG_PATH}'"
+                error_message = f"Could not start containers. No docker-compose yaml found in '{REMOTE_DOCKER_COMPOSE_PATH}'"
                 raise Exception(error_message)
 
             return { 'STATUS': "MC_SERVER_STARTED", 'COMMAND': self.ACTION, "INFO": "STARTED MINECRAFT SERVER SUCCESSFULLY" }
