@@ -26,6 +26,16 @@
             "VIEW_DISTANCE": "30",
             "SIMULATION_DISTANCE": "30",
             "SAVE_MINECRAFT_WORLD": "false"
+        },
+        "test-temp-world": {
+            "TYPE": "VANILLA",
+            "VERSION": "LATEST",
+            "MODE": "creative",
+            "DIFFICULTY": "hard",
+            "MAX_PLAYERS": "20",
+            "VIEW_DISTANCE": "30",
+            "SIMULATION_DISTANCE": "30",
+            "SAVE_MINECRAFT_WORLD": "true"
         }
     }
 }
