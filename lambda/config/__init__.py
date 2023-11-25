@@ -17,6 +17,7 @@ LOCAL_TEMPLATE_CONFIG_PATH = os.path.join(LOCAL_TEMPLATES_PATH, "template.json")
 REMOTE_CONFIG_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/config"
 REMOTE_MC_SERVER_ENV_FILE_PATH = f"{REMOTE_CONFIG_PATH}/.server-env"
 REMOTE_MC_MONITOR_ENV_FILE_PATH = f"{REMOTE_CONFIG_PATH}/.monitoring-env"
+REMOTE_TEMPLATE_INFO_FILE_PATH = f"{REMOTE_CONFIG_PATH}/.template-id"
 
 REMOTE_DOCKER_COMPOSE_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/docker-compose.yml"
 
@@ -30,11 +31,12 @@ REMOTE_HELPER_SCRIPT_PATH = f"{REMOTE_SCRIPT_PATH}/helper.sh"
 REMOTE_INSTALL_LOGS_PATH = f"{REMOTE_SCRIPT_LOGS_PATH}/install.log"
 
 # --- Minecraft World Paths ---
-REMOTE_MINECRAFT_WORLD_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/minecraft-data/world"
+REMOTE_MINECRAFT_SERVER_PATH = f"{REMOTE_SERVER_FOLDER_PATH}/minecraft-data"
+REMOTE_MINECRAFT_WORLD_PATH = f"{REMOTE_MINECRAFT_SERVER_PATH}/world"
 CONTAINER_MINECRAFT_WORLD_PATH = f"./data/world"
 
 # --- Minecraft Server Memory Buffer ---
-MEMORY_BUFFER = 0.75 # Allocate 75% of the operating systems memory just for minecraft
+MEMORY_BUFFER = 0.80 # Allocate 80% of the operating systems memory just for minecraft
 MIN_OS_MEMORY = 1 # Amount of Memory to Reserve for the EC2's operating system
 
 # --- Minecraft Server RCON PORT  ---
