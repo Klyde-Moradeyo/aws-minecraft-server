@@ -332,32 +332,7 @@ class LambdaHandler:
         self.logger.info("Testing Lambda with PING - PONG")
         return { "STATUS": "PONG", "COMMAND": self.ACTION, "INFO": "Testing Lambda with PING - PONG" }
 
-
 # Where the magic happens
 def lambda_handler(event, context):
     handler = LambdaHandler(event)
     return handler.execute_command()
-
-import time
-event = {
-    "body": '{"action": "stop", "server_template": "test-fabric-survival"}'
-}
-context = None
-
-# Start the timer
-start_time = time.time()
-
-response = lambda_handler(event, context)
-
-# Calculate the execution time
-execution_time = time.time() - start_time
-
-# Convert execution time to minutes and seconds
-minutes = int(execution_time // 60)
-seconds = int(execution_time % 60)
-
-# Print the results
-print("Response:", response)
-print(f"Execution time: {minutes} minutes {seconds} seconds")
-# rm -rfv aws-minecraft-server && clear && python lambda_function.py 
-# aws s3 cp s3://dev-minecraft-mc-server-assets-seafiuqk/ s3://main-minecraft-mc-server-assets-gfwxmqyy/test-fabric-survival/assets/mod_config/ --recursive
