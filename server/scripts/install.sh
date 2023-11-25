@@ -117,8 +117,9 @@ function install_cloudwatch_agent {
 #     Post Install     #
 ########################
 function post_install {
-    # Remove AWS zip
-    rm -rfv aws awscliv2.zip amazon-cloudwatch-agent.deb # Update this to happen in abandoned shell
+    echo "Removing installation files..."
+    rm -rf aws awscliv2.zip amazon-cloudwatch-agent.deb # Update this to happen in abandoned shell
+    echo "Removed installation files"
 
     echo "-------------------------------------"
     echo "              Installed              "
