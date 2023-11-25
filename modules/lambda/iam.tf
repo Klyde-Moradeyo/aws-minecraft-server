@@ -95,15 +95,32 @@ resource "aws_iam_role_policy_attachment" "fargate_access" {
 data "aws_iam_policy_document" "ec2_access" {
   statement {
     effect = "Allow"
-
     actions = [
       "ec2:StartInstances",
       "ec2:StopInstances",
+    ]
+    resources = [ var.ec2_instance_arn ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
       "ec2:DescribeInstances"
     ]
-
-    resources = [var.ec2_instance_arn]
+    resources = ["*"]
   }
+}
+
+resource "aws_iam_policy" "lambda_ec2_access" {
+  name        = "${module.resource_naming.name}-lambda-ec2-access"
+  description = "IAM policy to allow Lambda to interact with EC2 instances"
+
+  policy = data.aws_iam_policy_document.ec2_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ec2_access" {
+  policy_arn = aws_iam_policy.lambda_ec2_access.arn
+  role       = aws_iam_role.iam_for_lambda.name
 }
 
 resource "aws_iam_policy" "lambda_ec2_access" {
