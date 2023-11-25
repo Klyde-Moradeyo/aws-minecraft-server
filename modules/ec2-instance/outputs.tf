@@ -32,3 +32,8 @@ output "ec2_instance_id" {
   description = "The unique identifier of the AWS EC2 instance."
   value       = aws_instance.ec2_instance.id
 }
+
+output "ec2_instance_arn" {
+  description = "The arn of the AWS EC2 instance."
+  value       = aws_instance.ec2_instance.arn
+}
