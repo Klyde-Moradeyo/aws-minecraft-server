@@ -67,17 +67,12 @@ resource "aws_iam_policy" "ssm_access" {
 data "aws_iam_policy_document" "fargate_access" {
   statement {
     effect = "Allow"
-
     actions = [
       "ecs:RunTask",
       "ecs:StopTask",
       "ecs:DescribeTasks",
-      "ecs:ListTasks",
-      "iam:PassRole",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "ecs:ListTasks"
     ]
-
     resources = ["*"]
   }
 }
@@ -94,6 +89,34 @@ resource "aws_iam_role_policy_attachment" "fargate_access" {
   role       = aws_iam_role.iam_for_lambda.name
 }
 
+########################
+#          EC2         #
+########################
+data "aws_iam_policy_document" "ec2_access" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:StartInstances",
+      "ec2:StopInstances",
+      "ec2:DescribeInstances"
+    ]
+
+    resources = [var.ec2_instance_arn]
+  }
+}
+
+resource "aws_iam_policy" "lambda_ec2_access" {
+  name        = "${module.resource_naming.name}-lambda-ec2-access"
+  description = "IAM policy to allow Lambda to interact with EC2 instances"
+
+  policy = data.aws_iam_policy_document.ec2_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ec2_access" {
+  policy_arn = aws_iam_policy.lambda_ec2_access.arn
+  role       = aws_iam_role.iam_for_lambda.name
+}
 
 ########################
 #      Cloud Watch     #

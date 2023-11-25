@@ -113,6 +113,11 @@ variable "ec2_instance_id" {
   type        = string
 }
 
+variable "ec2_instance_arn" {
+  description = "ec2 instance arn to target"
+  type        = string
+}
+
 ########################
 #       S3 Bucket      #
 ########################
