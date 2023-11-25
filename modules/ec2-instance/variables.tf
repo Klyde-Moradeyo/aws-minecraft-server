@@ -118,8 +118,13 @@ variable "allowed_cidrs" {
 ########################
 #           S3         #
 ########################
-variable "mc_s3_bucket_arn" {
-  description = "S3 Bucket ARNs"
+variable "s3_mc_world_uri" {
+  description = "S3 Minecraft World Bucket ARN"
+  type        = string
+}
+
+variable "s3_mc_assets_uri" {
+  description = "S3 Minecraft Worlassetsd Bucket ARN"
   type        = string
 }
 

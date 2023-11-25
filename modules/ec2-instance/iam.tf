@@ -43,7 +43,7 @@ resource "aws_iam_role_policy" "mc_allow_ec2_to_s3" {
       {
         Effect   = "Allow"
         Action   = ["s3:ListBucket"]
-        Resource = ["${var.mc_s3_bucket_arn}"]
+        Resource = [ var.s3_mc_world_uri, var.s3_mc_assets_uri]
       },
       {
         Effect = "Allow"
@@ -52,7 +52,14 @@ resource "aws_iam_role_policy" "mc_allow_ec2_to_s3" {
           "s3:GetObject",
           "s3:DeleteObject",
         ]
-        Resource = ["${var.mc_s3_bucket_arn}/*"]
+        Resource = ["${var.s3_mc_world_uri}/*"]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+        ]
+        Resource = ["${var.s3_mc_assets_uri}/*/assets/*"]
       },
     ]
   })
