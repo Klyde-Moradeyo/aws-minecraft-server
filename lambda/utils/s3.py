@@ -28,4 +28,12 @@ class S3Util:
         """
         Get the S3 path for the server's assets.
         """
-        return f"{self.get_server_assets_path()}/world_archive"
+        server_assets = self.get_server_assets_path()
+        return f"{server_assets}/world_archive"
+    
+    def get_server_mods_path(self):
+        """
+        Get the S3 path for the server's mods
+        """
+        server_assets = self.get_server_assets_path()
+        return f"{server_assets}/mod_config"

@@ -7,7 +7,7 @@ from utils.ec2 import EC2Util
 from utils.env_manager import EnvironmentVariables
 from utils.event_parser import APIEventParser
 from utils.fargate import Fargate
-from utils.file_handler import write_to_tmp_file, generate_env_file
+from utils.file_handler import write_to_tmp_file, generate_env_file, JSONHelper
 from utils.git import GitUtil
 from utils.logger import setup_logging
 from utils.minecraft import MinecraftServer
@@ -101,10 +101,6 @@ class LambdaHandler:
             self.logger.info(f"Packages Installed: {packages_installed}")
             return packages_installed
         
-        if self.server_template == None:
-            error_message = "Template ID is Null. Cannot Start MC Server"
-            raise Exception(error_message)
-        
         if self.mc_server_status["online"]:
             return {"STATUS": "MC_SERVER_UP", "COMMAND": self.ACTION, "INFO": "MINECRAFT SERVER ALREADY ONLINE"}
 
@@ -113,6 +109,12 @@ class LambdaHandler:
 
         git_util = GitUtil(git_ssh_key_path)
         git_util.clone(GIT_REPO_URL, GIT_REPO_NAME, self.envs["GIT_BRANCH"])
+
+        # Check if Template is valid
+        self.config = JSONHelper.read_json(LOCAL_TEMPLATE_CONFIG_PATH)
+        if self.server_template not in self.config.get("templates", {}):
+            error_message = f"Template '{self.server_template}' is not found in the configuration. Cannot start MC Server."
+            raise Exception(error_message)
 
         if self.ec2_util.instance_exists():
             # Start EC2 instance
@@ -141,19 +143,36 @@ class LambdaHandler:
                 
             # Define map for additonal configs
             additional_configs = {}
+
+            # Copy .current_template to ec2 machine
+            template_id_file = write_to_tmp_file(self.server_template)
+            self.ssh_util.scp_to_machine(template_id_file, REMOTE_TEMPLATE_INFO_FILE_PATH)
         
             # Copy S3 minecraft world to ec2 machine if exist 
             # Look into using boto3 for this
+            s3_mc_world_path = self.s3_util.get_minecraft_world_path()
             try:
-                s3_ls_output = self.ssh_util.run_command(f"aws s3 ls '{self.s3_util.get_minecraft_world_path()}/'", capture_output=True)
+                s3_ls_output = self.ssh_util.run_command(f"aws s3 ls '{s3_mc_world_path}/'", capture_output=True)
             except Exception as e:
                 s3_ls_output = None
-                self.logger.info(f"Error retrieving S3 World Status Maybe the S3 Path doesn't exist? Continuing...")
+                self.logger.warn(f"Error retrieving '{s3_mc_world_path}' Maybe the S3 Path doesn't exist? Continuing...")
 
             if s3_ls_output:
-                self.ssh_util.run_command(f"aws s3 cp '{self.s3_util.get_minecraft_world_path()}' '{REMOTE_MINECRAFT_WORLD_PATH}' --recursive")
+                self.ssh_util.run_command(f"aws s3 cp '{s3_mc_world_path}' '{REMOTE_MINECRAFT_WORLD_PATH}' --recursive")
                 additional_configs["WORLD"] = CONTAINER_MINECRAFT_WORLD_PATH # Add world to config
                 self.logger.info("Successfully Restored S3 Minecraft World")
+
+            # Copy minecraft server mod config files to EC2 if exist 
+            s3_mod_config_path = self.s3_util.get_server_mods_path()
+            try:
+                s3_ls_output = self.ssh_util.run_command(f"aws s3 ls '{s3_mod_config_path}/'", capture_output=True)
+            except Exception as e:
+                s3_ls_output = None
+                self.logger.warn(f"Error retrieving '{s3_mod_config_path}' Maybe the S3 Path doesn't exist? Continuing...")
+
+            if s3_ls_output:
+                self.ssh_util.run_command(f"aws s3 cp '{s3_mod_config_path}' '{REMOTE_MINECRAFT_SERVER_PATH}' --recursive")
+                self.logger.info("Successfully Restored S3 Mod Config")
             
             # Calculcate Minecraft Server's available memory
             additional_configs["MEMORY"] = self.mc_server.get_memory(self.ssh_util)
@@ -318,3 +337,27 @@ class LambdaHandler:
 def lambda_handler(event, context):
     handler = LambdaHandler(event)
     return handler.execute_command()
+
+import time
+event = {
+    "body": '{"action": "stop", "server_template": "test-fabric-survival"}'
+}
+context = None
+
+# Start the timer
+start_time = time.time()
+
+response = lambda_handler(event, context)
+
+# Calculate the execution time
+execution_time = time.time() - start_time
+
+# Convert execution time to minutes and seconds
+minutes = int(execution_time // 60)
+seconds = int(execution_time % 60)
+
+# Print the results
+print("Response:", response)
+print(f"Execution time: {minutes} minutes {seconds} seconds")
+# rm -rfv aws-minecraft-server && clear && python lambda_function.py 
+# aws s3 cp s3://dev-minecraft-mc-server-assets-seafiuqk/ s3://main-minecraft-mc-server-assets-gfwxmqyy/test-fabric-survival/assets/mod_config/ --recursive
