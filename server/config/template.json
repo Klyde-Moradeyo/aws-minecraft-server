@@ -44,6 +44,6 @@
             "DIFFICULTY": "hard",
             "FABRIC_LOADER_VERSION": "0.14.24",
             "FABRIC_LAUNCHER_VERSION": "0.11.2"
-        },
+        }
     }
 }
