@@ -201,6 +201,9 @@ module "lambda" {
   bot_command_name     = module.ssm_bot_command.ssm_parameter_name
   terraform_token_name = var.terraform_token_name
 
+  # IAM
+  ec2_instance_arn = module.minecraft_server.ec2_instance_arn
+
   # Lambda Environment vars
   subnet_id                      = module.vpc.subnet_id
   security_group_id              = module.security_group.security_group_id
