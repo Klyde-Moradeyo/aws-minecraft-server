@@ -265,10 +265,10 @@ module "minecraft_server" {
   # Security group
   security_group_id = module.security_group.security_group_id
 
-
   # IAM
   ssm_git_private_key_name = var.ssm_git_private_key_name
-  mc_s3_bucket_arn         = module.s3_mc_world.s3_bucket_arn
+  s3_mc_world_uri = module.s3_mc_world.s3_bucket_arn
+  s3_mc_assets_uri = module.s3_mc_server_assets.s3_bucket_arn
 
   # Public IP
   public_ip = module.eip.eip_public_ip
