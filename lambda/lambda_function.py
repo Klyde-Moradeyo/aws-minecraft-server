@@ -1,5 +1,6 @@
 import json
 import time
+import shutil
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 from config import *
@@ -108,7 +109,7 @@ class LambdaHandler:
         git_ssh_key_path = write_to_tmp_file(ssh_key_str)
 
         git_util = GitUtil(git_ssh_key_path)
-        git_util.clone(GIT_REPO_URL, GIT_REPO_NAME, self.envs["GIT_BRANCH"])
+        git_util.clone(GIT_REPO_URL, GIT_REPO_PATH, self.envs["GIT_BRANCH"])
 
         # Check if Template is valid
         self.config = JSONHelper.read_json(LOCAL_TEMPLATE_CONFIG_PATH)
@@ -231,7 +232,7 @@ class LambdaHandler:
                 # Clone Git Repo
                 git_ssh_key_path = write_to_tmp_file(ssh_key_str)
                 git_util = GitUtil(git_ssh_key_path)
-                git_util.clone(GIT_REPO_URL, GIT_REPO_NAME, self.envs["GIT_BRANCH"])
+                git_util.clone(GIT_REPO_URL, GIT_REPO_PATH, self.envs["GIT_BRANCH"])
 
                 # Back up the world to S3 Bucket
                 world_save_enabled_str = self.mc_server.get_server_config(LOCAL_BASE_CONFIG_PATH, LOCAL_TEMPLATE_CONFIG_PATH).get("SAVE_MINECRAFT_WORLD").lower()
@@ -334,5 +335,10 @@ class LambdaHandler:
 
 # Where the magic happens
 def lambda_handler(event, context):
+    # Remove git repo if present
+    if os.path.exists(GIT_REPO_PATH) and os.listdir(GIT_REPO_PATH):
+        shutil.rmtree(GIT_REPO_PATH)  # Remove the directory
+        os.makedirs(GIT_REPO_PATH)   # Create a new directory
+
     handler = LambdaHandler(event)
     return handler.execute_command()

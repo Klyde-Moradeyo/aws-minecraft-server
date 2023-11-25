@@ -18,6 +18,9 @@ def convert_megabytes(mb_value):
         "size_gb": size_gb
     }
 
+def create_temp_dir():
+    return tempfile.mkdtemp() 
+
 def write_to_tmp_file(content):
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp_file:
         temp_file.write(content)

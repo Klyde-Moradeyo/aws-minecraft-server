@@ -1,12 +1,14 @@
 # config/__init__.py
 import os
+from utils.file_handler import create_temp_dir
 
 # --- Git ---
 GIT_REPO_NAME = "aws-minecraft-server"
 GIT_REPO_URL = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git"
+GIT_REPO_PATH = create_temp_dir()
 
 # --- Server Path ---
-LOCAL_SERVER_FOLDER_PATH = os.path.join(GIT_REPO_NAME, "server")
+LOCAL_SERVER_FOLDER_PATH = os.path.join(GIT_REPO_PATH, "server")
 REMOTE_SERVER_FOLDER_PATH = "server"
 
 # --- Server Config Paths ---
