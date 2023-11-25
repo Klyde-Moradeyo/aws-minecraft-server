@@ -83,8 +83,9 @@ class MinecraftServer:
         if length < 12:
             self.logger.warning("RCON password length is less than recommended 12 characters.")
         
-        # Define the character set for the password
-        characters = string.ascii_letters + string.digits + string.punctuation
+        # Define the character set for the password, excluding quotation marks
+        excluded_chars = {'"', "'"}
+        characters = ''.join(ch for ch in (string.ascii_letters + string.digits + string.punctuation) if ch not in excluded_chars)
 
         # Securely generate a random password
         password = ''.join(secrets.choice(characters) for i in range(length))
