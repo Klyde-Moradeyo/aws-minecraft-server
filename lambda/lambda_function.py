@@ -118,6 +118,10 @@ class LambdaHandler:
             raise Exception(error_message)
 
         if self.ec2_util.instance_exists():
+            # Don't do anything if ec2 instance is about to turn off
+            if self.ec2_util.check_instance_status() in ["Stopping", "Pending", "Shutting Down"]:
+                return None
+
             # Start EC2 instance
             self.ec2_util.start_instance()
 
@@ -131,21 +135,17 @@ class LambdaHandler:
             # If there are missing packages, install them
             if not all(get_packages_install(self.ssh_util).values()):
                 self.logger.info("Packages missing: Executing Install script...")
-                # Run install script
-                self.ssh_util.run_script(REMOTE_INSTALL_SCRIPT_PATH, REMOTE_INSTALL_LOGS_PATH)
-
-                # Check if install script was successful
-                packages_installed = get_packages_install(self.ssh_util).values()
-                if not packages_installed:
-                    # Identify which packages failed to install
-                    failed_packages = [pkg for pkg, installed in packages_installed.items() if not installed]
-                    error_message = f"Failed to install packages: {', '.join(failed_packages)}"
-                    raise Exception(error_message)
+                self.ssh_util.run_command(f"chmod -R +x {REMOTE_SCRIPT_PATH}/*.sh")
+                self.ssh_util.run_script(REMOTE_PREPARE_EC2_SCRIPT_PATH, REMOTE_PREPARE_EC2_LOGS_PATH, False)
+                return { 'STATUS': "EC2_INSTALL_STARTED", 'COMMAND': self.ACTION, "INFO": "STARTED EC2 ENVIRONMENT INSTALL" }
                 
             # Define map for additonal configs
             additional_configs = {}
 
-            # Copy .current_template to ec2 machine
+            # Set Minecraft Server Port
+            additional_configs["SERVER_PORT"] = self.mc_server.get_server_port()
+
+            # Copy the current template id to a file on the ec2 machine
             template_id_file = write_to_tmp_file(self.server_template)
             self.ssh_util.scp_to_machine(template_id_file, REMOTE_TEMPLATE_INFO_FILE_PATH)
         
@@ -162,6 +162,10 @@ class LambdaHandler:
                 self.ssh_util.run_command(f"aws s3 cp '{s3_mc_world_path}' '{REMOTE_MINECRAFT_WORLD_PATH}' --recursive")
                 additional_configs["WORLD"] = CONTAINER_MINECRAFT_WORLD_PATH # Add world to config
                 self.logger.info("Successfully Restored S3 Minecraft World")
+            else:
+                # Enable Permisions to the minecraft folder for first time run - Required since mc-exporters uses world dir of mc-server container
+                self.ssh_util.run_command(f"mkdir -p {REMOTE_MINECRAFT_WORLD_PATH}")
+                self.ssh_util.run_command(f"chmod 777 -R {REMOTE_MINECRAFT_WORLD_PATH}")
 
             # Copy minecraft server mod config files to EC2 if exist 
             s3_mod_config_path = self.s3_util.get_server_mods_path()
@@ -183,7 +187,7 @@ class LambdaHandler:
 
             # Configure RCON
             additional_configs["RCON_PORT"] = RCON_PORT
-            additional_configs["RCON_PASS"] = self.mc_server.generate_rcon_password(24)
+            additional_configs["RCON_PASSWORD"] = self.mc_server.generate_rcon_password(24)
 
             # Generate Server Config and Copy to Remote machine
             server_config = self.mc_server.initialize_server_config(LOCAL_BASE_CONFIG_PATH, LOCAL_TEMPLATE_CONFIG_PATH, additional_configs)
@@ -191,14 +195,17 @@ class LambdaHandler:
 
             # Generate Monitoring Config and Copy to Remote machine
             monitor_config = { 
+                "RCON_HOST": "mc-server",
                 "RCON_PORT": additional_configs["RCON_PORT"], 
-                "RCON_PASS": additional_configs["RCON_PASS"],
+                "RCON_PASSWORD": additional_configs["RCON_PASSWORD"],
+                "DYNMAP_ENABLED": "True",
                 "API_GW_URL": self.envs["API_GW_URL"],
                 "SSM_API_KEY": self.envs["SSM_API_KEY"],
                 "PROMETHEUS_PORT": None,
             }
             monitor_config = generate_env_file(monitor_config)
             self.ssh_util.scp_to_machine(monitor_config, REMOTE_MC_MONITOR_ENV_FILE_PATH)
+
 
             # Start docker compose from server folder
             if self.ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_PATH):

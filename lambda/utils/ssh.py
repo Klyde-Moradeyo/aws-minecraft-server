@@ -66,7 +66,7 @@ class SSHUtil:
         if capture_output:
             return out
         
-    def run_script(self, script_path, log_file_path, *args):
+    def run_script(self, script_path, log_file_path, wait_for_completion=True, *args):
         if not self.ssh:
             self.logger.error(f"SSH connection could not be established to {self.machine_ip}.")
             raise Exception(f"SSH connection could not be established to {self.machine_ip}.")
@@ -82,13 +82,17 @@ class SSHUtil:
             # Run the bash script and redirect its output to a log file
             stdin, stdout, stderr = self.ssh.exec_command(f"sudo bash {script_path} {args_str} > {log_file_path} 2>&1")
 
-            # Wait for the command to finish
-            exit_status = stdout.channel.recv_exit_status()
+            if wait_for_completion:
+                # Wait for the command to finish
+                exit_status = stdout.channel.recv_exit_status()
 
-            if exit_status != 0:
-                script_logs = self.read_file_output(log_file_path)
-                self.logger.error(f"{script_logs} \nScript exited with status code {exit_status}.")
-                raise Exception(f"Script exited with status code {exit_status}.")
+                if exit_status != 0:
+                    script_logs = self.read_file_output(log_file_path)
+                    self.logger.error(f"{script_logs} \nScript exited with status code {exit_status}.")
+                    raise Exception(f"Script exited with status code {exit_status}.")
+            else:
+                # Log that the script has been started but will not wait for completion
+                self.logger.info(f"Script {script_path} started on {self.machine_ip} but not waiting for completion.")
         except Exception as e:
             self.logger.error(f"Failed to execute script on {self.machine_ip}: {str(e)}.")
             raise

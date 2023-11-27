@@ -11,7 +11,9 @@ from config import *
 class MinecraftServer:
     def __init__(self, template_id, ip: str, port: str):
         self.logger = setup_logging()
-        self.server_address = f"{ip}:{port}"
+        self.ip = ip
+        self.port = port
+        self.server_address = f"{self.ip}:{self.port}"
         self.java_server = JavaServer.lookup(self.server_address)
         self.template_id = template_id
 
@@ -84,7 +86,7 @@ class MinecraftServer:
             self.logger.warning("RCON password length is less than recommended 12 characters.")
         
         # Define the character set for the password, excluding quotation marks
-        excluded_chars = {'"', "'"}
+        excluded_chars = {'"', "'", ' ', '$', '#', '&', '(', ')', '|', '*', '?', '~', ';', '<', '>', '^', '{', '}', '[', ']', '\\', '\n'}
         characters = ''.join(ch for ch in (string.ascii_letters + string.digits + string.punctuation) if ch not in excluded_chars)
 
         # Securely generate a random password
@@ -123,3 +125,6 @@ class MinecraftServer:
         file_path = generate_env_file(merged_config)
         self.logger.info(f"Successfully Generated Config for '{self.template_id}'")
         return file_path
+    
+    def get_server_port(self):
+        return self.port
