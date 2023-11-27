@@ -42,16 +42,47 @@ module "security_group" {
       cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
       description      = "Minecraft Server Port"
+    },
+    {
+      from_port   = 9149
+      to_port     = 9149
+      protocol    = "tcp"
+      cidr_blocks = [var.allowed_cidrs]
+      ipv6_cidr_blocks = []
+      description = "cAdvisor Metrics"
+    },
+    {
+      from_port   = 9150
+      to_port     = 9150
+      protocol    = "tcp"
+      cidr_blocks = [var.allowed_cidrs]
+      ipv6_cidr_blocks = []
+      description = "Minecraft Exporter Metrics"
+    },
+    {
+      from_port   = 9100
+      to_port     = 9100
+      protocol    = "tcp"
+      cidr_blocks = [var.allowed_cidrs]
+      ipv6_cidr_blocks = []
+      description = "Node Exporter Metrics"
+    },
+    {
+      from_port   = 9256
+      to_port     = 9256
+      protocol    = "tcp"
+      cidr_blocks = [var.allowed_cidrs]
+      ipv6_cidr_blocks = []
+      description = "Process Exporter Metricst"
+    },
+    {
+      from_port   = 9159
+      to_port     = 9159
+      protocol    = "tcp"
+      cidr_blocks = [var.allowed_cidrs]
+      ipv6_cidr_blocks = []
+      description = "Fabric Minecraft Exporter Metrics"
     }
-    # Promtheus Metrics
-    # {
-    #   from_port   = 9090
-    #   to_port     = 9090
-    #   protocol    = "tcp"
-    #   cidr_blocks = [var.allowed_cidrs]
-    #   ipv6_cidr_blocks = []
-    #   description = "Minecraft Server Port"
-    # }
   ]
 
   egress_rules = [
