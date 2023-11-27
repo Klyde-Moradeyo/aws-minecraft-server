@@ -6,13 +6,40 @@ services:
     image: itzg/minecraft-server:java17
     env_file: config/.server-env
     volumes:
-      # attach a directory relative to the directory containing this compose file
       - ./minecraft-data:/data
     ports:
       - 25565:25565
     tty: true
     stdin_open: true
     restart: unless-stopped
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 9149:8080
+    restart: unless-stopped
+    mem_limit: 128M
+    cpus: 0.1
+
+  minecraft-exporter:
+    depends_on: 
+      - mc-server
+    container_name: minecraft-exporter
+    image: klydem/minecraft-exporter
+    env_file: config/.monitoring-env
+    volumes:
+      - ./minecraft-data/world:/world:ro
+    ports:
+      - 9150:8000
+    restart: unless-stopped
+    mem_limit: 128M
+    cpus: 0.1
 
 volumes:
   minecraftdata:
