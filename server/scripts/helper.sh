@@ -3,7 +3,8 @@
 # Title: Helper Functions
 # Use: Series of Helper functions for running scripts
 
-commit_msg="Auto-commit: Add Minecraft Data $(date +"%d/%m/%Y") $(date +"%I:%M %p")"
+NODE_EXPORTER_PATH="/usr/local/bin/node_exporter"
+PROCESS_EXPORTER_PATH="/usr/local/bin/process_exporter"
 
 function get_current_date() {
     local year=$(date +"%Y")
@@ -41,16 +42,6 @@ function check_pid {
     local pid=$1
     local error_message=$2
     wait $pid || { echo "$error_message"; exit 1; }
-}
-
-function configure_git {
-  local directory="$1"
-  local git_email="mango-bot@mango.com"
-  local username="dark-mango-bot"
-  
-  echo "Configuring Git for $directory..."
-  git -C "$directory" config user.email "$git_email"
-  git -C "$directory" config user.name "$username"
 }
 
 function run_parallel() {

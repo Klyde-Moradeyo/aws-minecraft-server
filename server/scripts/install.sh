@@ -94,6 +94,7 @@ function install_aws_cli {
   curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" # arm64 Architecture
   unzip -o awscliv2.zip
   ./aws/install
+  rm -rf aws awscliv2.zip
   echo "AWS CLI install complete"
 }
 
@@ -106,21 +107,47 @@ function install_git {
   echo "Git install complete"
 }
 
+############################
+# Install Cloudwatch Agent #
+############################
 function install_cloudwatch_agent {
   local config_file_path="./amazon-cloudwatch-agent.json"
   wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/arm64/latest/amazon-cloudwatch-agent.deb
   sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
   sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m onPremise -s -c file:$config_file_path
+  rm -rf amazon-cloudwatch-agent.deb
+}
+
+#########################
+# Install node_exporter #
+#########################
+function install_node_exporter {
+  NODE_EXPORTER_VERSION="1.6.1"
+  echo "Installing node_exporter version $NODE_EXPORTER_VERSION"
+  wget "https://github.com/prometheus/node_exporter/releases/download/v${NODE_EXPORTER_VERSION}/node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64.tar.gz"
+  tar xvfz "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64.tar.gz"
+  sudo mv "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64/node_exporter" $NODE_EXPORTER_PATH
+  rm -rf "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64" "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64.tar.gz"
+  echo "Prometheus Node Exporter installed successfully!"
+}
+
+##############################
+#  Install process_exporter  #
+##############################
+function install_process_exporter {
+  PROCESS_EXPORTER_VERSION="0.7.10"
+  echo "Installing process_exporter version $PROCESS_EXPORTER_VERSION"
+  wget "https://github.com/ncabatoff/process-exporter/releases/download/v${PROCESS_EXPORTER_VERSION}/process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64.tar.gz"
+  tar xvfz "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64.tar.gz"
+  sudo mv "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64/process-exporter" $PROCESS_EXPORTER_PATH
+  rm -rf "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64" "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64.tar.gz"
+  echo "Prometheus Process Exporter installed successfully!"
 }
 
 ########################
 #     Post Install     #
 ########################
 function post_install {
-    echo "Removing installation files..."
-    rm -rf aws awscliv2.zip amazon-cloudwatch-agent.deb # Update this to happen in abandoned shell
-    echo "Removed installation files"
-
     echo "-------------------------------------"
     echo "              Installed              "
     echo "-------------------------------------"
@@ -159,6 +186,20 @@ function post_install {
         isCloudwatchAgentRunning="Not Running"
     fi
     echo "Cloudwatch Agent: $isCloudwatchAgentInstalled | $isCloudwatchAgentRunning"
+
+    # Check if node_exporter is installed
+    if [ -f $NODE_EXPORTER_PATH ]; then
+        echo "Node Exporter: Installed at $NODE_EXPORTER_PATH"
+    else
+        echo "Node Exporter: Not Installed"
+    fi
+
+    # Check if process_exporter is installed
+    if [ -f $PROCESS_EXPORTER_PATH ]; then
+        echo "Process Exporter: Installed at $PROCESS_EXPORTER_PATH"
+    else
+        echo "Process Exporter: Not Installed"
+    fi
     echo "-------------------------------------"
 }
 
@@ -170,6 +211,8 @@ function run {
       "install_docker" \
       "install_aws_cli" \
       "install_git" \
+      "install_node_exporter" \
+      "install_process_exporter"
       # "install_cloudwatch_agent"
 
   post_install
