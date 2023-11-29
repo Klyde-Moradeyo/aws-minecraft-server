@@ -79,7 +79,7 @@ output "ec2_key_pair" {
   value = module.ec2_key_pair.key_pair_name
 }
 
-output "SSM_EC2_PRIVATE_KEY" {
+output "ssm_ec2_private_key" {
   description = "The private key part of the key pair"
   value       = module.ec2_key_pair.private_key_pem
   sensitive   = true
