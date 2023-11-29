@@ -76,12 +76,20 @@ module "security_group" {
       description = "Process Exporter Metricst"
     },
     {
-      from_port   = 9159
-      to_port     = 9159
+      from_port   = 25585
+      to_port     = 25585
       protocol    = "tcp"
       cidr_blocks = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
       description = "Fabric Minecraft Exporter Metrics"
+    },
+    {
+      from_port   = 24454
+      to_port     = 24454
+      protocol    = "tcp"
+      cidr_blocks = [var.allowed_cidrs]
+      ipv6_cidr_blocks = []
+      description = "Simple Voice Chat Mod"
     }
   ]
 
