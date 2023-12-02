@@ -10,36 +10,13 @@ on:
       - "lambda/**"
       - ".github/workflows/ci-cd.yml"
   workflow_dispatch:
-
+#
 jobs:
-  set-env-vars:
-    runs-on: ubuntu-latest
-    outputs:
-      tf_config_directory: ${{ steps.set-env.outputs.tf_config_directory }}
-      git_tag_prefix: ${{ steps.set-env.outputs.git_tag_prefix }}
-    steps:
-    - name: Set Env Vars 
-      id: set-env
-      run: |
-        ##### DEVELOPMENT ENVIRONMENT #####
-        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
-          TF_DIR="./terraform"
-  
-        ##### PRODUCTION ENVIRONMENT #####
-        elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
-        TF_DIR="./terraform" 
-        fi
-
-        GIT_TAG_PREFIX="MSIH" # MSIH means Minecraft Server Infrastructure Handler
-  
-        echo "tf_config_directory=$TF_DIR" >> "$GITHUB_OUTPUT"
-        echo "git_tag_prefix=$GIT_TAG_PREFIX" >> "$GITHUB_OUTPUT"
-
   filter:
     runs-on: ubuntu-latest
-    needs: [ set-env-vars ] 
     outputs:
-      lambda: ${{ steps.filter.outputs.lambda }}
+      ci-request-lambda: ${{ steps.filter.outputs.ci-request-lambda }}
+      ci-worker-lambda: ${{ steps.filter.outputs.ci-worker-lambda }}
       terraform: ${{ steps.filter.outputs.terraform }}
     steps:
       - uses: actions/checkout@v3
@@ -47,26 +24,40 @@ jobs:
         id: filter
         with:
           filters: |
-            lambda:
-              - 'lambda/**'
+            ci-request-lambda:
+              - 'lambda/request/**'
+            ci-worker-lambda
+            - 'lambda/worker/**'
             terraform:
-              - '${{ needs.set-env-vars.outputs.tf_config_directory }}/**'
+              - 'terraform/**'
 
-  ci-lambda:
+  ci-request-lambda:
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-ci-lambda-function.yml@github-workflows
-    needs: [ filter, set-env-vars ]   
+    # if: ${{ needs.filter.outputs.ci-request-lambda }} == 'true'
+    needs: [ filter ]  
     with:
-      filter: ${{ needs.filter.outputs.lambda }}
-      config_dir: "./lambda"
+      config_dir: "./lambda/request"
+      artifact_name: "request_lambda_latest"
     secrets:
       gh_pat_token: ${{ secrets.GH_PAT }}
 
+  ci-worker-lambda:
+    uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-ci-lambda-function.yml@github-workflows
+    # if: ${{ needs.filter.outputs.ci-worker-lambda }} == 'true'
+    needs: [ filter ]   
+    with:
+      config_dir: "./lambda/worker"
+      artifact_name: "worker_lambda_latest"
+    secrets:
+      gh_pat_token: ${{ secrets.GH_PAT }}
+
+  # Build Fargate
+
   cd-terraform-apply:
-    needs: [ ci-lambda, set-env-vars ]
+    needs: [ ci-worker-lambda, ci-request-lambda ]
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-cd-terraform-apply.yml@github-workflows
     with:
-      config_dir: ${{ needs.set-env-vars.outputs.tf_config_directory }}
-      filter: ${{ needs.filter.outputs.terraform }}
+      config_dir: terraform
       aws_region: "eu-west-2"
     secrets:
       gh_pat_token: ${{ secrets.GH_PAT }}
@@ -75,8 +66,8 @@ jobs:
 
   git-tag:
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-git-tag.yml@github-workflows
-    needs: [ cd-terraform-apply, set-env-vars ]
+    needs: [ cd-terraform-apply ]
     with:
-      git_tag_prefix: ${{ needs.set-env-vars.outputs.git_tag_prefix }}
+      git_tag_prefix: "MSI" # Minecraft Server Infrastructure (MCI)
     secrets:
       gh_pat_token: ${{ secrets.GH_PAT }}
