@@ -46,10 +46,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.aws_secret_access_key }}
           aws-region: ${{ inputs.aws_region }}
 
-      - name: Download lambda function payload
+      - name: Download ci-request-lambda payload
         uses: actions/download-artifact@v2
         with:
-          name: lambda-artifact
+          name: request_lambda_payload
+          path: ${{ inputs.config_dir }}
+
+      - name: Download ci-worker-lambda payload
+        uses: actions/download-artifact@v2
+        with:
+          name: worker_lambda_payload
           path: ${{ inputs.config_dir }}
 
       - name: Setup Terraform
@@ -65,7 +71,7 @@ jobs:
       - name: Terraform Plan
         working-directory: ${{ inputs.config_dir }}
         run: |
-          terraform plan -input=false -out=tfplan
+          terraform plan -input=false -out=tfplan -var "git_branch=${{ github.head_ref }}"
 
       - name: Terraform Apply
         working-directory: ${{ inputs.config_dir }}
