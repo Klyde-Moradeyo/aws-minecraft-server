@@ -19,49 +19,6 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 ########################
-#         SSM          #
-########################
-# Attach the SSM access policy to the Lambda IAM role
-resource "aws_iam_role_policy_attachment" "ssm_access" {
-  policy_arn = aws_iam_policy.ssm_access.arn
-  role       = aws_iam_role.iam_for_lambda.name
-}
-
-# IAM policy to allow Lambda to access specific 
-# SSM Parameter Store parameters
-resource "aws_iam_policy" "ssm_access" {
-  name        = "${module.resource_naming.name}-iam-lambda-ssm-access"
-  description = "IAM policy to allow Lambda access to specific SSM Parameter Store parameters"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "ssm:GetParameter",
-        ]
-        Effect = "Allow"
-        Resource = [
-          "arn:aws:ssm:*:847399026905:parameter/${var.ssm_git_private_key_name}",
-          "arn:aws:ssm:*:847399026905:parameter/${var.ssm_ec2_private_key_name}",
-          # "arn:aws:ssm:*:847399026905:parameter/mc_server/BOT_COMMAND",
-        ]
-      },
-      {
-        Action = [
-          "ssm:PutParameter",
-          "ssm:GetParameter"
-        ]
-        Effect = "Allow"
-        Resource = [
-          "arn:aws:ssm:*:847399026905:parameter/${var.bot_command_name}",
-        ]
-      }
-    ]
-  })
-}
-
-########################
 #        Fargate       #
 ########################
 data "aws_iam_policy_document" "fargate_access" {
@@ -93,15 +50,6 @@ resource "aws_iam_role_policy_attachment" "fargate_access" {
 #          EC2         #
 ########################
 data "aws_iam_policy_document" "ec2_access" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "ec2:StartInstances",
-      "ec2:StopInstances",
-    ]
-    resources = [ var.ec2_instance_arn ]
-  }
-
   statement {
     effect = "Allow"
     actions = [

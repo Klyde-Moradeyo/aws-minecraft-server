@@ -42,6 +42,18 @@ variable "lambda_timeout" {
   type        = string
 }
 
+variable "lambda_memory_size" {
+  description = "Amount of memory in MB your Lambda Function can use at runtime"
+  type        = number
+  default     = 128  # 128 is Default
+}
+
+variable "lambda_reserved_concurrent_executions" {
+  description = "The amount of reserved concurrent executions for this lambda function"
+  type        = number
+  default     = -1  # -1 means no limit
+}
+
 ########################
 #    Systems Manager   #
 ########################
@@ -128,6 +140,27 @@ variable "s3_minecraft_world_bucket_url" {
 
 variable "s3_minecraft_assets_bucket_url" {
   description = "Minecraft assets bucket URI"
+  type        = string
+}
+
+########################
+#    DynamoDB Table    #
+########################
+variable "dynamodb_table_name" {
+  description = "The name of the DynamoDB table"
+  type        = string
+}
+
+########################
+#    Worker Lambda     #
+########################
+variable "worker_lambda_name" {
+  description = "The name of the worker lambda function"
+  type        = string
+}
+
+variable "lambda_payload_zip_path" {
+  description = "Path to the Lambda function payload ZIP file"
   type        = string
 }
 
