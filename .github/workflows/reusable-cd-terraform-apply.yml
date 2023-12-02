@@ -3,10 +3,6 @@ name: Reusable Terraform apply
 on:
   workflow_call:
     inputs:
-      filter:
-        description: 'Filter'
-        type: string
-        required: true
       config_dir:
         description: 'Terraform Config Directory'
         type: string
