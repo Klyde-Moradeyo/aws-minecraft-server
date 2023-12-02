@@ -3,20 +3,17 @@ name: Reusable CI Lambda Function
 on:
   workflow_call:
     inputs:
-      filter:
-        description: 'Filter'
-        type: string
-        required: true
       config_dir:
         description: 'Lambda function files dir'
+        type: string
+        required: true
+      artifact_name:
+        description: 'Artifact Name to upload'
         type: string
         required: true
     secrets:
       gh_pat_token:
         required: true
-
-env:
-    GIT_TAG_PREFIX: "MCI" # MCI means Minecraft Infrastructure Coordinator
 
 jobs:
     build-lambda:
@@ -26,57 +23,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
           token: ${{ secrets.gh_pat_token }}
 
-      - name: Get Lambda MCI Tag
-        run: |
-          echo $(git tag -l -n)
-          ls -l 
-          # Get tags, filter those that start with MCI_, sort them and get the last one
-          latest_tag=$(git tag | grep '^${{ env.GIT_TAG_PREFIX }}_' | sort -t. -k1,1n -k2,2n -k3,3n | tail -n1)
-          
-          # Check if latest_tag is empty
-          if [[ -z "$latest_tag" ]]; then
-            echo "No existing MCI tags found. Setting default tag."
-            latest_tag="${{ env.GIT_TAG_PREFIX }}_0.0.0"
-          fi
-      
-          echo "Latest Version: $latest_tag"
-          echo "MCI_TAG=$latest_tag" >> $GITHUB_ENV
-        
-
-      - name: Increment Lambda MCI Tag
-        if: inputs.filter == 'true'
-        run: |
-          # Get tags, filter those that start with MCI_, sort them and get the last one
-          latest_tag=${{ env.MCI_TAG }}
-  
-          if [[ -z "$latest_tag" ]]; then
-            echo "No tags found starting with MCI_"
-            exit 1
-          fi
-  
-          # Remove the prefix "MCI_" from the tag
-          version_string=${latest_tag#${{ env.GIT_TAG_PREFIX }}_}
-  
-          # Split the version string into an array
-          version=(${version_string//./ })
-  
-          # Increment patch version
-          version[2]=$((version[2] + 1))
-  
-          # Construct new tag
-          MCI_TAG="${{ env.GIT_TAG_PREFIX }}_${version[0]}.${version[1]}.${version[2]}"
-  
-          echo "New tag is $MCI_TAG"
-          echo "MCI_TAG=$MCI_TAG" >> $GITHUB_ENV
-
-      - name: Build Docker image
+      - name: Build Lambda package in container
         working-directory: ${{ inputs.config_dir }}
         run: |
           ls -l
-          docker build -t aws_lambda_img . --build-arg version=${{ env.MCI_TAG }}
+          docker build -t aws_lambda_img .
 
       - name: Run Docker image
         working-directory: ${{ inputs.config_dir }}
@@ -99,13 +52,5 @@ jobs:
       - name: Upload lambda function payload
         uses: actions/upload-artifact@v2
         with:
-          name: lambda-artifact
+          name: ${{ inputs.artifact_name }}
           path: ${{ inputs.config_dir }}/lambda_function_payload.zip
-          
-      - name: Tag Version
-        if: inputs.filter == 'true'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag "${{ env.MCI_TAG }}"
-          git push https://dark-mango-bot:${{ secrets.gh_pat_token }}@github.com/${{ github.repository }}.git --tags
