@@ -13,26 +13,17 @@ class EnvironmentVariables:
 
     def get_required_vars(self):
         required_configs = [    
-                                # Minecraft Specific Env Vars
-                                'MC_PORT', 'MC_SERVER_IP', 
-
-                                # Fargate Specific Env Vars
-                                # 'CLUSTER', 'CONTAINER_NAME', 'TASK_DEFINITION_NAME',
-
-                                # JOB to run
-                                'BOT_COMMAND_NAME',
-                                
                                 # Git
                                 'SSM_GIT_PRIVATE_KEY', 'GIT_BRANCH',
                                 
                                 # EC2 Instance
-                                'SSM_EC2_PRIVATE_KEY', 'EC2_INSTANCE_ID',
+                                'SSM_EC2_PRIVATE_KEY',
 
                                 # S3
                                 'S3_MC_ASSETS_URI', 'S3_MC_WORLD_URI',
 
                                 # API
-                                'API_GW_URL', 'SSM_API_KEY'
+                                'API_GW_URL', 'SSM_REQUEST_LAMBDA_AUTH_TOKEN'
                             ]
         return required_configs
 
@@ -54,7 +45,6 @@ class EnvironmentVariables:
         Fetches and decodes the environment variables. Returns the fetched variables.
         """
         self._fetch_required_variables()
-        self._decode_tags_json()
         self._verify_missing_variables()
         self._log_env_variables()
 
@@ -65,26 +55,6 @@ class EnvironmentVariables:
         Fetches required environment variables.
         """
         self.env_vars.update({var: os.getenv(var) for var in self.REQUIRED_VARS})
-
-    def _decode_tags_json(self) -> None:
-        """
-        Decodes the TAGS_JSON environment variable and updates env_vars.
-        """
-        tags_json = os.getenv('TAGS_JSON')
-        if not tags_json:
-            raise ValueError("Missing environment variable: TAGS_JSON")
-
-        try:
-            tags = json.loads(tags_json)
-        except json.JSONDecodeError:
-            raise ValueError("Error decoding TAGS_JSON. Ensure it's a valid JSON string.")
-
-        self.env_vars.update({
-            'TAG_NAME': tags.get('Name'),
-            'TAG_NAMESPACE': tags.get('Namespace'),
-            'TAG_ENVIRONMENT': tags.get('Stage'),
-            'TAG_RUNNING_COMMAND': self.action
-        })
 
     def _verify_missing_variables(self) -> None:
         """
