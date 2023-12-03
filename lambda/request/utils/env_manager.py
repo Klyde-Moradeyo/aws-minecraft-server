@@ -21,9 +21,12 @@ class EnvironmentVariables:
 
                                 # Worker Lambda
                                 'WORKER_LAMBDA_NAME',
+
+                                # EC2
+                                'EC2_INSTANCE_ID',
                                 
                                 # DYNAMBO_TABLE_NAME
-                                'DYNAMODB_TABLE_NAME'
+                                'DYNAMO_DB_TABLE_NAME'
                             ]
         return required_configs
 
