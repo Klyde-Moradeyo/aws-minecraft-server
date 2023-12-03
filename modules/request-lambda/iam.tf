@@ -108,3 +108,33 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_logs" {
   policy_arn = aws_iam_policy.lambda_cloudwatch_logs.arn
   role       = aws_iam_role.iam_for_lambda.name
 }
+
+########################
+#       DynamoDB       #
+########################
+data "aws_caller_identity" "aws" {}
+data "aws_iam_policy_document" "dynamodb_access" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:Query",
+      "dynamodb:Scan" 
+    ]
+    resources = ["arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.aws.arn}:table/${var.dynamodb_table_name}"]
+  }
+}
+
+resource "aws_iam_policy" "lambda_dynamodb_access" {
+  name        = "${module.resource_naming.name}-request-lambda-dynamodb-access"
+  description = "IAM policy to allow Lambda to interact with DynamoDB"
+
+  policy = data.aws_iam_policy_document.dynamodb_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "dynamodb_access" {
+  policy_arn = aws_iam_policy.lambda_dynamodb_access.arn
+  role       = aws_iam_role.iam_for_lambda.name
+}
