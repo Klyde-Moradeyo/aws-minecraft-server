@@ -12,8 +12,7 @@ class DynamoDBUtil:
 
     def update_item(self, task_id, status, result=None, ttl=None):
         try:
-            self.table.put_item(
-                Item={
+            item = {
                     "task_id": task_id,
                     "status": status,
                     "result": result,
@@ -21,8 +20,10 @@ class DynamoDBUtil:
                     "last_updated": datetime.utcnow().isoformat(),
                     "TTL": self.calculate_ttl(ttl)  # Time To Live - in hours
                 }
+            self.table.put_item(
+                Item=item
             )
-            self.logger("Update item to ")
+            self.logger.info(f"Update item with: '{item}'")
         except ClientError as e:
             self.logger.error(f"Error updating DynamoDB: {e}")
             raise

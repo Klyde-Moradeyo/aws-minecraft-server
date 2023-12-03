@@ -2,7 +2,7 @@ import uuid
 import json
 import os
 import boto3
-from datetime import datetime
+from datetime import datetime, timedelta
 from .logger import setup_logging
 from .dynamodb import DynamoDBUtil
 
@@ -23,4 +23,11 @@ class TaskManager:
             self.dynamodb_util.update_task_attribute(task_id, "result", value)
         except Exception as e:
             self.logger.error(f"Failed to update task_id('{task_id}') with result: '{value}'")
+            self.logger.error(f"Error: {e}")
+
+    def update_last_update_time(self, task_id):
+        try:
+            self.dynamodb_util.update_task_attribute(task_id, "last_updated", datetime.utcnow().isoformat())
+        except Exception as e:
+            self.logger.error(f"Failed to update task_id('{task_id}') with last updated time")
             self.logger.error(f"Error: {e}")

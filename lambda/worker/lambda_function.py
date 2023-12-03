@@ -88,9 +88,15 @@ class LambdaHandler:
         
     def _update_task(self, task_id, status, result=None):
         try:
+            # Update Task Status
             self.task_manager.update_task_status(task_id, status)
+            
+            # Update Task Result
             if result:
                 self.task_manager.update_task_result(task_id, result)
+
+            # Update Last Updated Time
+            self.task_manager.update_last_update_time(task_id)
         except Exception as e:
             self.logger.error(f"Failed to update task_id: '{task_id}' \n{e}")
             raise
