@@ -288,10 +288,9 @@ module "worker_lambda" {
   lambda_memory_size      = 128
   lambda_payload_zip_path = "./worker_lambda_latest.zip"
 
-
-
   # IAM
   ec2_instance_arn = module.minecraft_server.ec2_instance_arn
+  dynamodb_table_name = module.dynamodb_table.table_name
 
   # Lambda Environment vars
   ssm_git_private_key_name       = var.ssm_git_private_key_name
