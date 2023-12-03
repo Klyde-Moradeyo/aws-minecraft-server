@@ -22,12 +22,13 @@ resource "aws_lambda_function" "lambda_function" {
 
   environment {
     variables = {
-      MC_SERVER_IP         = var.mc_server_ip
-      MC_PORT              = var.mc_port
-      EC2_INSTANCE_ID      = var.ec2_instance_id
-      WORKER_LAMBDA_NAME   = var.worker_lambda_name
-      DYNAMO_DB_TABLE_NAME = var.dynamodb_table_name
-      TAGS_JSON            = jsonencode(var.tags)
+      SSM_GIT_PRIVATE_KEY = "/${var.ssm_git_private_key_name}"
+      SSM_EC2_PRIVATE_KEY = "/${var.ssm_ec2_private_key_name}"
+      GIT_BRANCH          = var.git_branch
+      S3_MC_WORLD_URI     = var.s3_minecraft_world_bucket_url
+      S3_MC_ASSETS_URI    = var.s3_minecraft_assets_bucket_url
+      API_GW_URL          = var.api_gateway_url
+      SSM_REQUEST_LAMBDA_AUTH_TOKEN         = "/${var.ssm_request_lambda_api_key_name}"
     }
   }
 

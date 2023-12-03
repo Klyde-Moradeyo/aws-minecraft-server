@@ -49,6 +49,11 @@ variable "lambda_reserved_concurrent_executions" {
   default     = -1  # -1 means no limit
 }
 
+variable "lambda_payload_zip_path" {
+  description = "Path to the Lambda function payload ZIP file"
+  type        = string
+}
+
 ########################
 #    Systems Manager   #
 ########################
@@ -153,17 +158,3 @@ variable "worker_lambda_name" {
   description = "The name of the worker lambda function"
   type        = string
 }
-
-variable "lambda_payload_zip_path" {
-  description = "Path to the Lambda function payload ZIP file"
-  type        = string
-}
-
-
-
-
-
-
-
-
-

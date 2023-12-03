@@ -49,19 +49,14 @@ variable "lambda_reserved_concurrent_executions" {
   default     = -1  # -1 means no limit
 }
 
+variable "lambda_payload_zip_path" {
+  description = "Path to the Lambda function payload ZIP file"
+  type        = string
+}
+
 ########################
 #    Systems Manager   #
 ########################
-variable "bot_command_name" {
-  description = "SSM Store Containing the Command Fargate should run"
-  type        = string
-}
-
-variable "terraform_token_name" {
-  description = "Terraform token name in Systems Manager Parameter Store"
-  type        = string
-}
-
 variable "ssm_git_private_key_name" {
   description = "Private Key name for Github SSH in Systems Manager Parameter Store"
   type        = string
@@ -72,7 +67,7 @@ variable "ssm_ec2_private_key_name" {
   type        = string
 }
 
-variable "ssm_api_key_name" {
+variable "ssm_request_lambda_api_key_name" {
   type        = string
   description = "Name of the SSM parameter to store the API key"
 }
@@ -83,33 +78,6 @@ variable "ssm_api_key_name" {
 variable "api_gateway_url" {
   type        = string
   description = "URL of the API Gateway"
-}
-
-########################
-#        VPC           #
-########################
-variable "security_group_id" {
-  description = "Security group ID"
-  type        = string
-}
-
-variable "subnet_id" {
-  description = "VPC subnet id to place the instance"
-  type        = string
-}
-
-########################
-#     Minecraft        #
-########################
-variable "mc_server_ip" {
-  description = "Minecraft Server Host Name / IP"
-  type        = string
-}
-
-variable "mc_port" {
-  description = "TCP port for minecraft"
-  type        = number
-  default     = 25565
 }
 
 ########################
@@ -145,25 +113,3 @@ variable "dynamodb_table_name" {
   description = "The name of the DynamoDB table"
   type        = string
 }
-
-########################
-#    Worker Lambda     #
-########################
-variable "worker_lambda_name" {
-  description = "The name of the worker lambda function"
-  type        = string
-}
-
-variable "lambda_payload_zip_path" {
-  description = "Path to the Lambda function payload ZIP file"
-  type        = string
-}
-
-
-
-
-
-
-
-
-
