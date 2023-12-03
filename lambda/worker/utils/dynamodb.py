@@ -33,12 +33,16 @@ class DynamoDBUtil:
         try:
             key = {'task_id': task_id}
 
+            # Use expression attribute names to avoid reserved keyword issues
+            expression_attribute_names = {'#attr_key': attribute_key}
+
             self.table.update_item(
                 Key=key,
-                UpdateExpression=f"SET {attribute_key} = :val",
+                UpdateExpression="SET #attr_key = :val",
                 ExpressionAttributeValues={
                     ':val': attribute_value
-                }
+                },
+                ExpressionAttributeNames=expression_attribute_names
             )
             return True
         except ClientError as e:

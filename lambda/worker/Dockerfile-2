@@ -1,7 +1,7 @@
 # Use an official Python runtime as a parent image
 FROM python:3.10-slim
 
-WORKDIR /app
+WORKDIR /app/worker_lambda
 COPY . .
 
 # Set environment variables
@@ -27,3 +27,5 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN pip install -r requirements.txt 
 
 CMD ["tail", "-f", "/dev/null"]
+
+# docker build -f Dockerfile-2 -t worker_lambda . && docker run -it -v "$(pwd)":/app/worker_lambda worker_lambda bash

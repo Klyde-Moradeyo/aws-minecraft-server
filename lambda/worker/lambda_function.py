@@ -26,18 +26,18 @@ class LambdaHandler:
         # Parse the event
         self.logger.info(event)
         event_parser = APIEventParser(event)
-        event_body = event_parser.parse()
+        self.event_body = event_parser.parse()
 
         # Extract the action from the parsed event
-        self.ACTION = event_body["action"] 
+        self.ACTION = self.event_body["action"] 
 
         # Extract other atrributes from event
-        self.server_template = event_body["server_template"]
-        self.task_id = event_body["task_id"]
-        self.dynambodb_table_name = event_body["dynambodb_table_name"]
-        self.mc_server_ip = event_body["mc_server_ip"]
-        self.mc_server_port = event_body["mc_server_port"]
-        self.ec2_instance_id = event_body["ec2_instance_id"]
+        self.task_id = self.event_body["task_id"]
+        server_template = self.event_body["server_template"]
+        self.dynambodb_table_name = self.event_body["dynambodb_table_name"]
+        mc_server_ip = self.event_body["mc_server_ip"]
+        mc_server_port = self.event_body["mc_server_port"]
+        ec2_instance_id = self.event_body["ec2_instance_id"]
 
         # Get the environment
         self.envs = EnvironmentVariables(self.ACTION).get_vars()  # Get Environment Variables
@@ -46,19 +46,19 @@ class LambdaHandler:
         self.ssm_util = SSMUtil()
 
         # Initialize ec2 class
-        self.ec2_util = EC2Util(self.ec2_instance_id)
+        self.ec2_util = EC2Util(ec2_instance_id, self.envs)
 
         # Initialize s3 class
-        self.s3_util = S3Util(self.envs, self.server_template)
+        self.s3_util = S3Util(self.envs, server_template)
 
         # Initialize dynamodb class
         self.dynamodb_util = DynamoDBUtil(self.dynambodb_table_name)
 
         # Initialize task manager class
-        self.task_manager = TaskManager(self.dynambodb_table_name)
+        self.task_manager = TaskManager(self.dynamodb_util)
 
         # Check If minecraft server is online/offline
-        self.mc_server = MinecraftServer(self.server_template, self.mc_server_ip, self.mc_server_port)
+        self.mc_server = MinecraftServer(server_template, mc_server_ip, mc_server_port)
     
     def execute_command(self):
         try:
@@ -68,7 +68,7 @@ class LambdaHandler:
             # Imported Action Module
             action_module = importlib.import_module(self.ACTION)
 
-            action_module.handle(self.server_template, self.envs, self.ssm_util, self.ec2_util, self.mc_server, self.s3_util, self.logger)
+            action_module.handle(self.event_body, self.envs, self.ssm_util, self.ec2_util, self.mc_server, self.s3_util, self.logger)
 
             # Update DynamoDB that task completed
             self._update_task(self.task_id, "COMPLETED", "SUCCESS")
@@ -77,10 +77,13 @@ class LambdaHandler:
             self.logger.error(error_message)
             self._update_task(self.task_id, "ERROR", error_message)
         except ValueError as error:
+            self.logger.error(f"Error: {error}")
             self._update_task(self.task_id, "ERROR", f"Value error occured \n{str(error)}")
         except (BotoCoreError, ClientError) as error:
+            self.logger.error(f"Error: {error}")
             self._update_task(self.task_id, "ERROR", f"Boto3 related error occurred \n{str(error)}")
         except Exception as error:
+            self.logger.error(f"Error: {error}")
             self._update_task(self.task_id, "ERROR", f"Unhandled exception occurred \n{str(error)}")
         
     def _update_task(self, task_id, status, result=None):
@@ -89,7 +92,7 @@ class LambdaHandler:
             if result:
                 self.task_manager.update_task_result(task_id, result)
         except Exception as e:
-            self.logger.error(f"Failed to update task_id: {task_id} \n{e}")
+            self.logger.error(f"Failed to update task_id: '{task_id}' \n{e}")
             raise
 
 # Where the magic happens
@@ -101,3 +104,21 @@ def lambda_handler(event, context):
 
     handler = LambdaHandler(event)
     return handler.execute_command()
+
+import json
+
+test_event = {
+    "body": json.dumps({
+        "task_id": "0ecf7821-5537-4675-91b5-b4e0cec501b2",
+        "action": "stop",
+        "server_template": "test-fabric-survival",
+        "ec2_instance_id": "i-0cfa0b3cab4b7fe7d",
+        "dynambodb_table_name": "my-table",
+        "mc_server_ip": "18.171.104.203",
+        "mc_server_port": "25565"
+    })
+}
+
+# Now you can pass this event to your lambda_handler
+result = lambda_handler(test_event, {})
+

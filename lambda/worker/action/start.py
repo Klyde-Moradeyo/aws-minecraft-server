@@ -20,7 +20,18 @@ def get_packages_install(ssh):
     }
     return packages_installed
 
-def handle(server_template, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: MinecraftServer, s3_util: S3Util, logger):
+def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: MinecraftServer, s3_util: S3Util, logger):
+    logger.info("Handling 'Start' Action...")
+    status = None
+    info = None
+
+    # Get Server Template
+    server_template = event_body["server_template"]
+
+    # Get Minecraft Server Details
+    minecraft_server_ip = event_body["mc_server_ip"]
+    minecraft_server_port = event_body["mc_server_port"]
+
     ssh_key_str = ssm_util.get_param(envs["SSM_GIT_PRIVATE_KEY"])
     git_ssh_key_path = write_to_tmp_file(ssh_key_str)
 
@@ -37,8 +48,8 @@ def handle(server_template, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_serve
     ec2_util.start_instance()
 
     # Create SSH Connection
-    ec2_ssh_key_path = ec2_util.write_ec2_ssh_key_to_file(ssm.get_param(envs["SSM_EC2_PRIVATE_KEY"]))
-    ssh_util = SSHUtil(envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
+    ec2_ssh_key_path = ec2_util.write_ec2_ssh_key_to_file(ssm_util.get_param(envs["SSM_EC2_PRIVATE_KEY"]))
+    ssh_util = SSHUtil(minecraft_server_ip, EC2_USERNAME, ec2_ssh_key_path)
 
     # Copy Latest Sever Folder to ec2 machine
     ssh_util.scp_to_machine(LOCAL_SERVER_FOLDER_PATH, REMOTE_SERVER_FOLDER_PATH)
@@ -49,8 +60,10 @@ def handle(server_template, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_serve
     if not all(packages_installed.values()):
         logger.info("Packages missing: Executing Install script...")
         ssh_util.run_command(f"chmod -R +x {REMOTE_SCRIPT_PATH}/*.sh")
-        ssh_util.run_script(REMOTE_PREPARE_EC2_SCRIPT_PATH, REMOTE_PREPARE_EC2_LOGS_PATH, False)
-        return { 'STATUS': "EC2_INSTALL_STARTED", 'COMMAND': self.ACTION, "INFO": "STARTED EC2 ENVIRONMENT INSTALL" }
+        ssh_util.run_script(REMOTE_PREPARE_EC2_SCRIPT_PATH, REMOTE_PREPARE_EC2_LOGS_PATH, True)
+        status = "EC2_INSTALL_STARTED"
+        info = "Started EC2 Install Script"
+        return status, info
 
     # Define map for additonal configs
     additional_configs = {}
@@ -113,7 +126,7 @@ def handle(server_template, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_serve
         "RCON_PASSWORD": additional_configs["RCON_PASSWORD"],
         "DYNMAP_ENABLED": "True",
         "API_GW_URL": envs["API_GW_URL"],
-        "SSM_API_KEY": envs["SSM_API_KEY"],
+        "SSM_API_KEY": envs["SSM_REQUEST_LAMBDA_AUTH_TOKEN"],
         "PROMETHEUS_PORT": None,
     }
     monitor_config = generate_env_file(monitor_config)
@@ -130,4 +143,5 @@ def handle(server_template, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_serve
     
     status = "MC_SERVER_STARTED"
     info = "Started Minecraft Server Successfully"
+    logger.info("'Start' Action Complete!")
     return status, info
