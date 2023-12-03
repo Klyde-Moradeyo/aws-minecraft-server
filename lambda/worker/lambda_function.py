@@ -104,21 +104,3 @@ def lambda_handler(event, context):
 
     handler = LambdaHandler(event)
     return handler.execute_command()
-
-import json
-
-test_event = {
-    "body": json.dumps({
-        "task_id": "0ecf7821-5537-4675-91b5-b4e0cec501b2",
-        "action": "stop",
-        "server_template": "test-fabric-survival",
-        "ec2_instance_id": "i-0cfa0b3cab4b7fe7d",
-        "dynambodb_table_name": "my-table",
-        "mc_server_ip": "18.171.104.203",
-        "mc_server_port": "25565"
-    })
-}
-
-# Now you can pass this event to your lambda_handler
-result = lambda_handler(test_event, {})
-
