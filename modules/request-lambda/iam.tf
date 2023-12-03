@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "assume_role_lambda" {
   }
 }
 resource "aws_iam_role" "iam_for_lambda" {
-  name               = "${module.resource_naming.name}-iam-for-lambda"
+  name               = "${module.resource_naming.name}-iam-for-request-lambda"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
