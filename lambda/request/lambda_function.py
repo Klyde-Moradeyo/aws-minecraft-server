@@ -71,7 +71,7 @@ def lambda_handler(event, context):
         status, action, task_id, info = action_module.handle(event_body, envs, mc_server, ec2_util, logger)
         return {
             'statusCode': 200,
-            'body': json.dumps(ResponseFormatter.success_response(status, status, task_id, info))
+            'body': json.dumps(ResponseFormatter.success_response(status, action, task_id, info))
         }
     except ImportError as import_error:
         error_message = f'Invalid action: {action}. Error: {import_error}'
