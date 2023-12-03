@@ -78,5 +78,6 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ${{ inputs.config_dir }}
-        run: |
+        run: | 
+          ls -la
           terraform apply -input=false -auto-approve tfplan
