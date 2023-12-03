@@ -44,3 +44,11 @@ class DynamoDBUtil:
         except ClientError as e:
             self.logger.error(f"Error updating DynamoDB: {e}")
             raise
+        
+    def get_task_status(self, task_id):
+        try:
+            response = self.table.get_item(Key={"task_id": task_id})
+            return response.get("Item")
+        except ClientError as e:
+            self.logger.error(f"Error retrieving task status from DynamoDB: {e}")
+            raise
