@@ -24,6 +24,7 @@ class LambdaHandler:
         self.logger = setup_logging()
         
         # Parse the event
+        self.logger.info(event)
         event_parser = APIEventParser(event)
         event_body = event_parser.parse()
 
