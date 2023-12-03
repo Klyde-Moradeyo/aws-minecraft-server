@@ -100,3 +100,11 @@ variable "s3_minecraft_assets_bucket_url" {
   description = "Minecraft assets bucket URI"
   type        = string
 }
+
+########################
+#    DynamoDB Table    #
+########################
+variable "dynamodb_table_name" {
+  description = "The name of the DynamoDB table"
+  type        = string
+}
