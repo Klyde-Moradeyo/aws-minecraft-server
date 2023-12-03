@@ -117,3 +117,8 @@ variable "worker_lambda_name" {
   description = "The name of the worker lambda function"
   type        = string
 }
+
+variable "worker_lambda_arn" {
+  description = "The arn of the worker lambda function"
+  type        = string
+}

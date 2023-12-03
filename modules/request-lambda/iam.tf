@@ -112,8 +112,6 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_logs" {
 ########################
 #       DynamoDB       #
 ########################
-data "aws_caller_identity" "current" {}
-
 data "aws_iam_policy_document" "dynamodb_access" {
   statement {
     effect = "Allow"
@@ -137,5 +135,30 @@ resource "aws_iam_policy" "lambda_dynamodb_access" {
 
 resource "aws_iam_role_policy_attachment" "dynamodb_access" {
   policy_arn = aws_iam_policy.lambda_dynamodb_access.arn
+  role       = aws_iam_role.iam_for_lambda.name
+}
+
+########################
+#    Invoke Lambda     #
+########################
+data "aws_iam_policy_document" "lambda_invoke" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "lambda:InvokeFunction"
+    ]
+    resources = [var.worker_lambda_arn]
+  }
+}
+
+resource "aws_iam_policy" "lambda_invoke_access" {
+  name        = "${module.resource_naming.name}-request-lambda-invoke-access"
+  description = "IAM policy to allow Lambda to invoke other Lambda functions"
+
+  policy = data.aws_iam_policy_document.lambda_invoke.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_invoke_access" {
+  policy_arn = aws_iam_policy.lambda_invoke_access.arn
   role       = aws_iam_role.iam_for_lambda.name
 }

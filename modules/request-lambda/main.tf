@@ -35,6 +35,7 @@ resource "aws_lambda_function" "lambda_function" {
   tags = var.tags
 }
 
+data "aws_caller_identity" "current" {}
 
 # resource "aws_lambda_layer_version" "terraform_lambda_layer" {
 #   filename   = "${path.module}/../../lambda/terraform_layer.zip"  # Replace with your layer ZIP filename
