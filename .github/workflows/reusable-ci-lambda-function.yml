@@ -41,10 +41,11 @@ jobs:
       - name: Copy and validate lambda payload
         working-directory: ${{ inputs.config_dir }}
         run: |
+          PAYLOAD="${{ inputs.artifact_name }}.zip"
           lambda_function_payload_dir="./lambda/"
-          docker cp lambda_payload_builder:/app/lambda_function_payload.zip .
+          docker cp lambda_payload_builder:/app/lambda_function_payload.zip $PAYLOAD
   
-          package_size=$(du -m "lambda_function_payload.zip" | cut -f1)
+          package_size=$(du -m "$PAYLOAD" | cut -f1)
           echo "payload size: $package_size mb"
           if (( package_size > 50 )); then
               echo -e "Error: \nThe lambda_function_payload is larger than 50 MB \nDoc: https://docs.aws.amazon.com/lambda/latest/dg/python-package.html"
