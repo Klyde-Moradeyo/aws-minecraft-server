@@ -41,8 +41,14 @@ class APIEventParser:
         """
         Parse the body of the event and return it as a dictionary.
         """
+        body = event.get('body', '{}')
+
+        # Check if the body is already a dictionary
+        if isinstance(body, dict):
+            return body
+
+        # If body is a string, parse it as JSON
         try:
-            body = event.get('body', '{}')
             return json.loads(body)
         except json.JSONDecodeError as e:
             self.logger.error(f"Invalid JSON input: {e}")
