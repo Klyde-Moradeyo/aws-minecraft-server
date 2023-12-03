@@ -256,9 +256,6 @@ module "request_lambda" {
   lambda_memory_size      = 128
   lambda_payload_zip_path = "./request_lambda_latest.zip"
 
-  # SSM
-  ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
-
   # IAM
   ec2_instance_arn = module.minecraft_server.ec2_instance_arn
   worker_lambda_arn = module.worker_lambda.lambda_function_arn
@@ -270,6 +267,7 @@ module "request_lambda" {
   worker_lambda_name  = module.worker_lambda.lambda_function_name
   dynamodb_table_name = module.dynamodb_table.table_name
   git_branch          = var.git_branch
+  ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
 
   # Module tags
   tags = module.tags.tags
@@ -290,6 +288,8 @@ module "worker_lambda" {
   lambda_memory_size      = 128
   lambda_payload_zip_path = "./worker_lambda_latest.zip"
 
+
+
   # IAM
   ec2_instance_arn = module.minecraft_server.ec2_instance_arn
 
@@ -300,6 +300,7 @@ module "worker_lambda" {
   s3_minecraft_world_bucket_url  = module.s3_mc_world.s3_bucket_uri
   s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.s3_bucket_uri
   api_gateway_url                = module.api_gateway.api_gateway_url
+  ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
 
   # Module tags
   tags = module.tags.tags
