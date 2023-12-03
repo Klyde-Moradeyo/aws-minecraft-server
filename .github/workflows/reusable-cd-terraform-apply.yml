@@ -72,7 +72,8 @@ jobs:
       - name: Terraform Plan
         working-directory: ${{ inputs.config_dir }}
         run: |
-          BRANCH=${${{ github.ref }}#refs/heads/}
+          BRANCH=${{ github.ref }}
+          BRANCH=${BRANCH#refs/heads/}
           terraform plan -input=false -out=tfplan -var "git_branch=$BRANCH"
 
       - name: Terraform Apply
