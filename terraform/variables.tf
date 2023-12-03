@@ -17,21 +17,6 @@ variable "git_branch" {
 }
 
 ########################
-#    Lambda Function   #
-########################
-variable "lambda_runtime" {
-  description = "Tags from tags module"
-  type        = string
-  default     = "python3.10"
-}
-
-variable "lambda_timeout" {
-  description = "Timeout for Lambda execution"
-  type        = number
-  default     = 900 # Set the timeout to the max (15 minutes)
-}
-
-########################
 #     Minecraft        #
 ########################
 variable "mc_port" {
@@ -76,7 +61,7 @@ variable "instance_type" {
   # default     = "t4g.small"
   # default = "t4g.medium"
   # default = "t4g.2xlarge" 
-  default = "t4g.xlarge" 
+  default = "t4g.xlarge"
   // For tests: default =  "t4g.large" | https://amazon-aws-ec2-pricing-comparison.pcapps.com/
 }
 

@@ -44,52 +44,52 @@ module "security_group" {
       description      = "Minecraft Server Port"
     },
     {
-      from_port   = 9149
-      to_port     = 9149
-      protocol    = "tcp"
-      cidr_blocks = [var.allowed_cidrs]
+      from_port        = 9149
+      to_port          = 9149
+      protocol         = "tcp"
+      cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
-      description = "cAdvisor Metrics"
+      description      = "cAdvisor Metrics"
     },
     {
-      from_port   = 9150
-      to_port     = 9150
-      protocol    = "tcp"
-      cidr_blocks = [var.allowed_cidrs]
+      from_port        = 9150
+      to_port          = 9150
+      protocol         = "tcp"
+      cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
-      description = "Minecraft Exporter Metrics"
+      description      = "Minecraft Exporter Metrics"
     },
     {
-      from_port   = 9100
-      to_port     = 9100
-      protocol    = "tcp"
-      cidr_blocks = [var.allowed_cidrs]
+      from_port        = 9100
+      to_port          = 9100
+      protocol         = "tcp"
+      cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
-      description = "Node Exporter Metrics"
+      description      = "Node Exporter Metrics"
     },
     {
-      from_port   = 9256
-      to_port     = 9256
-      protocol    = "tcp"
-      cidr_blocks = [var.allowed_cidrs]
+      from_port        = 9256
+      to_port          = 9256
+      protocol         = "tcp"
+      cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
-      description = "Process Exporter Metricst"
+      description      = "Process Exporter Metricst"
     },
     {
-      from_port   = 25585
-      to_port     = 25585
-      protocol    = "tcp"
-      cidr_blocks = [var.allowed_cidrs]
+      from_port        = 25585
+      to_port          = 25585
+      protocol         = "tcp"
+      cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
-      description = "Fabric Minecraft Exporter Metrics"
+      description      = "Fabric Minecraft Exporter Metrics"
     },
     {
-      from_port   = 24454
-      to_port     = 24454
-      protocol    = "tcp"
-      cidr_blocks = [var.allowed_cidrs]
+      from_port        = 24454
+      to_port          = 24454
+      protocol         = "tcp"
+      cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
-      description = "Simple Voice Chat Mod"
+      description      = "Simple Voice Chat Mod"
     }
   ]
 
@@ -135,14 +135,14 @@ module "mc_world_archive_cluster" {
   aws_region = var.aws_region
 
   # Task Resources
-  task_cpu_limit = 256
+  task_cpu_limit    = 256
   task_memory_limit = 1024
-  
+
   # SSM
   ssm_git_private_key_name = "dark-mango-bot-private-key"
 
   # S3 
-  minecraft_world_s3_bucket = module.s3_mc_world.s3_bucket_arn
+  minecraft_world_s3_bucket  = module.s3_mc_world.s3_bucket_arn
   minecraft_assets_s3_bucket = module.s3_mc_server_assets.s3_bucket_arn
 
   # Module tags
@@ -199,7 +199,7 @@ module "ssm_bot_command" {
 module "ssm_api_gw_key" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ssm?ref=tf-modules"
 
-  parameter_name = "api_gateway_key"
+  parameter_name = "request_lambda_api_gw_auth_token"
   parameter_type = "String"
   value          = "null"
 
@@ -215,8 +215,8 @@ module "api_gateway" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/api-gateway?ref=tf-modules"
 
   # lambda integration
-  lambda_function_name = module.lambda.lambda_function_name
-  lambda_invoke_arn    = module.lambda.lambda_function_invoke_arn
+  lambda_function_name = module.request_lambda.lambda_function_name
+  lambda_invoke_arn    = module.request_lambda.lambda_function_invoke_arn
 
   # Module tags
   label_id = module.tags.label_id
@@ -224,42 +224,84 @@ module "api_gateway" {
 }
 
 ########################
-#    Lambda Function   #
+#    DynamoDB Table    #
 ########################
-module "lambda" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/lambda?ref=tf-modules"
+module "dynamodb_table" {
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/dynamodb-table?ref=tf-modules"
+
+  table_name = "my-table"
+  hash_key   = "task_id"
+  attributes = [
+    { name = "task_id", type = "S" },
+  ]
+  read_capacity_units  = 10
+  write_capacity_units = 10
+  ttl_enabled          = true
+  ttl_attribute        = "TTL"
+  tags                 = module.tags.tags
+}
+
+########################
+#    Request Lambda    #
+########################
+module "request_lambda" {
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/request-lambda?ref=tf-modules"
 
   # aws region
   aws_region = var.aws_region
 
   # Lambda Config
-  lambda_runtime = var.lambda_runtime
-  lambda_timeout = var.lambda_timeout
+  lambda_runtime          = "python3.10"
+  lambda_timeout          = 900
+  lambda_memory_size      = 128
+  lambda_payload_zip_path = "./request_lambda_latest.zip"
 
   # SSM
-  bot_command_name     = module.ssm_bot_command.ssm_parameter_name
-  terraform_token_name = var.terraform_token_name
+  ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
 
   # IAM
   ec2_instance_arn = module.minecraft_server.ec2_instance_arn
 
   # Lambda Environment vars
-  subnet_id                      = module.vpc.subnet_id
-  security_group_id              = module.security_group.security_group_id
-  mc_server_ip                   = module.eip.eip_public_ip
-  mc_port                        = var.mc_port
+  ec2_instance_id     = module.minecraft_server.ec2_instance_id
+  mc_server_ip        = module.eip.eip_public_ip
+  mc_port             = var.mc_port
+  worker_lambda_name  = module.worker_lambda.lambda_function_name
+  dynamodb_table_name = module.dynamodb_table.table_name
+  git_branch          = var.git_branch
+
+  # Module tags
+  tags = module.tags.tags
+}
+
+########################
+#     Worker Lambda    #
+#########################
+module "worker_lambda" {
+  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/worker-lambda?ref=tf-modules"
+
+  # aws region
+  aws_region = var.aws_region
+
+  # Lambda Config
+  lambda_runtime          = "python3.10"
+  lambda_timeout          = 900
+  lambda_memory_size      = 128
+  lambda_payload_zip_path = "./worker_lambda_latest.zip"
+
+  # IAM
+  ec2_instance_arn = module.minecraft_server.ec2_instance_arn
+
+  # Lambda Environment vars
   ssm_git_private_key_name       = var.ssm_git_private_key_name
   ssm_ec2_private_key_name       = module.ssm_mc_server_private_key.ssm_parameter_name
-  ec2_instance_id                = module.minecraft_server.ec2_instance_id
   git_branch                     = var.git_branch
   s3_minecraft_world_bucket_url  = module.s3_mc_world.s3_bucket_uri
   s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.s3_bucket_uri
   api_gateway_url                = module.api_gateway.api_gateway_url
-  ssm_api_key_name               = module.ssm_api_gw_key.ssm_parameter_name
 
   # Module tags
-  label_id = module.tags.label_id
-  tags     = module.tags.tags
+  tags = module.tags.tags
 }
 
 ########################
@@ -269,7 +311,7 @@ module "s3_mc_world" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/s3?ref=tf-modules"
 
   # S3 Bucket 
-  bucket_name = "world-data"
+  bucket_name           = "world-data"
   version_config_status = "Enabled"
 
   # Module tags
@@ -309,8 +351,8 @@ module "minecraft_server" {
 
   # IAM
   ssm_git_private_key_name = var.ssm_git_private_key_name
-  s3_mc_world_uri = module.s3_mc_world.s3_bucket_arn
-  s3_mc_assets_uri = module.s3_mc_server_assets.s3_bucket_arn
+  s3_mc_world_uri          = module.s3_mc_world.s3_bucket_arn
+  s3_mc_assets_uri         = module.s3_mc_server_assets.s3_bucket_arn
 
   # Public IP
   public_ip = module.eip.eip_public_ip
