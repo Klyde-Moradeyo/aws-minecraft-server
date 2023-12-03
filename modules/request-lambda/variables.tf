@@ -57,51 +57,23 @@ variable "lambda_payload_zip_path" {
 ########################
 #    Systems Manager   #
 ########################
-variable "bot_command_name" {
-  description = "SSM Store Containing the Command Fargate should run"
-  type        = string
-}
-
-variable "terraform_token_name" {
-  description = "Terraform token name in Systems Manager Parameter Store"
-  type        = string
-}
-
-variable "ssm_git_private_key_name" {
-  description = "Private Key name for Github SSH in Systems Manager Parameter Store"
-  type        = string
-}
-
-variable "ssm_ec2_private_key_name" {
-  description = "Private Key name for EC2 in Systems Manager Parameter Store"
-  type        = string
-}
-
 variable "ssm_api_key_name" {
   type        = string
   description = "Name of the SSM parameter to store the API key"
 }
 
 ########################
-#        API           #
-########################
-variable "api_gateway_url" {
-  type        = string
-  description = "URL of the API Gateway"
-}
-
-########################
 #        VPC           #
 ########################
-variable "security_group_id" {
-  description = "Security group ID"
-  type        = string
-}
+# variable "security_group_id" {
+#   description = "Security group ID"
+#   type        = string
+# }
 
-variable "subnet_id" {
-  description = "VPC subnet id to place the instance"
-  type        = string
-}
+# variable "subnet_id" {
+#   description = "VPC subnet id to place the instance"
+#   type        = string
+# }
 
 ########################
 #     Minecraft        #
@@ -127,19 +99,6 @@ variable "ec2_instance_id" {
 
 variable "ec2_instance_arn" {
   description = "ec2 instance arn to target"
-  type        = string
-}
-
-########################
-#       S3 Bucket      #
-########################
-variable "s3_minecraft_world_bucket_url" {
-  description = "Minecraft world bucket URI"
-  type        = string
-}
-
-variable "s3_minecraft_assets_bucket_url" {
-  description = "Minecraft assets bucket URI"
   type        = string
 }
 

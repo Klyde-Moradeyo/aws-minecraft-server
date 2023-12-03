@@ -27,6 +27,7 @@ resource "aws_lambda_function" "lambda_function" {
       EC2_INSTANCE_ID      = var.ec2_instance_id
       WORKER_LAMBDA_NAME   = var.worker_lambda_name
       DYNAMO_DB_TABLE_NAME = var.dynamodb_table_name
+      SSM_REQUEST_LAMBDA_AUTH_TOKEN = var.ssm_api_key_name
       TAGS_JSON            = jsonencode(var.tags)
     }
   }
