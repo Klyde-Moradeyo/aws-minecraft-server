@@ -1,5 +1,5 @@
-import logging
-from datetime import datetime
+import time
+from datetime import datetime, timedelta
 from .logger import setup_logging
 import boto3
 from botocore.exceptions import ClientError
@@ -18,7 +18,8 @@ class DynamoDBUtil:
                     "status": status,
                     "result": result,
                     "created_at": datetime.utcnow().isoformat(),
-                    "TTL": ttl  # Time To Live - Set as UNIX timestamp if used
+                    "last_updated": datetime.utcnow().isoformat(),
+                    "TTL": self.calculate_ttl(ttl)  # Time To Live - in hours
                 }
             )
             self.logger("Update item to ")
@@ -56,3 +57,20 @@ class DynamoDBUtil:
         except ClientError as e:
             self.logger.error(f"Error retrieving task status from DynamoDB: {e}")
             raise
+
+    def calculate_ttl(self, hours_until_expiration=24):
+        """
+        Calculate the Time to Live (TTL) for a DynamoDB item.
+        """
+        # Ensure that the input is a positive integer
+        if not isinstance(hours_until_expiration, int) or hours_until_expiration < 0:
+            raise ValueError("Hours until expiration must be a positive integer.")
+
+        # Calculate the expiration time
+        expiration_time = datetime.utcnow() + timedelta(hours=hours_until_expiration)
+
+        # Convert to UNIX timestamp
+        ttl_unix_timestamp = int(time.mktime(expiration_time.timetuple()))
+
+        return ttl_unix_timestamp
+
