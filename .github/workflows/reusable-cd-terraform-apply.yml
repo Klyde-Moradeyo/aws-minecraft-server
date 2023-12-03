@@ -21,9 +21,6 @@ on:
       ssh_private_key:
         required: true
 
-env:
-    GIT_TAG_PREFIX: "SIOS" # Serverless Infrastructure Orchestration System
-
 jobs:
   terraform-apply:
     name: "Terraform Apply"
@@ -75,7 +72,8 @@ jobs:
       - name: Terraform Plan
         working-directory: ${{ inputs.config_dir }}
         run: |
-          terraform plan -input=false -out=tfplan -var "git_branch=${{ github.head_ref }}"
+          BRANCH=${${{ github.ref }}#refs/heads/}
+          terraform plan -input=false -out=tfplan -var "git_branch=$BRANCH"
 
       - name: Terraform Apply
         working-directory: ${{ inputs.config_dir }}
