@@ -6,6 +6,8 @@ module "resource_naming" {
   tags   = var.tags
 }
 
+data "aws_caller_identity" "current" {}
+
 ########################
 #    Lambda Function   #
 ########################
