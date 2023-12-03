@@ -5,36 +5,16 @@ on:
     branches:
       - main
       - dev
+      - prod
     paths:
       - "terraform/**"
       - "lambda/**"
       - ".github/workflows/ci-cd.yml"
   workflow_dispatch:
-#
-jobs:
-  filter:
-    runs-on: ubuntu-latest
-    outputs:
-      ci-request-lambda: ${{ steps.filter.outputs.ci-request-lambda }}
-      ci-worker-lambda: ${{ steps.filter.outputs.ci-worker-lambda }}
-      terraform: ${{ steps.filter.outputs.terraform }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            ci-request-lambda:
-              - 'lambda/request/**'
-            ci-worker-lambda
-            - 'lambda/worker/**'
-            terraform:
-              - 'terraform/**'
 
+jobs:
   ci-request-lambda:
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-ci-lambda-function.yml@github-workflows
-    # if: ${{ needs.filter.outputs.ci-request-lambda }} == 'true'
-    needs: [ filter ]  
     with:
       config_dir: "./lambda/request"
       artifact_name: "request_lambda_latest"
@@ -43,8 +23,6 @@ jobs:
 
   ci-worker-lambda:
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-ci-lambda-function.yml@github-workflows
-    # if: ${{ needs.filter.outputs.ci-worker-lambda }} == 'true'
-    needs: [ filter ]   
     with:
       config_dir: "./lambda/worker"
       artifact_name: "worker_lambda_latest"
@@ -63,10 +41,12 @@ jobs:
       gh_pat_token: ${{ secrets.GH_PAT }}
       aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY }}
       aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
   git-tag:
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-git-tag.yml@github-workflows
     needs: [ cd-terraform-apply ]
+    if: github.ref == 'refs/heads/main'
     with:
       git_tag_prefix: "MSI" # Minecraft Server Infrastructure (MCI)
     secrets:
