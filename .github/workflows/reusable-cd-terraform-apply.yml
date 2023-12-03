@@ -72,6 +72,8 @@ jobs:
           # Use sed to replace the placeholder
           sed -i "s/[GITHUB_BRANCH]/$BRANCH/g" $TF_FILE
 
+          cat $TF_FILE
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
