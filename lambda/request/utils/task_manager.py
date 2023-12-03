@@ -21,7 +21,7 @@ class TaskManager:
 
     def _invoke_worker_lambda(self, task_data, task_id):
         try:
-            payload = json.dumps({"task_id": task_id, **task_data})
+            payload = json.dumps({"body": {"task_id": task_id, **task_data}})
             self.lambda_client.invoke(
                 FunctionName=self.worker_lambda_name,
                 InvocationType="Event",
