@@ -30,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "ssm_access" {
 # IAM policy to allow Lambda to access specific 
 # SSM Parameter Store parameters
 resource "aws_iam_policy" "ssm_access" {
-  name        = "${module.resource_naming.name}-iam-lambda-ssm-access"
+  name        = "${module.resource_naming.name}-iam-worker-lambda-ssm-access"
   description = "IAM policy to allow Lambda access to specific SSM Parameter Store parameters"
 
   policy = jsonencode({
@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "fargate_access" {
 }
 
 resource "aws_iam_policy" "lambda_fargate_access" {
-  name        = "${module.resource_naming.name}-iam-lambda-fargate-access"
+  name        = "${module.resource_naming.name}-iam-worker-lambda-fargate-access"
   description = "IAM policy to allow Lambda to manage Fargate tasks"
 
   policy = data.aws_iam_policy_document.fargate_access.json
@@ -102,7 +102,7 @@ data "aws_iam_policy_document" "ec2_access" {
 }
 
 resource "aws_iam_policy" "lambda_ec2_access" {
-  name        = "${module.resource_naming.name}-lambda-ec2-access"
+  name        = "${module.resource_naming.name}-worker-lambda-ec2-access"
   description = "IAM policy to allow Lambda to interact with EC2 instances"
 
   policy = data.aws_iam_policy_document.ec2_access.json
@@ -133,7 +133,7 @@ data "aws_iam_policy_document" "cloudwatch_logs" {
 
 # IAM policy to allow Lambda to access CloudWatch Logs
 resource "aws_iam_policy" "lambda_cloudwatch_logs" {
-  name        = "${module.resource_naming.name}-lambda-cloudwatch-logs"
+  name        = "${module.resource_naming.name}-worker-lambda-cloudwatch-logs"
   description = "IAM policy to allow ${module.resource_naming.name} Lambda to write to CloudWatch Logs"
 
   policy = data.aws_iam_policy_document.cloudwatch_logs.json

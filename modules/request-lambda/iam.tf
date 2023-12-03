@@ -35,7 +35,7 @@ data "aws_iam_policy_document" "fargate_access" {
 }
 
 resource "aws_iam_policy" "lambda_fargate_access" {
-  name        = "${module.resource_naming.name}-iam-lambda-fargate-access"
+  name        = "${module.resource_naming.name}-iam-request-lambda-fargate-access"
   description = "IAM policy to allow Lambda to manage Fargate tasks"
 
   policy = data.aws_iam_policy_document.fargate_access.json
@@ -60,7 +60,7 @@ data "aws_iam_policy_document" "ec2_access" {
 }
 
 resource "aws_iam_policy" "lambda_ec2_access" {
-  name        = "${module.resource_naming.name}-lambda-ec2-access"
+  name        = "${module.resource_naming.name}-request-lambda-ec2-access"
   description = "IAM policy to allow Lambda to interact with EC2 instances"
 
   policy = data.aws_iam_policy_document.ec2_access.json
@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "cloudwatch_logs" {
 
 # IAM policy to allow Lambda to access CloudWatch Logs
 resource "aws_iam_policy" "lambda_cloudwatch_logs" {
-  name        = "${module.resource_naming.name}-lambda-cloudwatch-logs"
+  name        = "${module.resource_naming.name}-request-lambda-cloudwatch-logs"
   description = "IAM policy to allow ${module.resource_naming.name} Lambda to write to CloudWatch Logs"
 
   policy = data.aws_iam_policy_document.cloudwatch_logs.json
