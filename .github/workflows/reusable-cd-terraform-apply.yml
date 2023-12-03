@@ -18,6 +18,8 @@ on:
         required: true
       gh_pat_token:
         required: true
+      ssh_private_key:
+        required: true
 
 env:
     GIT_TAG_PREFIX: "SIOS" # Serverless Infrastructure Orchestration System
@@ -57,7 +59,7 @@ jobs:
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.ssh_private_key }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
       - name: Setup Terraform
