@@ -40,13 +40,13 @@ variable "lambda_timeout" {
 variable "lambda_memory_size" {
   description = "Amount of memory in MB your Lambda Function can use at runtime"
   type        = number
-  default     = 128  # 128 is Default
+  default     = 128 # 128 is Default
 }
 
 variable "lambda_reserved_concurrent_executions" {
   description = "The amount of reserved concurrent executions for this lambda function"
   type        = number
-  default     = -1  # -1 means no limit
+  default     = -1 # -1 means no limit
 }
 
 variable "lambda_payload_zip_path" {

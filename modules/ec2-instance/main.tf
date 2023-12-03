@@ -49,7 +49,7 @@ resource "aws_instance" "ec2_instance" {
 
 resource "null_resource" "delay_before_stop" {
   depends_on = [aws_instance.ec2_instance]
-  triggers = { instance_id = aws_instance.ec2_instance.id }
+  triggers   = { instance_id = aws_instance.ec2_instance.id }
 
   provisioner "local-exec" {
     command = "sleep 60" # Delay in seconds
@@ -58,7 +58,7 @@ resource "null_resource" "delay_before_stop" {
 
 resource "null_resource" "stop_instance" {
   depends_on = [null_resource.delay_before_stop]
-  triggers = { instance_id = aws_instance.ec2_instance.id }
+  triggers   = { instance_id = aws_instance.ec2_instance.id }
 
   provisioner "local-exec" {
     command = "aws ec2 stop-instances --instance-ids ${aws_instance.ec2_instance.id}"

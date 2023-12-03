@@ -43,7 +43,7 @@ resource "aws_iam_role_policy" "mc_allow_ec2_to_s3" {
       {
         Effect   = "Allow"
         Action   = ["s3:ListBucket"]
-        Resource = [ var.s3_mc_world_uri, var.s3_mc_assets_uri]
+        Resource = [var.s3_mc_world_uri, var.s3_mc_assets_uri]
       },
       {
         Effect = "Allow"

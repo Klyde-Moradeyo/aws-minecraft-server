@@ -99,7 +99,7 @@ data "aws_iam_policy_document" "ec2_access" {
       "ec2:StartInstances",
       "ec2:StopInstances",
     ]
-    resources = [ var.ec2_instance_arn ]
+    resources = [var.ec2_instance_arn]
   }
 
   statement {
