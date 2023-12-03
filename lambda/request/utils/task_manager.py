@@ -33,6 +33,7 @@ class TaskManager:
             raise
 
     def check_task_status(self, task_id):
+        self.logger.info(f"Checking status of task_id: {task_id}")
         return self.dynamodb_util.get_task_status(task_id)
 
     def _create_unique_task_id(self):
