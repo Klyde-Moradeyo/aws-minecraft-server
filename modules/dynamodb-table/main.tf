@@ -14,6 +14,9 @@ resource "aws_dynamodb_table" "this" {
   billing_mode = var.billing_mode
   hash_key     = var.hash_key
   range_key    = var.range_key
+  read_capacity  = var.billing_mode == "PROVISIONED" ? var.read_capacity_units : null
+  write_capacity = var.billing_mode == "PROVISIONED" ? var.write_capacity_units : null
+
 
   attribute {
     name = var.hash_key
@@ -25,14 +28,6 @@ resource "aws_dynamodb_table" "this" {
     content {
       name = attribute.value["name"]
       type = attribute.value["type"]
-    }
-  }
-
-  dynamic "provisioned_throughput" {
-    for_each = var.billing_mode == "PROVISIONED" ? [1] : []
-    content {
-      read_capacity_units  = var.read_capacity_units
-      write_capacity_units = var.write_capacity_units
     }
   }
 
