@@ -55,4 +55,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.artifact_name }}
-          path: ${{ inputs.config_dir }}/lambda_function_payload.zip
+          path: ${{ inputs.config_dir }}/${{ inputs.artifact_name }}.zip
