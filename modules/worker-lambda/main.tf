@@ -28,7 +28,6 @@ resource "aws_lambda_function" "lambda_function" {
       S3_MC_WORLD_URI               = var.s3_minecraft_world_bucket_url
       S3_MC_ASSETS_URI              = var.s3_minecraft_assets_bucket_url
       API_GW_URL                    = var.api_gateway_url
-      SSM_REQUEST_LAMBDA_AUTH_TOKEN = "/${var.ssm_request_lambda_api_key_name}"
     }
   }
 

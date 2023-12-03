@@ -67,11 +67,6 @@ variable "ssm_ec2_private_key_name" {
   type        = string
 }
 
-variable "ssm_request_lambda_api_key_name" {
-  type        = string
-  description = "Name of the SSM parameter to store the API key"
-}
-
 ########################
 #        API           #
 ########################
@@ -83,11 +78,6 @@ variable "api_gateway_url" {
 ########################
 #     EC2 Instance     #
 ########################
-variable "ec2_instance_id" {
-  description = "ec2 instance id to target"
-  type        = string
-}
-
 variable "ec2_instance_arn" {
   description = "ec2 instance arn to target"
   type        = string
@@ -103,13 +93,5 @@ variable "s3_minecraft_world_bucket_url" {
 
 variable "s3_minecraft_assets_bucket_url" {
   description = "Minecraft assets bucket URI"
-  type        = string
-}
-
-########################
-#    DynamoDB Table    #
-########################
-variable "dynamodb_table_name" {
-  description = "The name of the DynamoDB table"
   type        = string
 }
