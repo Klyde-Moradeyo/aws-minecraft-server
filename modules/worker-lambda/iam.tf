@@ -46,16 +46,6 @@ resource "aws_iam_policy" "ssm_access" {
           "arn:aws:ssm:*:847399026905:parameter/${var.ssm_ec2_private_key_name}",
           # "arn:aws:ssm:*:847399026905:parameter/mc_server/BOT_COMMAND",
         ]
-      },
-      {
-        Action = [
-          "ssm:PutParameter",
-          "ssm:GetParameter"
-        ]
-        Effect = "Allow"
-        Resource = [
-          "arn:aws:ssm:*:847399026905:parameter/${var.bot_command_name}",
-        ]
       }
     ]
   })
