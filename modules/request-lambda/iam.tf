@@ -112,7 +112,8 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_logs" {
 ########################
 #       DynamoDB       #
 ########################
-data "aws_caller_identity" "aws" {}
+data "aws_caller_identity" "current" {}
+
 data "aws_iam_policy_document" "dynamodb_access" {
   statement {
     effect = "Allow"
@@ -123,7 +124,7 @@ data "aws_iam_policy_document" "dynamodb_access" {
       "dynamodb:Query",
       "dynamodb:Scan" 
     ]
-    resources = ["arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.aws.arn}:table/${var.dynamodb_table_name}"]
+    resources = ["arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_table_name}"]
   }
 }
 
