@@ -20,8 +20,3 @@ output "iam_role_arn" {
   description = "The ARN of the IAM role for Lambda"
   value       = aws_iam_role.iam_for_lambda.arn
 }
-
-output "iam_policy_arn" {
-  description = "The ARN of the IAM policy for Lambda to access SSM Parameter Store"
-  value       = aws_iam_policy.ssm_access.arn
-}
