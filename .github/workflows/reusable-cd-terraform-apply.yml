@@ -54,6 +54,12 @@ jobs:
           name: worker_lambda_latest
           path: ${{ inputs.config_dir }}
 
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
