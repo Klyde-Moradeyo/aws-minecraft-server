@@ -78,11 +78,12 @@ def lambda_handler(event, context):
         logger.error(error_message)
         return {
             'statusCode': 400,
-            'body': json.dumps(ResponseFormatter.error_response("Invalid Action", "Invalid Action", None, None, error_message))
+            'body': json.dumps(ResponseFormatter.error_response("ERROR", "Invalid Action", None, None, error_message))
         }
     except Exception as e:
-        logger.error(f'Server Error: {str(e)}')
+        error_message = f'Server Error: {str(e)}'
+        logger.error(error_message)
         return {
             'statusCode': 500,
-            'body': json.dumps(ResponseFormatter.error_response(status, status, task_id, info, str(e)))
+            'body': json.dumps(ResponseFormatter.error_response(status, status, task_id, info, error_message))
         }

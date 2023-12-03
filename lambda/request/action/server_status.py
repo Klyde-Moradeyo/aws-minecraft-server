@@ -24,6 +24,7 @@ def handle(task_data, envs, mc_server, ec2_util, logger):
             status = "MC_SERVER_DOWN"
             info = f"Minecraft Server Status - OFFLINE"
             task_id = None
+            logger.info("'Handle Status' Action Complete!")
             return status, action, task_id, info
     else:
         error_message = "EC2 Instance does not exist!"
