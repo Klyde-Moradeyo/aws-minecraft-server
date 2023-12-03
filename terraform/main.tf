@@ -261,6 +261,7 @@ module "request_lambda" {
 
   # IAM
   ec2_instance_arn = module.minecraft_server.ec2_instance_arn
+  worker_lambda_arn = module.worker_lambda.lambda_function_arn
 
   # Lambda Environment vars
   ec2_instance_id     = module.minecraft_server.ec2_instance_id
