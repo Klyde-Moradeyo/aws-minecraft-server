@@ -70,7 +70,7 @@ jobs:
           TF_FILE="versions.tf"
 
           # Use sed to replace the placeholder
-          sed -i "s/[GITHUB_BRANCH]/$BRANCH/g" $TF_FILE
+          sed -i "s/<GITHUB_BRANCH>/$BRANCH/g" $TF_FILE
 
           cat $TF_FILE
 
