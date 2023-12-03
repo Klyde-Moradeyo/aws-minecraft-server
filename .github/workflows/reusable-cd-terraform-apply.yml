@@ -59,6 +59,19 @@ jobs:
           echo "${{ secrets.ssh_private_key }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
+      - name: Set Terraform State File Location
+        working-directory: ${{ inputs.config_dir }}
+        run: |
+          # Define the branch name
+          BRANCH=${{ github.ref }}
+          BRANCH=${BRANCH#refs/heads/}
+
+          # Path to your Terraform file
+          TF_FILE="versions.tf"
+
+          # Use sed to replace the placeholder
+          sed -i "s/[GITHUB_BRANCH]/$BRANCH/g" $TF_FILE
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
