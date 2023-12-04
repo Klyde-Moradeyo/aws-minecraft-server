@@ -16,7 +16,7 @@ class TaskManager:
     def process_task(self, task_data):
         task_id = self._create_unique_task_id()
         self._invoke_worker_lambda(task_data, task_id)
-        self.dynamodb_util.update_item(task_id, "PENDING", None, 2)
+        self.dynamodb_util.update_item(task_id, "PENDING", None, 360) # TTL = 360 hours = 15 day
         return task_id
 
     def _invoke_worker_lambda(self, task_data, task_id):
