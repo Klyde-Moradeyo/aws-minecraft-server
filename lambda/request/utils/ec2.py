@@ -30,6 +30,11 @@ class EC2Util:
         try:
             self.client.describe_instances(InstanceIds=[self.instance_id])
             self.logger.info(f"EC2 Instance '{self.instance_id}' Exists!")
+
+            # If EC2 Instance is in terminated state, we will count it as not existing
+            if self.check_instance_status() is "terminated":
+                return False
+            
             return True
         except ClientError as e:
             if 'InvalidInstanceID.NotFound' in str(e):
