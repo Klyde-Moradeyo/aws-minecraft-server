@@ -54,7 +54,7 @@ jobs:
       image_tag: ${{ needs.ci-fargate.outputs.image_tag }}
     secrets:
       gh_pat_token: ${{ secrets.GH_PAT }}
-      aws_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_id: ${{ secrets.AWS_ACCESS_KEY }}
       aws_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}  
 
@@ -72,7 +72,7 @@ jobs:
 
   git-tag:
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-git-tag.yml@github-workflows
-    needs: [ cd-terraform-apply ]
+    needs: [ cd-terraform-apply, cd-fargate ]
     if: github.ref == 'refs/heads/main'
     with:
       git_tag_prefix: "MSI" # Minecraft Server Infrastructure (MCI)
