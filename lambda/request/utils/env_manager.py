@@ -13,7 +13,7 @@ class EnvironmentVariables:
 
     def get_required_vars(self):
         required_configs = [    
-                                # Minecraft Specific Env Vars
+                                # Minecraft Specifi\c Env Vars
                                 'MC_PORT', 'MC_SERVER_IP', 
                                 
                                 # Authorization Token
@@ -27,6 +27,9 @@ class EnvironmentVariables:
                                 
                                 # DYNAMBO_TABLE_NAME
                                 'DYNAMO_DB_TABLE_NAME'
+
+                                # Fargate Task
+                                'CLUSTER_NAME', 'MC_ARCHIVE_TASK_DEFINITION_NAME'
                             ]
         return required_configs
 

@@ -2,28 +2,27 @@ import boto3
 from .env_manager import EnvironmentVariables
 from .logger import setup_logging
 
-class Fargate:
-    def __init__(self, cluster, env_vars):
+class FargateUtil:
+    def __init__(self, cluster_name, task_definition, container_name, environment_variables, env_vars):
         self.logger = setup_logging() # Setting up logging
-        self.cluster = cluster
+        self.cluster_name = cluster_name
         self.client = boto3.client('ecs')
         self.env_vars = env_vars
-        self.cluster = self.env_vars["CLUSTER"]
-        self.task_definition = self.env_vars["TASK_DEFINITION_NAME"]
-        self.container_name = self.env_vars["CONTAINER_NAME"]
-        self.environment_variables = self.set_env_vars()
+        self.task_definition = task_definition
+        self.container_name = container_name
+        self.environment_variables = environment_variables
         self.network_configuration = self.set_network_config()
         self.tags = self.set_task_tags()      
 
     def create_fargate_container(self):
         try:
             response = self.client.run_task(
-                cluster=self.cluster,
+                cluster=self.cluster_name,
                 launchType="FARGATE",
                 taskDefinition=self.task_definition,
                 count=1,
                 platformVersion="LATEST",
-                networkConfiguration=self.network_configuration,
+                # networkConfiguration=self.network_configuration,
                 overrides={
                     "containerOverrides": [{
                         "name": self.container_name,
@@ -39,12 +38,13 @@ class Fargate:
             self.logger.error(f"Error creating Fargate container: {e}")
             raise
 
-    def is_task_with_tags_exists(self, desired_tags):
+    def is_task_with_tags_exists(self):
         try:
-            tasks_response = self.client.list_tasks(cluster=self.cluster)
+            desired_tags = self.get_task_tags()
+            tasks_response = self.client.list_tasks(cluster=self.cluster_name)
             for task_arn in tasks_response.get('taskArns'):
                 current_task_details = self.client.describe_tasks(
-                    cluster=self.cluster,
+                    cluster=self.cluster_name,
                     tasks=[task_arn],
                     include=['TAGS'],
                 )
@@ -52,7 +52,7 @@ class Fargate:
                     if self._tags_match(task_data.get('tags', []), desired_tags):
                         self.logger.info(f"Located task with ARN '{task_arn}' matching the specified tags.")
                         return True
-            self.logger.info(f"No tasks matching the provided tags were found in cluster '{self.cluster}'.")
+            self.logger.info(f"No tasks matching the provided tags were found in cluster '{self.cluster_name}'.")
             return False
         except Exception as e:
             self.logger.error(f"Error checking if task with tags exists: {e}")
@@ -60,9 +60,9 @@ class Fargate:
 
     def check_task_status(self, tags):
         try:
-            list_tasks_response = self.client.list_tasks(cluster=self.cluster)
+            list_tasks_response = self.client.list_tasks(cluster=self.cluster_name)
             for task_arn in list_tasks_response.get("taskArns", []):
-                describe_task_response = self.client.describe_tasks(cluster=self.cluster, tasks=[task_arn], include=['TAGS'])
+                describe_task_response = self.client.describe_tasks(cluster=self.cluster_name, tasks=[task_arn], include=['TAGS'])
                 task = describe_task_response["tasks"][0]
                 if self._tags_match(task.get('tags', []), tags):
                     self.logger.debug(f"Task Status: {task['lastStatus']}")
@@ -85,29 +85,12 @@ class Fargate:
         return tag_match_count == len(desired_tags)
 
 
-    def set_env_vars(self):
-        environment_variables = [ 
-            {'name': 'TF_USER_TOKEN', 'value': self.env_vars["TF_USER_TOKEN"] },
-            {'name': 'SSM_GIT_PRIVATE_KEY', 'value': self.env_vars["SSM_GIT_PRIVATE_KEY"] },
-            {'name': 'SSM_EC2_PRIVATE_KEY', 'value': self.env_vars["SSM_EC2_PRIVATE_KEY"] },
-            {'name': 'BOT_COMMAND_NAME', 'value': self.env_vars["BOT_COMMAND_NAME"] },
-            {'name': 'ENVIRONMENT', 'value': self.env_vars["TAG_ENVIRONMENT"] },
-            ]
+    def set_env_vars(self, environment_variables={}):
         return environment_variables
         
     def set_task_tags(self):
         task_tags = [ {'key': key, 'value': value} for key, value in self.env_vars.items() if key.startswith('TAG_') ]
         return task_tags
-
-    def set_network_config(self):
-        fargate_network_configuration = {
-            "awsvpcConfiguration": {
-                "subnets": [ self.env_vars['SUBNET_ID'] ], 
-                "securityGroups": [ self.env_vars['SECURITY_GROUP_ID'] ],
-                "assignPublicIp": "ENABLED"
-            }   
-        }
-        return fargate_network_configuration
     
     def get_env_vars(self):
         return self.environment_variables
