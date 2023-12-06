@@ -128,3 +128,6 @@ class MinecraftServer:
     
     def get_server_port(self):
         return self.port
+    
+    def get_server_ip(self):
+        return self.ip

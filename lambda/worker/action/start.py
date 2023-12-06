@@ -28,10 +28,6 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
     # Get Server Template
     server_template = event_body["server_template"]
 
-    # Get Minecraft Server Details
-    minecraft_server_ip = event_body["mc_server_ip"]
-    minecraft_server_port = event_body["mc_server_port"]
-
     ssh_key_str = ssm_util.get_param(envs["SSM_GIT_PRIVATE_KEY"])
     git_ssh_key_path = write_to_tmp_file(ssh_key_str)
 
@@ -49,7 +45,7 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
 
     # Create SSH Connection
     ec2_ssh_key_path = ec2_util.write_ec2_ssh_key_to_file(ssm_util.get_param(envs["SSM_EC2_PRIVATE_KEY"]))
-    ssh_util = SSHUtil(minecraft_server_ip, EC2_USERNAME, ec2_ssh_key_path)
+    ssh_util = SSHUtil(mc_server.get_server_ip(), EC2_USERNAME, ec2_ssh_key_path)
 
     # Copy Latest Sever Folder to ec2 machine
     ssh_util.scp_to_machine(LOCAL_SERVER_FOLDER_PATH, REMOTE_SERVER_FOLDER_PATH)
