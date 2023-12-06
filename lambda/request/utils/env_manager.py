@@ -29,7 +29,7 @@ class EnvironmentVariables:
                                 'DYNAMO_DB_TABLE_NAME',
 
                                 # Fargate Task
-                                'ECS_CLUSTER_NAME', 'MC_ARCHIVE_TASK_DEFINITION_NAME'
+                                'ECS_CLUSTER_NAME', 'ECS_MC_ARCHIVE_TASK_DEFINITION_NAME'
                             ]
         return required_configs
 
