@@ -96,20 +96,20 @@ jobs:
           working-directory: ${{ inputs.tf_config_dir }}
           run: |
             terraform init
-            
+
             # Attempt to capture the Terraform output
             ECR_REPO_NAME=$(terraform output -raw ecr_mc_world_archive_repository_name || echo "")
 
             # Check if the Terraform output is non-empty
             if [ -z "$ECR_REPO_NAME" ]; then
-            echo "RUN_STEPS=false" >> $GITHUB_ENV
+                echo "RUN_STEPS=false" >> $GITHUB_ENV
             else
-            echo "ECR_REPO_NAME=$ECR_REPO_NAME" >> $GITHUB_ENV
-            echo "RUN_STEPS=true" >> $GITHUB_ENV
+                echo "ECR_REPO_NAME=$ECR_REPO_NAME" >> $GITHUB_ENV
+                echo "RUN_STEPS=true" >> $GITHUB_ENV
             fi
 
         - name: Build Fargate Image
-          if: env.ECR_REPO_NAME != ''
+          if: env.RUN_STEPS == 'true'
           working-directory: ${{ inputs.working_dir }}
           env:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -128,7 +128,7 @@ jobs:
             
         - name: Set Output Vars
           id: set-vars
-          if: env.ECR_REPO_NAME != ''
+          if: env.RUN_STEPS == 'true'
           run: |
             # Outputs
             echo "docker_tar_file_name=${{ env.OUTPUT_ARTIFACT }}" >> "$GITHUB_OUTPUT"
