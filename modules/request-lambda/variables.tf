@@ -135,3 +135,8 @@ variable "ecs_mc_archive_task_definition_name" {
   description = "ECS Task Defintion Namr"
   type        = string
 }
+
+variable "mc_archive_task_container_name" {
+  description = "ECS Task Container Namr"
+  type        = string
+}
