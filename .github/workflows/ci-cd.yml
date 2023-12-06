@@ -72,7 +72,7 @@ jobs:
 
   git-tag:
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-git-tag.yml@github-workflows
-    needs: [ cd-terraform-apply ]
+    needs: [ cd-terraform-apply, cd-fargate ]
     if: github.ref == 'refs/heads/main'
     with:
       git_tag_prefix: "MSI" # Minecraft Server Infrastructure (MCI)

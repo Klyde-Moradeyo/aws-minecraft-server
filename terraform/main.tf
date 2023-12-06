@@ -129,7 +129,7 @@ module "mc_monitoring_ecs_registry" {
 ########################
 #         ECS          #
 ########################
-module "mc_world_archive_cluster" {
+module "ecs_cluster" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ecs?ref=tf-modules"
 
   aws_region = var.aws_region
@@ -300,6 +300,8 @@ module "worker_lambda" {
   s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.s3_bucket_uri
   api_gateway_url                = module.api_gateway.api_gateway_url
   ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
+  ecs_cluster_name = module.ecs_cluster.ecs_cluster_name
+  ecs_mc_archive_task_definition_name = module.ecs_cluster.ecs_mc_archive_task_definition_name
 
   # Module tags
   tags = module.tags.tags
