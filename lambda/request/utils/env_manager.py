@@ -26,10 +26,10 @@ class EnvironmentVariables:
                                 'EC2_INSTANCE_ID',
                                 
                                 # DYNAMBO_TABLE_NAME
-                                'DYNAMO_DB_TABLE_NAME'
+                                'DYNAMO_DB_TABLE_NAME',
 
                                 # Fargate Task
-                                'CLUSTER_NAME', 'MC_ARCHIVE_TASK_DEFINITION_NAME'
+                                'ECS_CLUSTER_NAME', 'MC_ARCHIVE_TASK_DEFINITION_NAME'
                             ]
         return required_configs
 

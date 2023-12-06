@@ -3,9 +3,9 @@ from .env_manager import EnvironmentVariables
 from .logger import setup_logging
 
 class FargateUtil:
-    def __init__(self, cluster_name, task_definition, container_name, environment_variables, env_vars):
+    def __init__(self, ECS_CLUSTER_NAME, task_definition, container_name, environment_variables, env_vars):
         self.logger = setup_logging() # Setting up logging
-        self.cluster_name = cluster_name
+        self.ECS_CLUSTER_NAME = ECS_CLUSTER_NAME
         self.client = boto3.client('ecs')
         self.env_vars = env_vars
         self.task_definition = task_definition
@@ -17,7 +17,7 @@ class FargateUtil:
     def create_fargate_container(self):
         try:
             response = self.client.run_task(
-                cluster=self.cluster_name,
+                cluster=self.ECS_CLUSTER_NAME,
                 launchType="FARGATE",
                 taskDefinition=self.task_definition,
                 count=1,
@@ -41,10 +41,10 @@ class FargateUtil:
     def is_task_with_tags_exists(self):
         try:
             desired_tags = self.get_task_tags()
-            tasks_response = self.client.list_tasks(cluster=self.cluster_name)
+            tasks_response = self.client.list_tasks(cluster=self.ECS_CLUSTER_NAME)
             for task_arn in tasks_response.get('taskArns'):
                 current_task_details = self.client.describe_tasks(
-                    cluster=self.cluster_name,
+                    cluster=self.ECS_CLUSTER_NAME,
                     tasks=[task_arn],
                     include=['TAGS'],
                 )
@@ -52,7 +52,7 @@ class FargateUtil:
                     if self._tags_match(task_data.get('tags', []), desired_tags):
                         self.logger.info(f"Located task with ARN '{task_arn}' matching the specified tags.")
                         return True
-            self.logger.info(f"No tasks matching the provided tags were found in cluster '{self.cluster_name}'.")
+            self.logger.info(f"No tasks matching the provided tags were found in cluster '{self.ECS_CLUSTER_NAME}'.")
             return False
         except Exception as e:
             self.logger.error(f"Error checking if task with tags exists: {e}")
@@ -60,9 +60,9 @@ class FargateUtil:
 
     def check_task_status(self, tags):
         try:
-            list_tasks_response = self.client.list_tasks(cluster=self.cluster_name)
+            list_tasks_response = self.client.list_tasks(cluster=self.ECS_CLUSTER_NAME)
             for task_arn in list_tasks_response.get("taskArns", []):
-                describe_task_response = self.client.describe_tasks(cluster=self.cluster_name, tasks=[task_arn], include=['TAGS'])
+                describe_task_response = self.client.describe_tasks(cluster=self.ECS_CLUSTER_NAME, tasks=[task_arn], include=['TAGS'])
                 task = describe_task_response["tasks"][0]
                 if self._tags_match(task.get('tags', []), tags):
                     self.logger.debug(f"Task Status: {task['lastStatus']}")
