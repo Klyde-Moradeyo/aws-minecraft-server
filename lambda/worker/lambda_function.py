@@ -9,7 +9,6 @@ from config import *
 from utils.ec2 import EC2Util
 from utils.env_manager import EnvironmentVariables
 from utils.event_parser import APIEventParser
-from utils.fargate import Fargate
 from utils.logger import setup_logging
 from utils.minecraft import MinecraftServer
 from utils.s3 import S3Util
