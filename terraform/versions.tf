@@ -9,7 +9,7 @@ terraform {
 
   backend "s3" {
     bucket  = "terraform-state-s3-pfqdhvmq"
-    key     = "aws-minecraft-server/dev/terraform.tfstate"
+    key     = "aws-minecraft-server/<GITHUB_BRANCH>/terraform.tfstate"
     region  = "eu-west-2"
     encrypt = true
   }
