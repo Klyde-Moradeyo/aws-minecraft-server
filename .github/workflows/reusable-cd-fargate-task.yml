@@ -74,13 +74,11 @@ jobs:
 
         - name: Initialize Terraform Env
           working-directory: ${{ inputs.tf_config_dir }}
-          env:
-            TF_TOKEN_app_terraform_io: ${{ secrets.tf_api_token }}
           run: |
             terraform init
 
             # Get Terraform outputs
-            ECR_REPO_NAME=$(terraform output -raw ecr_repository_name)
+            ECR_REPO_NAME=$(terraform output -raw ecr_mc_world_archive_repository_name)
 
             # Create Env Vars
             echo "ECR_REPO_NAME=$ECR_REPO_NAME" >> $GITHUB_ENV
