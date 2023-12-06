@@ -30,8 +30,6 @@ on:
         required: true
       aws_key:
         required: true
-      tf_api_token:
-        required: true
       ssh_private_key:
         required: true
 
