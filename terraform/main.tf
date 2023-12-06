@@ -270,7 +270,9 @@ module "request_lambda" {
   ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
   ecs_cluster_name = module.ecs_cluster.ecs_cluster_name
   ecs_mc_archive_task_definition_name = module.ecs_cluster.mc_archive_task_definition_name
-  mc_archive_task_container_name = module.ecs_cluster.mc_archive_task_container_name
+  ecs_mc_archive_task_container_name = module.ecs_cluster.mc_archive_task_container_name
+  ecs_subnet_id = module.vpc.subnet_id
+  ecs_security_group_id = module.security_group.security_group_id
 
   # Module tags
   tags = module.tags.tags
