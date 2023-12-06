@@ -11,7 +11,7 @@ output "ecs_task_definition_family" {
   value       = aws_ecs_task_definition.my_task.family
 }
 
-output "ecs_task_definition_container_name" {
+output "mc_archive_task_container_name" {
   description = "The name of the container in the ECS task definition"
   value       = jsondecode(aws_ecs_task_definition.my_task.container_definitions)[0].name
 }
