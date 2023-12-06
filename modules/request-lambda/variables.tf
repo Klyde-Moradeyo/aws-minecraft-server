@@ -122,3 +122,16 @@ variable "worker_lambda_arn" {
   description = "The arn of the worker lambda function"
   type        = string
 }
+
+########################
+#         ECS          #
+########################
+variable "ecs_cluster_name" {
+  description = "ECS Cluster Name of the environment"
+  type        = string
+}
+
+variable "ecs_mc_archive_task_definition_name" {
+  description = "ECS Task Defintion Namr"
+  type        = string
+}

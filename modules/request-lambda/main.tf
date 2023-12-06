@@ -28,6 +28,8 @@ resource "aws_lambda_function" "lambda_function" {
       WORKER_LAMBDA_NAME            = var.worker_lambda_name
       DYNAMO_DB_TABLE_NAME          = var.dynamodb_table_name
       SSM_REQUEST_LAMBDA_AUTH_TOKEN = "/${var.ssm_api_key_name}"
+      ECS_CLUSTER_NAME              = var.ecs_cluster_name
+      ECS_MC_ARCHIVE_TASK_DEFINITION_NAME = var.ecs_mc_archive_task_definition_name
       TAGS_JSON                     = jsonencode(var.tags)
     }
   }
