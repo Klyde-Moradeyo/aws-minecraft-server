@@ -32,7 +32,7 @@ class EC2Util:
             self.logger.info(f"EC2 Instance '{self.instance_id}' Exists!")
 
             # If EC2 Instance is in terminated state, we will count it as not existing
-            if self.check_instance_status() is "terminated":
+            if self.check_instance_status() == "terminated":
                 return False
             
             return True
