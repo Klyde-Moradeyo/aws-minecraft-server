@@ -77,25 +77,28 @@ jobs:
           run: |
             terraform init
 
-            # Get Terraform outputs
+            # Set RUN_STEPS based on Terraform output existence
+            if terraform output -raw ecr_mc_world_archive_repository_name; then
             ECR_REPO_NAME=$(terraform output -raw ecr_mc_world_archive_repository_name)
-
-            # Create Env Vars
             echo "ECR_REPO_NAME=$ECR_REPO_NAME" >> $GITHUB_ENV
-
-            # Hide the Environment Variables
-            echo "::add-mask::$ECR_REPO_NAME"
+            echo "RUN_STEPS=true" >> $GITHUB_ENV
+            else
+            echo "RUN_STEPS=false" >> $GITHUB_ENV
+            fi
 
         - name: Download Docker image from artifact
           uses: actions/download-artifact@v2
+          if: ${{ env.RUN_STEPS == 'true' }}
           with:
             name: ${{ inputs.image_artifact_name }}
         
         - name: Load Docker image
+          if: ${{ env.RUN_STEPS == 'true' }}
           run: |
             docker load < ${{ inputs.image_tar_name }}
 
         - name: Push Fargate Image
+          if: ${{ env.RUN_STEPS == 'true' }}
           working-directory: ${{ inputs.working_dir }}
           env:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
