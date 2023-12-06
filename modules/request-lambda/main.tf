@@ -30,7 +30,9 @@ resource "aws_lambda_function" "lambda_function" {
       SSM_REQUEST_LAMBDA_AUTH_TOKEN = "/${var.ssm_api_key_name}"
       ECS_CLUSTER_NAME              = var.ecs_cluster_name
       ECS_MC_ARCHIVE_TASK_DEFINITION_NAME = var.ecs_mc_archive_task_definition_name
-      ECS_MC_ARCHIVE_CONTAINER_NAME = var.mc_archive_task_container_name
+      ECS_MC_ARCHIVE_CONTAINER_NAME = var.ecs_mc_archive_task_container_name
+      ECS_SUBNET_ID = var.ecs_subnet_id
+      ECS_SECURITY_GROUP_ID =var.ecs_security_group_id
       TAGS_JSON                     = jsonencode(var.tags)
     }
   }

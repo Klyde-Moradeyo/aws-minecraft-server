@@ -136,7 +136,17 @@ variable "ecs_mc_archive_task_definition_name" {
   type        = string
 }
 
-variable "mc_archive_task_container_name" {
+variable "ecs_mc_archive_task_container_name" {
   description = "ECS Task Container Namr"
+  type        = string
+}
+
+variable "ecs_subnet_id" {
+  description = "ECS Subnet ID"
+  type        = string
+}
+
+variable "ecs_security_group_id" {
+  description = "ECS Security Group ID"
   type        = string
 }
