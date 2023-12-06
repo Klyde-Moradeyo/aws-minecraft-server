@@ -269,7 +269,7 @@ module "request_lambda" {
   git_branch          = var.git_branch
   ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
   ecs_cluster_name = module.ecs_cluster.ecs_cluster_name
-  ecs_mc_archive_task_definition_name = module.ecs_cluster.ecs_mc_archive_task_definition_name
+  ecs_mc_archive_task_definition_name = module.ecs_cluster.mc_archive_task_definition_name
 
   # Module tags
   tags = module.tags.tags
