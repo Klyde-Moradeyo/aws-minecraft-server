@@ -92,13 +92,15 @@ jobs:
           run: |
             terraform init
 
-            # Set RUN_STEPS based on Terraform output existence
-            if terraform output -raw ecr_mc_world_archive_repository_name; then
-            ECR_REPO_NAME=$(terraform output -raw ecr_mc_world_archive_repository_name)
+            # Attempt to capture the Terraform output
+            ECR_REPO_NAME=$(terraform output -raw ecr_mc_world_archive_repository_name || echo "")
+
+            # Check if the Terraform output is non-empty
+            if [ -z "$ECR_REPO_NAME" ]; then
+            echo "RUN_STEPS=false" >> $GITHUB_ENV
+            else
             echo "ECR_REPO_NAME=$ECR_REPO_NAME" >> $GITHUB_ENV
             echo "RUN_STEPS=true" >> $GITHUB_ENV
-            else
-            echo "RUN_STEPS=false" >> $GITHUB_ENV
             fi
 
         - name: Download Docker image from artifact
