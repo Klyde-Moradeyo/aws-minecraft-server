@@ -31,8 +31,8 @@ jobs:
 
   # Build Fargate
   ci-fargate:
-    name: CI Fargate MC World Archiver
-    uses: Klyde-Moradeyo/minecraft-AWS-server/.github/workflows/reusable-ci-fargate-task.yml@github-workflows
+    name: Fargate MC World Archiver - CI
+    uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-ci-fargate-task.yml@github-workflows
     with:
       TF_CONFIG_DIR: terraform
       WORKING_DIR: "fargate/mc_world_archiver"
@@ -43,11 +43,12 @@ jobs:
       ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
   cd-fargate:
-    uses: Klyde-Moradeyo/minecraft-AWS-server/.github/workflows/reusable-cd-fargate-task.yml@github-workflows
+    name: Fargate MC World Archiver - CD
+    uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-cd-fargate-task.yml@github-workflows
     needs: [ ci-fargate ]
     with:
-      TF_CONFIG_DIR: terraform
-      WORKING_DIR: "fargate/mc_world_archiver"
+      tf_config_dir: terraform
+      working_dir: "fargate/mc_world_archiver"
       image_artifact_name: ${{ needs.ci-fargate.outputs.artifact_name }}
       image_tar_name: ${{ needs.ci-fargate.outputs.docker_tar_file_name }}
       image_tag: ${{ needs.ci-fargate.outputs.image_tag }}
