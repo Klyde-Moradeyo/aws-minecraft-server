@@ -59,7 +59,7 @@ jobs:
       ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}  
 
   cd-terraform-apply:
-    needs: [ ci-worker-lambda, ci-request-lambda, cd-fargate ]
+    needs: [ ci-worker-lambda, ci-request-lambda ]
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-cd-terraform-apply.yml@github-workflows
     with:
       config_dir: terraform
