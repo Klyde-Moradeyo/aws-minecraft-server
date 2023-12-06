@@ -8,7 +8,7 @@ def handle(task_data, envs, mc_server, ec2_util, logger):
 
     if ec2_util.instance_exists():
         # Don't do anything if ec2 instance is about to turn off
-        if ec2_util.check_instance_status() in ["Stopping", "Pending", "Shutting Down"]:
+        if ec2_util.check_instance_status() in ["stopping", "pending", "shutting-down"]:
             status = "EC2_INSTANCE_SHUTTING_DOWN"
             info = f"Cannot run command as EC2 instance is still shutting down"
             task_id = None
