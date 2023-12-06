@@ -70,7 +70,22 @@ jobs:
             mkdir -p ~/.ssh
             echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts 
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            
+        - name: Set Terraform State File Location
+          working-directory: ${{ inputs.tf_config_dir }}
+          run: |
+            # Define the branch name
+            BRANCH=${{ github.ref }}
+            BRANCH=${BRANCH#refs/heads/}
+
+            # Path to your Terraform file
+            TF_FILE="versions.tf"
+
+            # Use sed to replace the placeholder
+            sed -i "s/<GITHUB_BRANCH>/$BRANCH/g" $TF_FILE
+
+            cat $TF_FILE   
 
         - name: Initialize Terraform Env
           working-directory: ${{ inputs.tf_config_dir }}
