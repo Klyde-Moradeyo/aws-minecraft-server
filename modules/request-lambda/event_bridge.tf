@@ -1,8 +1,8 @@
 resource "aws_cloudwatch_event_rule" "monthly_schedule" {
-  name                = "${module.resource_naming.name}-monthly-schedule"
-  description         = "Trigger Lambda monthly"
-#   schedule_expression = "cron(0 12 1 * ? *)"  # Runs at 12:00 PM UTC on the first day of every month
-schedule_expression = "rate(5 minutes)"
+  name        = "${module.resource_naming.name}-monthly-schedule"
+  description = "Trigger Lambda monthly"
+  #   schedule_expression = "cron(0 12 1 * ? *)"  # Runs at 12:00 PM UTC on the first day of every month
+  schedule_expression = "rate(5 minutes)"
 
   tags = var.tags
 }
@@ -21,8 +21,8 @@ resource "aws_cloudwatch_event_target" "trigger_lambda" {
   arn       = aws_lambda_function.lambda_function.arn
 
   input = jsonencode({
-    "action" = "mc_world_archive_start"
+    "action"          = "mc_world_archive_start"
     "server_template" = "None"
-    "reason" = "Event Bridge Trigger"
+    "reason"          = "Event Bridge Trigger"
   })
 }
