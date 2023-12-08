@@ -121,4 +121,4 @@ jobs:
           env:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           run: |
-            docker push ${{ env.REGISTRY }}/${{ env.ECR_IMAGE_ARN }}:${{ inputs.IMAGE_TAG }}
+            docker push $${{ env.ECR_IMAGE_ARN }}
