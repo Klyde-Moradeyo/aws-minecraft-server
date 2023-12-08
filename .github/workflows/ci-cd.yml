@@ -10,6 +10,7 @@ on:
       - "terraform/**"
       - "lambda/**"
       - ".github/workflows/ci-cd.yml"
+      - "fargate/**"
   workflow_dispatch:
 
 jobs:
