@@ -26,4 +26,4 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install -r requirements.txt 
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["python", "main.py"]
