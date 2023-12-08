@@ -141,6 +141,9 @@ module "ecs_cluster" {
   # SSM
   ssm_git_private_key_name = "dark-mango-bot-private-key"
 
+  # Task Defintion 
+  mc_archive_ecr_repo_name = module.mc_monitoring_ecr_registry.ecr_repository_name
+
   # S3 
   minecraft_world_s3_bucket  = module.s3_mc_world.s3_bucket_arn
   minecraft_assets_s3_bucket = module.s3_mc_server_assets.s3_bucket_arn
