@@ -9,10 +9,7 @@ class APIEventParser:
         self.body = self._parse_body(event)
         self.header = self._parse_headers(event)
         # self.isAuthorized = Authorization.check("ssm_param_name")
-
-        # For debuging later
-        # self.logger.info(f"query params: {self.parse_query_parameters(event)}")
-        # self.logger.info(f"path params: \n{self.parse_path_parameters(event)}")
+        
         self.logger.info(f"body: {format_dictionary(self.body)}")
 
     def parse(self):
