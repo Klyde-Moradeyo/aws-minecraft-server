@@ -94,7 +94,7 @@ jobs:
             terraform init
 
             # Attempt to capture the Terraform output
-            ECR_IMAGE_ARN=$(terraform output -raw ecs_mc_archive_image_arn || echo "")
+            ECR_IMAGE_ARN=$(terraform output -raw ecr_mc_world_archive_repository_name || echo "")
 
             # Check if the Terraform output is non-empty
             if [ -z "$ECR_IMAGE_ARN" ]; then
