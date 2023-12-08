@@ -94,13 +94,13 @@ jobs:
             terraform init
 
             # Attempt to capture the Terraform output
-            ECR_REPO_NAME=$(terraform output -raw ecr_mc_world_archive_repository_name || echo "")
+            ECR_IMAGE_ARN=$(terraform output -raw ecs_mc_archive_image_arn || echo "")
 
             # Check if the Terraform output is non-empty
-            if [ -z "$ECR_REPO_NAME" ]; then
+            if [ -z "$ECR_IMAGE_ARN" ]; then
                 echo "RUN_STEPS=false" >> $GITHUB_ENV
             else
-                echo "ECR_REPO_NAME=$ECR_REPO_NAME" >> $GITHUB_ENV
+                echo "ECR_IMAGE_ARN=$ECR_IMAGE_ARN" >> $GITHUB_ENV
                 echo "RUN_STEPS=true" >> $GITHUB_ENV
             fi
 
@@ -121,4 +121,4 @@ jobs:
           env:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           run: |
-            docker push ${{ env.REGISTRY }}/${{ env.ECR_REPO_NAME }}:${{ inputs.IMAGE_TAG }}
+            docker push ${{ env.REGISTRY }}/${{ env.ECR_IMAGE_ARN }}:${{ inputs.IMAGE_TAG }}
