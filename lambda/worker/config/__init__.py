@@ -36,7 +36,7 @@ REMOTE_MINECRAFT_WORLD_PATH = f"{REMOTE_MINECRAFT_SERVER_PATH}/world"
 CONTAINER_MINECRAFT_WORLD_PATH = f"./data/world"
 
 # --- Minecraft Server Memory Buffer ---
-MEMORY_BUFFER = 0.80 # Allocate 80% of the operating systems memory just for minecraft
+MEMORY_BUFFER = 0.95 # Allocate 95% of the operating systems memory just for minecraft
 MIN_OS_MEMORY = 1 # Amount of Memory to Reserve for the EC2's operating system
 
 # --- Minecraft Server RCON PORT  ---
