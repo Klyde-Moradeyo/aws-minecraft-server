@@ -128,7 +128,6 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
     monitor_config = generate_env_file(monitor_config)
     ssh_util.scp_to_machine(monitor_config, REMOTE_MC_MONITOR_ENV_FILE_PATH)
 
-
     # Start docker compose from server folder
     if ssh_util.file_exists(REMOTE_DOCKER_COMPOSE_PATH):
         ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose up -d --build")
