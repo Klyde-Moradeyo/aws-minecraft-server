@@ -276,6 +276,8 @@ module "request_lambda" {
   ecs_mc_archive_task_container_name = module.ecs_cluster.mc_archive_task_container_name
   ecs_subnet_id = module.vpc.subnet_id
   ecs_security_group_id = module.security_group.security_group_id
+  s3_minecraft_world_bucket_url  = module.s3_mc_world.s3_bucket_uri
+  s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.s3_bucket_uri
 
   # Module tags
   tags = module.tags.tags
