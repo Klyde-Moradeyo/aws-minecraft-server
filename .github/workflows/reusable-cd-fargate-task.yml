@@ -114,6 +114,12 @@ jobs:
           if: ${{ env.RUN_STEPS == 'true' }}
           run: |
             docker load < ${{ inputs.image_tar_name }}
+
+        - name: Tag Docker image
+          if: ${{ env.RUN_STEPS == 'true' }}
+          run: |
+            docker images
+            # docker tag [source_image]:[tag] ${{ env.ECR_IMAGE_ARN }}:${{ inputs.image_tag }}
                 
         - name: Push Fargate Image
           if: ${{ env.RUN_STEPS == 'true' }}

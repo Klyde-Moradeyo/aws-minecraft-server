@@ -99,13 +99,13 @@ jobs:
             terraform init
 
             # Attempt to capture the Terraform output
-            ECR_IMAGE_ARN=$(terraform output -raw ecs_mc_archive_image_arn || echo "")
+            ECR_REPO_NAME=$(terraform output -raw ecr_mc_world_archive_repository_name || echo "")
 
             # Check if the Terraform output is non-empty
-            if [ -z "$ECR_IMAGE_ARN" ]; then
+            if [ -z "$ECR_REPO_NAME" ]; then
                 echo "RUN_STEPS=false" >> $GITHUB_ENV
             else
-                echo "ECR_IMAGE_ARN=$ECR_IMAGE_ARN" >> $GITHUB_ENV
+                echo "ECR_REPO_NAME=$ECR_REPO_NAME" >> $GITHUB_ENV
                 echo "RUN_STEPS=true" >> $GITHUB_ENV
             fi
 
