@@ -37,3 +37,7 @@ class S3Util:
         """
         server_assets = self.get_server_assets_path()
         return f"{server_assets}/mod_config"
+    
+    def update_server_template(self, template_id):
+        self.server_template = template_id
+        return self.server_template

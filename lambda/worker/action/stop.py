@@ -30,6 +30,7 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
     # Get Server Template
     server_template = ssh_util.read_file_output(REMOTE_TEMPLATE_INFO_FILE_PATH)
     mc_server.update_server_template(server_template)
+    s3_util.update_server_template(server_template)
 
     # Back up the world to S3 Bucket
     world_save_enabled_str = mc_server.get_server_config(LOCAL_BASE_CONFIG_PATH, LOCAL_TEMPLATE_CONFIG_PATH).get("SAVE_MINECRAFT_WORLD").lower()
