@@ -8,8 +8,8 @@ logger = setup_logging()
 OUTPUT_ARCHIVE_FILE_NAME = "minecraft-world-archive.bundle"
 
 # --- S3 Buckets ---
-S3_MC_WORLD_BUCKET = os.getenv("S3_MC_WORLD_BUCKET").replace("s3://", "")
-S3_MC_ASSETS_BUCKET = os.getenv("S3_MC_ASSETS_BUCKET").replace("s3://", "")
+S3_MC_WORLD_BUCKET = os.getenv("S3_MC_WORLD_URI").replace("s3://", "")
+S3_MC_ASSETS_BUCKET = os.getenv("S3_MC_ASSETS_URI").replace("s3://", "")
 
 # --- S3 Buckets Paths ---
 BASE_S3_LATEST_MINECRAFT_WORLD_PATH = "minecraft-world/{template_id}"
