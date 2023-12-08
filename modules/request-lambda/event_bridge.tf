@@ -1,9 +1,7 @@
 resource "aws_cloudwatch_event_rule" "monthly_schedule" {
   name        = "${module.resource_naming.name}-monthly-schedule"
   description = "Trigger Lambda monthly"
-  #   schedule_expression = "cron(0 12 1 * ? *)"  # Runs at 12:00 PM UTC on the first day of every month
-  schedule_expression = "rate(5 minutes)"
-
+  schedule_expression = "cron(0 12 1 * ? *)"  # Runs at 12:00 PM UTC on the first day of every month
   tags = var.tags
 }
 
