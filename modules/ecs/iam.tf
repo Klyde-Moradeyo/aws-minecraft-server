@@ -136,7 +136,7 @@ resource "aws_iam_policy" "mc_allow_ecs_to_s3" {
           "s3:CreateMultipartUpload"
         ]
         Resource = [
-          "${var.minecraft_assets_s3_bucket}/*/assets/world_archive/*"
+          "${var.minecraft_assets_s3_bucket}/*/assets/world_bck_up/*"
         ]
       }
     ]
