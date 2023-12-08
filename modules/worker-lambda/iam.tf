@@ -162,7 +162,7 @@ data "aws_iam_policy_document" "dynamodb_access" {
       "dynamodb:PutItem",
       "dynamodb:UpdateItem",
       "dynamodb:Query",
-      "dynamodb:Scan" 
+      "dynamodb:Scan"
     ]
     resources = ["arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_table_name}"]
   }
