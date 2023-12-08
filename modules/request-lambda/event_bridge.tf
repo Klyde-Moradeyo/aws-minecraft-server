@@ -21,8 +21,10 @@ resource "aws_cloudwatch_event_target" "trigger_lambda" {
   arn       = aws_lambda_function.lambda_function.arn
 
   input = jsonencode({
-    "action"          = "mc_world_archive_start"
-    "server_template" = "None"
-    "reason"          = "Event Bridge Trigger"
+    "body": {
+      "action"          = "mc_world_archive_start",
+      "server_template" = "None",
+      "reason"          = "Event Bridge Trigger"
+    }
   })
 }
