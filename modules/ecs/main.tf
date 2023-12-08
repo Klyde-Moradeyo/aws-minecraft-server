@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "my_task" {
 
   container_definitions = jsonencode([{
     name      = local.container_name
-    image     = "${data.aws_caller_identity.aws.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${local.container_name}:latest"
+    image     = "${data.aws_caller_identity.aws.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.mc_archive_ecr_repo_name}:latest"
     cpu       = var.task_cpu_limit
     memory    = var.task_memory_limit
     essential = true

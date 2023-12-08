@@ -15,6 +15,14 @@ variable "aws_region" {
 }
 
 ########################
+#         ECR          #
+########################
+variable "mc_archive_ecr_repo_name" {
+  description = "MC Archive ECR Repo name"
+  type        = string
+}
+
+########################
 #         ECS          #
 ########################
 variable "task_cpu_limit" {
