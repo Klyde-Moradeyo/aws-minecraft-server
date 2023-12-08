@@ -38,8 +38,20 @@ services:
     ports:
       - 9150:8000
     restart: unless-stopped
-    mem_limit: 128M
-    cpus: 0.1
+    mem_limit: 64M
+    cpus: 0.02
+
+  mc-player-activity-watchdog:
+    container_name: mc-player-activity-watchdog
+    image: python:3.10-slim
+    env_file: config/.monitoring-env
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: /bin/bash -c "pip install -r scripts/player-activity-monitor/requirements.txt && python scripts/player-activity-monitor/monitoring.py"
+    restart: unless-stopped
+    mem_limit: 64M
+    cpus: 0.02
 
 volumes:
   minecraftdata:
