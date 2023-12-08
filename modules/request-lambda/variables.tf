@@ -150,3 +150,16 @@ variable "ecs_security_group_id" {
   description = "ECS Security Group ID"
   type        = string
 }
+
+########################
+#       S3 Bucket      #
+########################
+variable "s3_minecraft_world_bucket_url" {
+  description = "Minecraft world bucket URI"
+  type        = string
+}
+
+variable "s3_minecraft_assets_bucket_url" {
+  description = "Minecraft assets bucket URI"
+  type        = string
+}

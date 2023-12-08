@@ -31,6 +31,8 @@ resource "aws_lambda_function" "lambda_function" {
       ECS_CLUSTER_NAME              = var.ecs_cluster_name
       ECS_MC_ARCHIVE_TASK_DEFINITION_NAME = var.ecs_mc_archive_task_definition_name
       ECS_MC_ARCHIVE_CONTAINER_NAME = var.ecs_mc_archive_task_container_name
+      S3_MC_WORLD_URI               = var.s3_minecraft_world_bucket_url
+      S3_MC_ASSETS_URI              = var.s3_minecraft_assets_bucket_url
       ECS_SUBNET_ID = var.ecs_subnet_id
       ECS_SECURITY_GROUP_ID =var.ecs_security_group_id
       TAGS_JSON                     = jsonencode(var.tags)
