@@ -8,21 +8,13 @@ import logging
 from mcrcon import MCRcon
 from mcstatus import JavaServer
 
-RCON_HOST = os.environ["RCON_PASSWORD"]
+RCON_HOST = os.environ["RCON_HOST"]
 RCON_PORT = os.environ["RCON_PORT"]
 RCON_PASS = os.environ["RCON_PASSWORD"]
-API_GATEWAY_URL = os.environ["API_URL"]
+API_GATEWAY_URL = os.environ["API_GW_URL"]
 INACTIVE_TIME =  120 # 1800  # 30 minutes |  Time in seconds for inactive players check
 CHECK_INTERVAL = 60  # Time in seconds for the check interval
-LOG_FILE = 'server_monitoring.log'  # Log file name
-
-
-######################################################################
-#                         Helper Functions                           #
-######################################################################
-def get_env_variables() -> Dict[str, str]:
-    env_vars = ["RCON_PORT", "API_URL", "RCON_PASS" , "PROMETHEUS_PORT"]
-    return {var: os.getenv(var) for var in env_vars}
+LOG_FILE = 'logs/player_activity_watchdog.log'  # Log file name
 
 ######################################################################
 #                               LOG                                  #
@@ -98,7 +90,7 @@ class MonitorError(Exception):
     pass
 
 class MONITOR:
-    def __init__(self, server, log, inactive_time, check_interval, api_url, rcon_pass, envs):
+    def __init__(self, server, log, inactive_time, check_interval, api_url, rcon_pass):
         self.server = server
         self.log = log
         self.inactive_time = inactive_time
@@ -171,10 +163,6 @@ class MONITOR:
 
                 server_info = { **basic_info }
 
-                # Update the metrics
-                self.online_players_gauge.set(server_info['players_online'])
-                self.server_up_gauge.set(server_info['online'])
-
                 if server_info.get('players_online', 0) == 0:
                     if self.inactive_players_timer_start is None:
                         self.inactive_players_timer_start = time.time()
@@ -201,16 +189,7 @@ class MONITOR:
             time.sleep(self.check_interval)
 
 if __name__ == "__main__":
-    envs = get_env_variables()
-    RCON_HOST = 'mc-server'
-    RCON_PORT = envs["RCON_PORT"]
-    RCON_PASS = envs["RCON_PASS"]
-    API_GATEWAY_URL = envs["API_URL"] + "/command"
-    INACTIVE_TIME =  1800  # 30 minutes
-    CHECK_INTERVAL = 60  # Time in seconds for the check interval
-    LOG_FILE = 'server_monitoring.log'  # Log file name
-
     minecraft_server = JavaServer.lookup(f"{RCON_HOST}:{RCON_PORT}")
     log = LOG(LOG_FILE)
-    monitor = MONITOR(minecraft_server, log, INACTIVE_TIME, CHECK_INTERVAL, API_GATEWAY_URL, RCON_PASS, envs)
+    monitor = MONITOR(minecraft_server, log, INACTIVE_TIME, CHECK_INTERVAL, API_GATEWAY_URL, RCON_PASS)
     monitor.run()

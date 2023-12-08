@@ -46,7 +46,7 @@ services:
     image: klydem/mc-player-activity-monitor
     env_file: config/.monitoring-env
     volumes:
-      - .:/app
+      - .:/app/logs/
     restart: unless-stopped
     mem_limit: 64M
     cpus: 0.02
