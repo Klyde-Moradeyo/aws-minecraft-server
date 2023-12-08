@@ -3,6 +3,8 @@ resource "aws_cloudwatch_event_rule" "monthly_schedule" {
   description         = "Trigger Lambda monthly"
 #   schedule_expression = "cron(0 12 1 * ? *)"  # Runs at 12:00 PM UTC on the first day of every month
 schedule_expression = "rate(5 minutes)"
+
+  tags = var.tags
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
