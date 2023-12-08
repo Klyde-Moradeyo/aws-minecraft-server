@@ -132,7 +132,8 @@ resource "aws_iam_policy" "mc_allow_ecs_to_s3" {
         Action = [
           "s3:PutObject",
           "s3:GetObject",
-          "s3:DeleteObject"
+          "s3:DeleteObject",
+          "s3:CreateMultipartUpload"
         ]
         Resource = [
           "${var.minecraft_assets_s3_bucket}/*/assets/world_archive/*"
