@@ -22,6 +22,7 @@ LOG_FILE = 'logs/player_activity_watchdog.log'  # Log file name
 class LOG:
     def __init__(self, log_file):
         self.log_file = log_file
+        self.logger = setup_logging()
 
     def format_data(self, online, players_online, version, time_without_players, timer_status):  
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -38,10 +39,10 @@ class LOG:
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if isinstance(data, dict):
             timestamped_data = {'timestamp': timestamp, **data}
-            print(timestamped_data)
+            self.logger.info(timestamped_data)
             self.log_to_file(', '.join([f"{k}: {v}" for k, v in timestamped_data.items()]))
         else:
-            print(f"{timestamp}: {data}")
+            self.logger.info(f"{timestamp}: {data}")
             self.log_to_file(f"{timestamp}: {data}")
 
     def log_to_file(self, data):
@@ -121,20 +122,22 @@ class MONITOR:
         """
         Sends data to the API and returns the response.
         """
+        url = self.api_url + f"/{endpoint}"
         data = { "action": command, "server_template": "None" }
         data["metadata"] = {
-            "requestTime": datetime.datetime.now().isoformat(),
+            "requestTime": datetime.now().isoformat(),
             "reason": str(reason)
         }
 
         self.logger.info(f"API Payload: {data}")
         headers = {'Content-Type': 'application/json'}
 
+        self.logger.info(f"Sending Data to API at '{url}'")
         for attempt in range(retries):
-            self.logger.info(f"Sending Data to API at endpoint {endpoint} (Attempt: {attempt + 1})")
+            self.logger.info(f"Sending Data to API at endpoint '{endpoint}' (Attempt: {attempt + 1})")
 
             try:
-                response = requests.post(self.api_url, headers=headers, json=data, timeout=timeout)
+                response = requests.post(url, headers=headers, json=data, timeout=timeout)
                 response.raise_for_status()
 
                 self.logger.info(f"Received successful response from {endpoint}")
@@ -171,7 +174,7 @@ class MONITOR:
                     elif time.time() - self.inactive_players_timer_start >= self.inactive_time: # Send to API Gateway if no players for inactive_time
                         data = self.log.format_data(server_info['online'], server_info['players_online'], server_info['version'], self.get_inactive_time_string(), "EXPIRED - SIGNALING MC SERVER STOP")
                         self.log.log(data)
-                        self.send_to_api("stop", f"Server Automation Script: User's are inactive for '{self.get_inactive_time_string}.' Sending stop request...")
+                        self.send_to_api("stop", f"Server Automation Script: User's are inactive for '{self.get_inactive_time_string()}.' Sending stop request...")
                         self.inactive_players_timer_start = None
                     else:
                         elapsed_time = int(time.time() - self.inactive_players_timer_start)
