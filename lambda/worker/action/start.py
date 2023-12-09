@@ -116,7 +116,9 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
     ssh_util.scp_to_machine(server_config, REMOTE_MC_SERVER_ENV_FILE_PATH)
 
     # Generate Monitoring Config and Copy to Remote machine
-    monitor_config = { 
+    monitor_config = {
+        "SERVER_HOST": "mc-server",
+        "SERVER_PORT": additional_configs["SERVER_PORT"],
         "RCON_HOST": "mc-server",
         "RCON_PORT": additional_configs["RCON_PORT"], 
         "RCON_PASSWORD": additional_configs["RCON_PASSWORD"],
