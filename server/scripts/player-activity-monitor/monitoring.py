@@ -8,6 +8,8 @@ import logging
 from mcrcon import MCRcon
 from mcstatus import JavaServer
 
+SERVER_HOST = os.environ["SERVER_HOST"]
+SERVER_PORT = os.environ["SERVER_PORT"]
 RCON_HOST = os.environ["RCON_HOST"]
 RCON_PORT = os.environ["RCON_PORT"]
 RCON_PASS = os.environ["RCON_PASSWORD"]
@@ -192,7 +194,7 @@ class MONITOR:
             time.sleep(self.check_interval)
 
 if __name__ == "__main__":
-    minecraft_server = JavaServer.lookup(f"{RCON_HOST}:{RCON_PORT}")
+    minecraft_server = JavaServer.lookup(f"{SERVER_HOST}:{SERVER_PORT}")
     log = LOG(LOG_FILE)
     monitor = MONITOR(minecraft_server, log, INACTIVE_TIME, CHECK_INTERVAL, API_GATEWAY_URL, RCON_PASS)
     monitor.run()
