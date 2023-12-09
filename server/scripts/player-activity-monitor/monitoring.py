@@ -12,7 +12,7 @@ RCON_HOST = os.environ["RCON_HOST"]
 RCON_PORT = os.environ["RCON_PORT"]
 RCON_PASS = os.environ["RCON_PASSWORD"]
 API_GATEWAY_URL = os.environ["API_GW_URL"]
-INACTIVE_TIME =  120 # 1800  # 30 minutes |  Time in seconds for inactive players check
+INACTIVE_TIME =  1200  # 20 minutes |  Time in seconds for inactive players check
 CHECK_INTERVAL = 60  # Time in seconds for the check interval
 LOG_FILE = 'logs/player_activity_watchdog.log'  # Log file name
 
