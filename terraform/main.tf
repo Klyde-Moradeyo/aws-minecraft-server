@@ -308,7 +308,7 @@ module "worker_lambda" {
   git_branch                     = var.git_branch
   s3_minecraft_world_bucket_url  = module.s3_mc_world.s3_bucket_uri
   s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.s3_bucket_uri
-  api_gateway_url                = module.api_gateway.api_gateway_url
+  api_gateway_url                = "${module.api_gateway.api_gateway_url}/${module.api_gateway.stage_name}"
   ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
 
   # Module tags
