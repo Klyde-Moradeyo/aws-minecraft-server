@@ -86,7 +86,7 @@ module "security_group" {
     {
       from_port        = 24454
       to_port          = 24454
-      protocol         = "tcp"
+      protocol         = "udp"
       cidr_blocks      = [var.allowed_cidrs]
       ipv6_cidr_blocks = []
       description      = "Simple Voice Chat Mod"
