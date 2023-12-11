@@ -3,7 +3,6 @@ import boto3
 from botocore.exceptions import ClientError
 from .env_manager import EnvironmentVariables
 from .logger import setup_logging
-from .file_handler import write_to_tmp_file
 
 class EC2Util:
     def __init__(self, instance_id):
@@ -31,6 +30,11 @@ class EC2Util:
         try:
             self.client.describe_instances(InstanceIds=[self.instance_id])
             self.logger.info(f"EC2 Instance '{self.instance_id}' Exists!")
+
+            # If EC2 Instance is in terminated state, we will count it as not existing
+            if self.check_instance_status() == "terminated":
+                return False
+            
             return True
         except ClientError as e:
             if 'InvalidInstanceID.NotFound' in str(e):
@@ -67,8 +71,3 @@ class EC2Util:
         except ClientError as e:
             self.logger.error(f"Error occurred while stopping the instance: {e}")
             raise
-
-    def write_ec2_ssh_key_to_file(self, ssh_key):
-        ec2_ssh_key_path = write_to_tmp_file(ssh_key)
-        os.chmod(ec2_ssh_key_path, 0o600)
-        return ec2_ssh_key_path

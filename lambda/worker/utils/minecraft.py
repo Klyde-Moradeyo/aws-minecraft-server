@@ -128,3 +128,11 @@ class MinecraftServer:
     
     def get_server_port(self):
         return self.port
+    
+    def get_server_ip(self):
+        return self.ip
+    
+    def update_server_template(self, template_id):
+        self.template_id = template_id
+        return self.template_id
+

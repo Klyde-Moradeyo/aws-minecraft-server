@@ -8,13 +8,15 @@ from utils.minecraft import MinecraftServer
 from utils.s3 import S3Util
 from config import *
 
-def handle(server_template, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: MinecraftServer, s3_util: S3Util, logger):   
+def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: MinecraftServer, s3_util: S3Util, logger):
+    logger.info("Handling 'Stop' Action...")
+    status = None
+    info = None
+
     # Establish connection to Ec2 instance
     ssh_key_str = ssm_util.get_param(envs["SSM_GIT_PRIVATE_KEY"])             
     ec2_ssh_key_path = ec2_util.write_ec2_ssh_key_to_file(ssm_util.get_param(envs["SSM_EC2_PRIVATE_KEY"]))
-    ssh_util = SSHUtil(envs["MC_SERVER_IP"], EC2_USERNAME, ec2_ssh_key_path)
-
-    ## To Do: Add a check for if stop template matches running server
+    ssh_util = SSHUtil(event_body["mc_server_ip"], EC2_USERNAME, ec2_ssh_key_path)
 
     # Shutdown minecraft server
     ssh_util.run_command(f"cd {REMOTE_SERVER_FOLDER_PATH} && sudo docker compose down")
@@ -24,6 +26,11 @@ def handle(server_template, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_serve
     git_ssh_key_path = write_to_tmp_file(ssh_key_str)
     git_util = GitUtil(git_ssh_key_path)
     git_util.clone(GIT_REPO_URL, GIT_REPO_PATH, envs["GIT_BRANCH"])
+
+    # Get Server Template
+    server_template = ssh_util.read_file_output(REMOTE_TEMPLATE_INFO_FILE_PATH)
+    mc_server.update_server_template(server_template)
+    s3_util.update_server_template(server_template)
 
     # Back up the world to S3 Bucket
     world_save_enabled_str = mc_server.get_server_config(LOCAL_BASE_CONFIG_PATH, LOCAL_TEMPLATE_CONFIG_PATH).get("SAVE_MINECRAFT_WORLD").lower()
@@ -44,4 +51,5 @@ def handle(server_template, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_serve
     
     status = "MC_SERVER_STOPPED"
     info = "Stopped Minecraft Server Successfully"
+    logger.info("'Stop' Action Complete!")
     return status, info

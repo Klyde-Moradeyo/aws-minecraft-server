@@ -9,7 +9,6 @@ from config import *
 from utils.ec2 import EC2Util
 from utils.env_manager import EnvironmentVariables
 from utils.event_parser import APIEventParser
-from utils.fargate import Fargate
 from utils.logger import setup_logging
 from utils.minecraft import MinecraftServer
 from utils.s3 import S3Util
@@ -24,19 +23,20 @@ class LambdaHandler:
         self.logger = setup_logging()
         
         # Parse the event
+        self.logger.info(event)
         event_parser = APIEventParser(event)
-        event_body = event_parser.parse()
+        self.event_body = event_parser.parse()
 
         # Extract the action from the parsed event
-        self.ACTION = event_body["action"] 
+        self.ACTION = self.event_body["action"] 
 
         # Extract other atrributes from event
-        self.server_template = event_body["server_template"]
-        self.task_id = event_body["task_id"]
-        self.dynambodb_table_name = event_body["dynambodb_table_name"]
-        self.mc_server_ip = event_body["mc_server_ip"]
-        self.mc_server_port = event_body["mc_server_port"]
-        self.ec2_instance_id = event_body["ec2_instance_id"]
+        self.task_id = self.event_body["task_id"]
+        server_template = self.event_body["server_template"]
+        self.dynambodb_table_name = self.event_body["dynambodb_table_name"]
+        mc_server_ip = self.event_body["mc_server_ip"]
+        mc_server_port = self.event_body["mc_server_port"]
+        ec2_instance_id = self.event_body["ec2_instance_id"]
 
         # Get the environment
         self.envs = EnvironmentVariables(self.ACTION).get_vars()  # Get Environment Variables
@@ -45,19 +45,19 @@ class LambdaHandler:
         self.ssm_util = SSMUtil()
 
         # Initialize ec2 class
-        self.ec2_util = EC2Util(self.ec2_instance_id)
+        self.ec2_util = EC2Util(ec2_instance_id, self.envs)
 
         # Initialize s3 class
-        self.s3_util = S3Util(self.envs, self.server_template)
+        self.s3_util = S3Util(self.envs, server_template)
 
         # Initialize dynamodb class
         self.dynamodb_util = DynamoDBUtil(self.dynambodb_table_name)
 
         # Initialize task manager class
-        self.task_manager = TaskManager(self.dynambodb_table_name)
+        self.task_manager = TaskManager(self.dynamodb_util)
 
         # Check If minecraft server is online/offline
-        self.mc_server = MinecraftServer(self.server_template, self.mc_server_ip, self.mc_server_port)
+        self.mc_server = MinecraftServer(server_template, mc_server_ip, mc_server_port)
     
     def execute_command(self):
         try:
@@ -67,7 +67,7 @@ class LambdaHandler:
             # Imported Action Module
             action_module = importlib.import_module(self.ACTION)
 
-            action_module.handle(self.server_template, self.envs, self.ssm_util, self.ec2_util, self.mc_server, self.s3_util, self.logger)
+            action_module.handle(self.event_body, self.envs, self.ssm_util, self.ec2_util, self.mc_server, self.s3_util, self.logger)
 
             # Update DynamoDB that task completed
             self._update_task(self.task_id, "COMPLETED", "SUCCESS")
@@ -76,19 +76,28 @@ class LambdaHandler:
             self.logger.error(error_message)
             self._update_task(self.task_id, "ERROR", error_message)
         except ValueError as error:
+            self.logger.error(f"Error: {error}")
             self._update_task(self.task_id, "ERROR", f"Value error occured \n{str(error)}")
         except (BotoCoreError, ClientError) as error:
+            self.logger.error(f"Error: {error}")
             self._update_task(self.task_id, "ERROR", f"Boto3 related error occurred \n{str(error)}")
         except Exception as error:
+            self.logger.error(f"Error: {error}")
             self._update_task(self.task_id, "ERROR", f"Unhandled exception occurred \n{str(error)}")
         
     def _update_task(self, task_id, status, result=None):
         try:
+            # Update Task Status
             self.task_manager.update_task_status(task_id, status)
+            
+            # Update Task Result
             if result:
                 self.task_manager.update_task_result(task_id, result)
+
+            # Update Last Updated Time
+            self.task_manager.update_last_update_time(task_id)
         except Exception as e:
-            self.logger.error(f"Failed to update task_id: {task_id} \n{e}")
+            self.logger.error(f"Failed to update task_id: '{task_id}' \n{e}")
             raise
 
 # Where the magic happens

@@ -13,7 +13,7 @@ class EnvironmentVariables:
 
     def get_required_vars(self):
         required_configs = [    
-                                # Minecraft Specific Env Vars
+                                # Minecraft Specifi\c Env Vars
                                 'MC_PORT', 'MC_SERVER_IP', 
                                 
                                 # Authorization Token
@@ -21,9 +21,23 @@ class EnvironmentVariables:
 
                                 # Worker Lambda
                                 'WORKER_LAMBDA_NAME',
+
+                                # EC2
+                                'EC2_INSTANCE_ID',
                                 
                                 # DYNAMBO_TABLE_NAME
-                                'DYNAMODB_TABLE_NAME'
+                                'DYNAMO_DB_TABLE_NAME',
+
+                                # Fargate Task
+                                'ECS_CLUSTER_NAME', 
+                                'ECS_MC_ARCHIVE_TASK_DEFINITION_NAME', 
+                                'ECS_MC_ARCHIVE_CONTAINER_NAME',
+                                'ECS_SUBNET_ID',
+                                'ECS_SECURITY_GROUP_ID',
+
+                                # S3 (used for fargate task)
+                                'S3_MC_WORLD_URI',
+                                'S3_MC_ASSETS_URI'
                             ]
         return required_configs
 

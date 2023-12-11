@@ -1,5 +1,5 @@
-import logging
-from datetime import datetime
+import time
+from datetime import datetime, timedelta
 from .logger import setup_logging
 import boto3
 from botocore.exceptions import ClientError
@@ -12,16 +12,18 @@ class DynamoDBUtil:
 
     def update_item(self, task_id, status, result=None, ttl=None):
         try:
-            self.table.put_item(
-                Item={
+            item = {
                     "task_id": task_id,
                     "status": status,
                     "result": result,
                     "created_at": datetime.utcnow().isoformat(),
-                    "TTL": ttl  # Time To Live - Set as UNIX timestamp if used
+                    "last_updated": datetime.utcnow().isoformat(),
+                    "TTL": self.calculate_ttl(ttl)  # Time To Live - in hours
                 }
+            self.table.put_item(
+                Item=item
             )
-            self.logger("Update item to ")
+            self.logger.info(f"Update item with: '{item}'")
         except ClientError as e:
             self.logger.error(f"Error updating DynamoDB: {e}")
             raise
@@ -33,14 +35,43 @@ class DynamoDBUtil:
         try:
             key = {'task_id': task_id}
 
+            # Use expression attribute names to avoid reserved keyword issues
+            expression_attribute_names = {'#attr_key': attribute_key}
+
             self.table.update_item(
                 Key=key,
-                UpdateExpression=f"SET {attribute_key} = :val",
+                UpdateExpression="SET #attr_key = :val",
                 ExpressionAttributeValues={
                     ':val': attribute_value
-                }
+                },
+                ExpressionAttributeNames=expression_attribute_names
             )
             return True
         except ClientError as e:
             self.logger.error(f"Error updating DynamoDB: {e}")
             raise
+        
+    def get_task_status(self, task_id):
+        try:
+            response = self.table.get_item(Key={"task_id": task_id})
+            return response.get("Item")
+        except ClientError as e:
+            self.logger.error(f"Error retrieving task status from DynamoDB: {e}")
+            raise
+
+    def calculate_ttl(self, hours_until_expiration=24):
+        """
+        Calculate the Time to Live (TTL) for a DynamoDB item.
+        """
+        # Ensure that the input is a positive integer
+        if not isinstance(hours_until_expiration, int) or hours_until_expiration < 0:
+            raise ValueError("Hours until expiration must be a positive integer.")
+
+        # Calculate the expiration time
+        expiration_time = datetime.utcnow() + timedelta(hours=hours_until_expiration)
+
+        # Convert to UNIX timestamp
+        ttl_unix_timestamp = int(time.mktime(expiration_time.timetuple()))
+
+        return ttl_unix_timestamp
+
