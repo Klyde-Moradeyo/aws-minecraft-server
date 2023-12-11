@@ -105,3 +105,21 @@ output "mc_port" {
   description = "Minecraft Server Port"
   value       = var.mc_port
 }
+
+########################
+#         ECR          #
+########################
+output "ecr_mc_world_archive_repository_name" {
+  value = module.mc_world_archive_ecr_registry.ecr_repository_name
+}
+
+output "ecr_mc_monitoring_repository_name" {
+  value = module.mc_monitoring_ecr_registry.ecr_repository_name
+}
+
+########################
+#         ECS          #
+########################
+output "ecs_mc_archive_image_arn" {
+  value = module.ecs_cluster.ecs_task_definition_container_image
+}

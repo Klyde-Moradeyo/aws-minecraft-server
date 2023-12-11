@@ -108,7 +108,7 @@ module "security_group" {
 ########################
 #         ECR          #
 ########################
-module "mc_world_archive_ecs_registry" {
+module "mc_world_archive_ecr_registry" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ecr?ref=tf-modules"
 
   repo_name = "world-archive"
@@ -117,7 +117,7 @@ module "mc_world_archive_ecs_registry" {
   tags = module.tags.tags
 }
 
-module "mc_monitoring_ecs_registry" {
+module "mc_monitoring_ecr_registry" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ecr?ref=tf-modules"
 
   repo_name = "server-monitoring"
@@ -129,7 +129,7 @@ module "mc_monitoring_ecs_registry" {
 ########################
 #         ECS          #
 ########################
-module "mc_world_archive_cluster" {
+module "ecs_cluster" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ecs?ref=tf-modules"
 
   aws_region = var.aws_region
@@ -140,6 +140,9 @@ module "mc_world_archive_cluster" {
 
   # SSM
   ssm_git_private_key_name = "dark-mango-bot-private-key"
+
+  # Task Defintion 
+  mc_archive_ecr_repo_name = module.mc_world_archive_ecr_registry.ecr_repository_name
 
   # S3 
   minecraft_world_s3_bucket  = module.s3_mc_world.s3_bucket_arn
@@ -229,7 +232,7 @@ module "api_gateway" {
 module "dynamodb_table" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/dynamodb-table?ref=tf-modules"
 
-  table_name = "my-table"
+  table_name = "mc-server-worker"
   hash_key   = "task_id"
   attributes = [
     { name = "task_id", type = "S" },
@@ -256,11 +259,9 @@ module "request_lambda" {
   lambda_memory_size      = 128
   lambda_payload_zip_path = "./request_lambda_latest.zip"
 
-  # SSM
-  ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
-
   # IAM
   ec2_instance_arn = module.minecraft_server.ec2_instance_arn
+  worker_lambda_arn = module.worker_lambda.lambda_function_arn
 
   # Lambda Environment vars
   ec2_instance_id     = module.minecraft_server.ec2_instance_id
@@ -269,6 +270,14 @@ module "request_lambda" {
   worker_lambda_name  = module.worker_lambda.lambda_function_name
   dynamodb_table_name = module.dynamodb_table.table_name
   git_branch          = var.git_branch
+  ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
+  ecs_cluster_name = module.ecs_cluster.ecs_cluster_name
+  ecs_mc_archive_task_definition_name = module.ecs_cluster.mc_archive_task_definition_name
+  ecs_mc_archive_task_container_name = module.ecs_cluster.mc_archive_task_container_name
+  ecs_subnet_id = module.vpc.subnet_id
+  ecs_security_group_id = module.security_group.security_group_id
+  s3_minecraft_world_bucket_url  = module.s3_mc_world.s3_bucket_uri
+  s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.s3_bucket_uri
 
   # Module tags
   tags = module.tags.tags
@@ -291,6 +300,7 @@ module "worker_lambda" {
 
   # IAM
   ec2_instance_arn = module.minecraft_server.ec2_instance_arn
+  dynamodb_table_name = module.dynamodb_table.table_name
 
   # Lambda Environment vars
   ssm_git_private_key_name       = var.ssm_git_private_key_name
@@ -298,7 +308,8 @@ module "worker_lambda" {
   git_branch                     = var.git_branch
   s3_minecraft_world_bucket_url  = module.s3_mc_world.s3_bucket_uri
   s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.s3_bucket_uri
-  api_gateway_url                = module.api_gateway.api_gateway_url
+  api_gateway_url                = "${module.api_gateway.api_gateway_url}/${module.api_gateway.stage_name}"
+  ssm_api_key_name = module.ssm_api_gw_key.ssm_parameter_name
 
   # Module tags
   tags = module.tags.tags
