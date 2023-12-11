@@ -10,6 +10,7 @@ on:
       - "terraform/**"
       - "lambda/**"
       - ".github/workflows/ci-cd.yml"
+      - "fargate/**"
   workflow_dispatch:
 
 jobs:
@@ -30,6 +31,33 @@ jobs:
       gh_pat_token: ${{ secrets.GH_PAT }}
 
   # Build Fargate
+  ci-fargate:
+    name: Fargate MC World Archiver - CI
+    uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-ci-fargate-task.yml@github-workflows
+    with:
+      TF_CONFIG_DIR: terraform
+      WORKING_DIR: "fargate/mc_world_archiver"
+    secrets:
+      gh_pat_token: ${{ secrets.GH_PAT }}
+      aws_id: ${{ secrets.AWS_ACCESS_KEY }}
+      aws_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  cd-fargate:
+    name: Fargate MC World Archiver - CD
+    uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-cd-fargate-task.yml@github-workflows
+    needs: [ ci-fargate ]
+    with:
+      tf_config_dir: terraform
+      working_dir: "fargate/mc_world_archiver"
+      image_artifact_name: ${{ needs.ci-fargate.outputs.artifact_name }}
+      image_tar_name: ${{ needs.ci-fargate.outputs.docker_tar_file_name }}
+      image_tag: ${{ needs.ci-fargate.outputs.image_tag }}
+    secrets:
+      gh_pat_token: ${{ secrets.GH_PAT }}
+      aws_id: ${{ secrets.AWS_ACCESS_KEY }}
+      aws_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}  
 
   cd-terraform-apply:
     needs: [ ci-worker-lambda, ci-request-lambda ]
@@ -45,7 +73,7 @@ jobs:
 
   git-tag:
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-git-tag.yml@github-workflows
-    needs: [ cd-terraform-apply ]
+    needs: [ cd-terraform-apply, cd-fargate ]
     if: github.ref == 'refs/heads/main'
     with:
       git_tag_prefix: "MSI" # Minecraft Server Infrastructure (MCI)
