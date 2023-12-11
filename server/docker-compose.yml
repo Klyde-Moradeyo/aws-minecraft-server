@@ -38,8 +38,18 @@ services:
     ports:
       - 9150:8000
     restart: unless-stopped
-    mem_limit: 128M
-    cpus: 0.1
+    mem_limit: 64M
+    cpus: 0.02
+
+  mc-player-activity-watchdog:
+    container_name: mc-player-activity-watchdog
+    image: klydem/mc-player-activity-monitor
+    env_file: config/.monitoring-env
+    volumes:
+      - ./minecraft-data:/app/logs/
+    restart: unless-stopped
+    mem_limit: 64M
+    cpus: 0.02
 
 volumes:
   minecraftdata:
