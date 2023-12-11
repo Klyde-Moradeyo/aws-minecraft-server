@@ -1,0 +1,6 @@
+Fargate gives 10gb storage by default - we will need to monitor how much storage the container is usiung and set salarms
+CPU = 1 
+Memory = between 2 and 4 gb
+
+will need moinitoirng for all this to make sure they are not usint up all resources with alarms aswell
+
