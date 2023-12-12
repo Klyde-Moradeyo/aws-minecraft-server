@@ -10,7 +10,7 @@ services:
     ports:
       - 25565:25565
       - 25585:25585 # Prometheus Fabric Exporter
-      - 24454:24454 # Simple Voice Chat Mod
+      - 24454:24454/udp # Simple Voice Chat Mod
     tty: true
     stdin_open: true
     restart: unless-stopped
