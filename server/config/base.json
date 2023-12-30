@@ -4,7 +4,7 @@
     "TZ": "Europe/London",
     "MAX_PLAYERS": "20",
     "VIEW_DISTANCE": "10",
-    "PLACEHOLDER-OPS": "No one",
+    "OPS": "TheBlackMango",
     "ENABLE_WHITELIST": "false",
     "ENFORCE_WHITELIST": "false",
     "ALLOW_FLIGHT": "true",
