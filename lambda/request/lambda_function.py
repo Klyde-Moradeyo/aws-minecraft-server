@@ -13,18 +13,6 @@ from utils.minecraft import MinecraftServer
 from utils.response_format import ResponseFormatter
 from datetime import datetime
 
-# def update_task_status(task_id, status):
-#     # Update task status in DynamoDB
-#     table.update_item(
-#         Key={'TaskID': task_id},
-#         UpdateExpression='SET #status = :status, UpdatedAt = :updatedAt',
-#         ExpressionAttributeNames={'#status': 'Status'},
-#         ExpressionAttributeValues={
-#             ':status': status,
-#             ':updatedAt': datetime.utcnow().isoformat()
-#         }
-#     )
-
 def lambda_handler(event, context):
     try:
         # Initialize variables
