@@ -6,7 +6,8 @@
             "MODE": "survival",
             "DIFFICULTY": "hard",
             "FABRIC_LOADER_VERSION": "0.14.24",
-            "FABRIC_LAUNCHER_VERSION": "0.11.2"
+            "FABRIC_LAUNCHER_VERSION": "0.11.2",
+            "RCON_CMDS_STARTUP": "/gamerule playersSleepingPercentage 75"
         },
         "vanilla-survival": {
             "TYPE": "VANILLA",
