@@ -57,9 +57,8 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
         logger.info("Packages missing: Executing Install script...")
         ssh_util.run_command(f"chmod -R +x {REMOTE_SCRIPT_PATH}/*.sh")
         ssh_util.run_script(REMOTE_PREPARE_EC2_SCRIPT_PATH, REMOTE_PREPARE_EC2_LOGS_PATH, True)
-        status = "EC2_INSTALL_STARTED"
-        info = "Started EC2 Install Script"
-        return status, info
+        packages_installed = get_packages_install(ssh_util)
+        logger.info(f"Packages Installed: {packages_installed}")
 
     # Define map for additonal configs
     additional_configs = {}
