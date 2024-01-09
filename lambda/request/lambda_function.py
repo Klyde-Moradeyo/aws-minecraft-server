@@ -73,5 +73,5 @@ def lambda_handler(event, context):
         logger.error(error_message)
         return {
             'statusCode': 500,
-            'body': json.dumps(ResponseFormatter.error_response(status, status, task_id, info, error_message))
+            'body': json.dumps(ResponseFormatter.error_response(status, action, task_id, info, error_message))
         }
