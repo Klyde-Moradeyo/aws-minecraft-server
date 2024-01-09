@@ -16,6 +16,7 @@ def handle(task_data, envs, mc_server, ec2_util, logger):
             if task_data['task_id'] is None:
                 error_message = "task_id is missing from task_data, cannot continue with request. "
                 error_message += "To fix this error, include the 'task_id' in your lambda request"
+                logger.error(error_message)
                 raise Exception(error_message)
 
             task_id = task_data["task_id"]
