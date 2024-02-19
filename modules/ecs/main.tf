@@ -57,3 +57,8 @@ resource "aws_ecs_task_definition" "my_task" {
   tags = var.tags
 }
 
+# Cloud Watch Log Group
+resource "aws_cloudwatch_log_group" "ecs_log_group" {
+  name              = "/ecs/${local.cluster_name}"
+  retention_in_days = 120
+}
