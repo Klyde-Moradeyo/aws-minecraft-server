@@ -37,7 +37,7 @@ CONTAINER_MINECRAFT_WORLD_PATH = f"./data/world"
 
 # --- Minecraft Server Memory Buffer ---
 MEMORY_BUFFER = 0.95 # Allocate 95% of the operating systems memory just for minecraft
-MIN_OS_MEMORY = 1 # Amount of Memory to Reserve for the EC2's operating system
+MIN_OS_MEMORY = 2 # Amount of Memory to Reserve for the EC2's operating system
 
 # --- Minecraft Server RCON PORT  ---
 RCON_PORT = "25575"
