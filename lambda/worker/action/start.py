@@ -98,7 +98,7 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
 
     if s3_ls_output:
         ssh_util.run_command(f"aws s3 cp '{s3_mod_config_path}' '{REMOTE_MINECRAFT_SERVER_PATH}' --recursive")
-        ssh_util.run_command(f"[ -d datafiles ] && mkdir -p ./world/datafiles && cp -r datafiles/* ./world/datafiles/") # Attempt to Restore datapack
+        ssh_util.run_command(f"[ -d {OLD_REMOTE_MINECRAFT_DATAPACK_PATH} ] && mkdir -p {NEW_REMOTE_MINECRAFT_DATAPACK_PATH} && cp -r {OLD_REMOTE_MINECRAFT_DATAPACK_PATH}/* {NEW_REMOTE_MINECRAFT_DATAPACK_PATH}") # Attempt to Restore datapack
         logger.info("Successfully Restored S3 Mod Config")
     
     # Calculcate Minecraft Server's available memory
