@@ -100,7 +100,7 @@ function install_docker {
 # Docker Compose installation
 function install_docker_compose {
   local ARCH="${ARCH_MAP[github_docker_compose]}"
-  echo "Starting $ARCH Docker Compose install"
+  echo "Starting ${ARCH} Docker Compose install"
   DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
   mkdir -p "$DOCKER_CONFIG/cli-plugins"
   curl -SL "https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-${ARCH}" -o "$DOCKER_CONFIG/cli-plugins/docker-compose"
@@ -114,7 +114,7 @@ function install_docker_compose {
 ########################
 function install_aws_cli {
   local ARCH="${ARCH_MAP[aws]}"
-  echo "Starting $ARCH AWS CLI install"
+  echo "Starting ${ARCH} AWS CLI install"
   curl "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o "awscliv2.zip"
   unzip -o awscliv2.zip
   ./aws/install
@@ -149,7 +149,7 @@ function install_cloudwatch_agent {
 function install_node_exporter {
   local NODE_EXPORTER_VERSION="1.6.1"
   local ARCH="${ARCH_MAP[node_exporter]}"
-  echo "Installing node_exporter version $NODE_EXPORTER_VERSION"
+  echo "Installing ${ARCH} node_exporter version $NODE_EXPORTER_VERSION"
   wget "https://github.com/prometheus/node_exporter/releases/download/v${NODE_EXPORTER_VERSION}/node_exporter-${NODE_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
   tar xvfz "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64.tar.gz"
   sudo mv "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64/node_exporter" $NODE_EXPORTER_PATH
@@ -161,8 +161,9 @@ function install_node_exporter {
 #  Install process_exporter  #
 ##############################
 function install_process_exporter {
-  PROCESS_EXPORTER_VERSION="0.7.10"
-  echo "Installing process_exporter version $PROCESS_EXPORTER_VERSION"
+  local PROCESS_EXPORTER_VERSION="0.7.10"
+  local ARCH="${ARCH_MAP[process_exporter]}"
+  echo "Installing ${ARCH} process_exporter version $PROCESS_EXPORTER_VERSION"
   wget "https://github.com/ncabatoff/process-exporter/releases/download/v${PROCESS_EXPORTER_VERSION}/process-exporter-${PROCESS_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
   tar xvfz "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64.tar.gz"
   sudo mv "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64/process-exporter" $PROCESS_EXPORTER_PATH
