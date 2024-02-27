@@ -22,9 +22,9 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
     logger.info("Stopped all EC2 containers")
 
     # Clone Git Repo
-    # git_ssh_key_path = write_to_tmp_file(ssh_key_str)
-    # git_util = GitUtil(git_ssh_key_path)
-    # git_util.clone(GIT_REPO_URL, GIT_REPO_PATH, envs["GIT_BRANCH"])
+    git_ssh_key_path = write_to_tmp_file(ssh_key_str)
+    git_util = GitUtil(git_ssh_key_path)
+    git_util.clone(GIT_REPO_URL, GIT_REPO_PATH, envs["GIT_BRANCH"])
 
     # Get Server Template
     server_template = ssh_util.read_file_output(REMOTE_TEMPLATE_INFO_FILE_PATH)
