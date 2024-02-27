@@ -5,4 +5,4 @@ source $script_dir/helper.sh
 # Trap the ERR signal
 trap 'if [[ $? -ne 0 ]]; then error_handler; fi' EXIT
 
-sudo $script_dir/install.sh && sudo $script_dir/setup.sh
+$script_dir/install.sh && $script_dir/setup.sh
