@@ -14,6 +14,29 @@ source $script_dir/helper.sh
 # Trap the ERR signal
 trap 'if [[ $? -ne 0 ]]; then error_handler; fi' EXIT
 
+## Set Architecture
+ARCH=$(uname -m)
+echo "System Architecture: ${ARCH}"
+declare -A ARCH_MAP
+if [[ "$ARCH" == "aarch64" ]] || [[ "$ARCH" == "arm64" ]]; then
+    # For ARM architecture
+    ARCH_MAP["docker"]="arm64"
+    ARCH_MAP["docker_compose"]="aarch64"
+    ARCH_MAP["aws"]="aarch64"
+    ARCH_MAP["node_exporter"]="arm64"
+    ARCH_MAP["process_exporter"]="arm64"
+elif [[ "$ARCH" == "x86_64" ]] || [[ "$ARCH" == "amd64" ]]; then
+    # For x86_64 architecture
+    ARCH_MAP["docker"]="x86_64"
+    ARCH_MAP["docker_compose"]="x86_64"
+    ARCH_MAP["aws"]="x86_64"
+    ARCH_MAP["node_exporter"]="amd64"
+    ARCH_MAP["process_exporter"]="amd64"
+else
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+fi
+
 # Run the apt-get command 
 # DPkg::Lock checks if apt lock is in use - Timeout set to -1 for unlimited. 60 for 60 sec
 apt_get() {
@@ -76,11 +99,12 @@ function install_docker {
 
 # Docker Compose installation
 function install_docker_compose {
-  echo "Starting Docker Compose install"
+  local ARCH="${ARCH_MAP[docker_compose]}"
+  local DOCKER_COMPOSE_VERSION="2.24.6"
+  echo "Starting ${ARCH} Docker Compose install"
   DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
   mkdir -p "$DOCKER_CONFIG/cli-plugins"
-  # curl -SL https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-x86_64 -o "$DOCKER_CONFIG/cli-plugins/docker-compose"
-  curl -SL https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-aarch64 -o "$DOCKER_CONFIG/cli-plugins/docker-compose"
+  curl -SL "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "$DOCKER_CONFIG/cli-plugins/docker-compose"
   chmod +x "$DOCKER_CONFIG/cli-plugins/docker-compose"
   echo "Docker Compose install complete"
 }
@@ -89,10 +113,12 @@ function install_docker_compose {
 #    AWS CLI Install   #
 ########################
 function install_aws_cli {
-  echo "Starting AWS CLI install"
-  # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" # x86 Architecture
-  curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" # arm64 Architecture
-  unzip -o awscliv2.zip
+  local ARCH="${ARCH_MAP[aws]}"
+  echo "Starting ${ARCH} AWS CLI install"
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o "awscliv2.zip"
+  echo "Unzipping AWS CLI package..."
+  unzip -o -q awscliv2.zip
+  echo "Installing AWS CLI..."
   ./aws/install
   rm -rf aws awscliv2.zip
   echo "AWS CLI install complete"
@@ -111,6 +137,7 @@ function install_git {
 # Install Cloudwatch Agent #
 ############################
 function install_cloudwatch_agent {
+  local ARCH="${ARCH_MAP[cloudwatch_agent]}"
   local config_file_path="./amazon-cloudwatch-agent.json"
   wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/arm64/latest/amazon-cloudwatch-agent.deb
   sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
@@ -122,12 +149,13 @@ function install_cloudwatch_agent {
 # Install node_exporter #
 #########################
 function install_node_exporter {
-  NODE_EXPORTER_VERSION="1.6.1"
-  echo "Installing node_exporter version $NODE_EXPORTER_VERSION"
-  wget "https://github.com/prometheus/node_exporter/releases/download/v${NODE_EXPORTER_VERSION}/node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64.tar.gz"
-  tar xvfz "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64.tar.gz"
-  sudo mv "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64/node_exporter" $NODE_EXPORTER_PATH
-  rm -rf "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64" "node_exporter-${NODE_EXPORTER_VERSION}.linux-arm64.tar.gz"
+  local NODE_EXPORTER_VERSION="1.7.0"
+  local ARCH="${ARCH_MAP[node_exporter]}"
+  echo "Installing ${ARCH} node_exporter version $NODE_EXPORTER_VERSION"
+  wget "https://github.com/prometheus/node_exporter/releases/download/v${NODE_EXPORTER_VERSION}/node_exporter-${NODE_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
+  tar xvfz "node_exporter-${NODE_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
+  sudo mv "node_exporter-${NODE_EXPORTER_VERSION}.linux-${ARCH}/node_exporter" $NODE_EXPORTER_PATH
+  rm -rf "node_exporter-${NODE_EXPORTER_VERSION}.linux-${ARCH}" "node_exporter-${NODE_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
   echo "Prometheus Node Exporter installed successfully!"
 }
 
@@ -135,12 +163,13 @@ function install_node_exporter {
 #  Install process_exporter  #
 ##############################
 function install_process_exporter {
-  PROCESS_EXPORTER_VERSION="0.7.10"
-  echo "Installing process_exporter version $PROCESS_EXPORTER_VERSION"
-  wget "https://github.com/ncabatoff/process-exporter/releases/download/v${PROCESS_EXPORTER_VERSION}/process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64.tar.gz"
-  tar xvfz "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64.tar.gz"
-  sudo mv "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64/process-exporter" $PROCESS_EXPORTER_PATH
-  rm -rf "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64" "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-arm64.tar.gz"
+  local PROCESS_EXPORTER_VERSION="0.7.10"
+  local ARCH="${ARCH_MAP[process_exporter]}"
+  echo "Installing ${ARCH} process_exporter version $PROCESS_EXPORTER_VERSION"
+  wget "https://github.com/ncabatoff/process-exporter/releases/download/v${PROCESS_EXPORTER_VERSION}/process-exporter-${PROCESS_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
+  tar xvfz "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
+  sudo mv "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-${ARCH}/process-exporter" $PROCESS_EXPORTER_PATH
+  rm -rf "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-${ARCH}" "process-exporter-${PROCESS_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
   echo "Prometheus Process Exporter installed successfully!"
 }
 
@@ -148,6 +177,9 @@ function install_process_exporter {
 #     Post Install     #
 ########################
 function post_install {
+    # Pause to ensure install completion
+    sleep 2
+
     echo "-------------------------------------"
     echo "              Installed              "
     echo "-------------------------------------"
@@ -158,18 +190,21 @@ function post_install {
               $(docker compose version)"
     else
         echo "Docker: Not Installed"
+        exit 1
     fi
 
     if command -v aws > /dev/null 2>&1; then
         echo "AWS CLI: $(aws --version)"
     else
         echo "AWS CLI: Not Installed"
+        exit 1
     fi
 
     if command -v git > /dev/null 2>&1; then
         echo "GIT: $(git --version)"
     else
         echo "GIT: Not Installed"
+        exit 1
     fi
 
     # Check if the CloudWatch agent is installed
@@ -192,6 +227,7 @@ function post_install {
         echo "Node Exporter: Installed at $NODE_EXPORTER_PATH"
     else
         echo "Node Exporter: Not Installed"
+        exit 1
     fi
 
     # Check if process_exporter is installed
@@ -199,6 +235,7 @@ function post_install {
         echo "Process Exporter: Installed at $PROCESS_EXPORTER_PATH"
     else
         echo "Process Exporter: Not Installed"
+        exit 1
     fi
     echo "-------------------------------------"
 }

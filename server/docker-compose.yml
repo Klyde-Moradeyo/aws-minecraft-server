@@ -31,7 +31,7 @@ services:
 
   minecraft-exporter:
     container_name: minecraft-exporter
-    image: klydem/minecraft-exporter:arm64-latest
+    image: klydem/minecraft-exporter:amd64-latest
     env_file: config/.monitoring-env
     volumes:
       - ./minecraft-data/world:/world:ro
@@ -43,7 +43,7 @@ services:
 
   mc-player-activity-watchdog:
     container_name: mc-player-activity-watchdog
-    image: klydem/mc-player-activity-monitor:arm64-latest
+    image: klydem/mc-player-activity-monitor:amd64-latest
     env_file: config/.monitoring-env
     volumes:
       - ./minecraft-data:/app/logs/
