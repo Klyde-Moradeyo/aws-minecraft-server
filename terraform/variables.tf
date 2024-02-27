@@ -67,7 +67,8 @@ variable "instance_type" {
 
 variable "ami" {
   type    = list(string)
-  default = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-server-*"]
+  # default = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-server-*"]
+  default = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
 }
 
 variable "ami_owners" {
@@ -90,7 +91,8 @@ variable "ami_virtualization_type" {
 
 variable "architecture" {
   type    = list(string)
-  default = ["arm64"]
+  # default = ["arm64"]
+  default = ["x86_64"]
 }
 
 variable "network_interface_id" {
