@@ -116,7 +116,9 @@ function install_aws_cli {
   local ARCH="${ARCH_MAP[aws]}"
   echo "Starting ${ARCH} AWS CLI install"
   curl "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o "awscliv2.zip"
-  unzip -o awscliv2.zip
+  echo "Unzipping AWS CLI package..."
+  unzip -o -q awscliv2.zip
+  echo "Installing AWS CLI..."
   ./aws/install
   rm -rf aws awscliv2.zip
   echo "AWS CLI install complete"
