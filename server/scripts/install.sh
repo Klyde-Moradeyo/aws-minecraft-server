@@ -99,15 +99,15 @@ function install_docker {
 
 # Docker Compose installation
 function install_docker_compose {
-  local ARCH="${ARCH_MAP[github_docker_compose]}"
+  local ARCH="${ARCH_MAP[docker_compose]}"
+  local DOCKER_COMPOSE_VERSION="2.24.6"
   echo "Starting ${ARCH} Docker Compose install"
   DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
   mkdir -p "$DOCKER_CONFIG/cli-plugins"
-  curl -SL "https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-${ARCH}" -o "$DOCKER_CONFIG/cli-plugins/docker-compose"
+  curl -SL "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "$DOCKER_CONFIG/cli-plugins/docker-compose"
   chmod +x "$DOCKER_CONFIG/cli-plugins/docker-compose"
   echo "Docker Compose install complete"
 }
-
 
 ########################
 #    AWS CLI Install   #
@@ -179,7 +179,7 @@ function install_process_exporter {
 function post_install {
     # Pause to ensure install completion
     sleep 2
-    
+
     echo "-------------------------------------"
     echo "              Installed              "
     echo "-------------------------------------"
@@ -190,18 +190,21 @@ function post_install {
               $(docker compose version)"
     else
         echo "Docker: Not Installed"
+        exit 1
     fi
 
     if command -v aws > /dev/null 2>&1; then
         echo "AWS CLI: $(aws --version)"
     else
         echo "AWS CLI: Not Installed"
+        exit 1
     fi
 
     if command -v git > /dev/null 2>&1; then
         echo "GIT: $(git --version)"
     else
         echo "GIT: Not Installed"
+        exit 1
     fi
 
     # Check if the CloudWatch agent is installed
@@ -224,6 +227,7 @@ function post_install {
         echo "Node Exporter: Installed at $NODE_EXPORTER_PATH"
     else
         echo "Node Exporter: Not Installed"
+        exit 1
     fi
 
     # Check if process_exporter is installed
@@ -231,6 +235,7 @@ function post_install {
         echo "Process Exporter: Installed at $PROCESS_EXPORTER_PATH"
     else
         echo "Process Exporter: Not Installed"
+        exit 1
     fi
     echo "-------------------------------------"
 }
