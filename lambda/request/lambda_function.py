@@ -3,15 +3,12 @@ import os
 import sys
 import importlib
 from boto3.dynamodb.conditions import Key
-from utils.helper import format_dictionary
 from utils.logger import setup_logging
 from utils.event_parser import APIEventParser
-from utils.task_manager import TaskManager
 from utils.env_manager import EnvironmentVariables
 from utils.ec2 import EC2Util
 from utils.minecraft import MinecraftServer
 from utils.response_format import ResponseFormatter
-from datetime import datetime
 
 def lambda_handler(event, context):
     try:
@@ -57,6 +54,7 @@ def lambda_handler(event, context):
 
         # Call the action handler function
         status, action, task_id, info = action_module.handle(event_body, envs, mc_server, ec2_util, logger)
+        logger.info(f"STATUS: {status} | ACTION: {action} | TASK_ID: {task_id} | INFO: {info}")
         return {
             'statusCode': 200,
             'body': json.dumps(ResponseFormatter.success_response(status, action, task_id, info))

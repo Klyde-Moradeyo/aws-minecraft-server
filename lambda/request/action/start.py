@@ -1,6 +1,5 @@
 import json
 from utils.task_manager import TaskManager
-from utils.response_format import ResponseFormatter
 
 def handle(task_data, envs, mc_server, ec2_util, logger):
     logger.info("Handling 'Start' Action...")

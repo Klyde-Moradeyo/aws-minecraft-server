@@ -47,3 +47,6 @@ RCON_PORT = "25575"
 
 # --- EC2 USERNAME ---
 EC2_USERNAME = "ubuntu"
+
+# --- DOCKER CONTAINER ---
+MC_SERVER_CONTAINER_NAME = "mc-server"
