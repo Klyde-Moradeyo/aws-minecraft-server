@@ -58,11 +58,17 @@ variable "ssm_git_private_key_name" {
 variable "instance_type" {
   description = "EC2 Instance Type"
   type        = string
+
+  ### T4g Family ###
   # default     = "t4g.small"
   # default = "t4g.medium"
-  default = "r6id.large" 
   # default = "t4g.xlarge"
-  // For tests: default =  "t4g.large" | https://amazon-aws-ec2-pricing-comparison.pcapps.com/
+
+  ### R6g Family ###
+  default = "r6i.large" 
+  # default = "r6i.xlarge"
+  
+  // https://amazon-aws-ec2-pricing-comparison.pcapps.com/
 }
 
 variable "ami" {
