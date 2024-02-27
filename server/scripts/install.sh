@@ -177,6 +177,9 @@ function install_process_exporter {
 #     Post Install     #
 ########################
 function post_install {
+    # Pause to ensure install completion
+    sleep 2
+    
     echo "-------------------------------------"
     echo "              Installed              "
     echo "-------------------------------------"
