@@ -1,0 +1,92 @@
+mango-command-line@Mango-Machine:/mnt/s/Repo/aws-minecraft-server$ infracost breakdown --path ./terraform
+Evaluating Terraform directory at ./terraform
+  ✔ Downloading Terraform modules 
+  ✔ Evaluating Terraform directory 
+Warning: Input values were not provided for following Terraform variables: "variable.git_branch". Use --terraform-var-file or --terraform-var to specify them.
+  ✔ Retrieving usage defaults for 16 resources from Infracost Cloud 
+  ✔ Retrieving cloud prices to calculate costs 
+
+Project: Klyde-Moradeyo/aws-minecraft-server/terraform
+
+ Name                                                                   Monthly Qty  Unit         Monthly Cost
+
+ module.minecraft_server.aws_instance.ec2_instance
+ ├─ Instance usage (Linux/UNIX, on-demand, z1d.large)                           730  hours             $160.60
+ ├─ EC2 detailed monitoring                                                       7  metrics             $2.10
+ └─ root_block_device
+    └─ Storage (general purpose SSD, gp2)                                         8  GB                  $0.93
+
+ module.dynamodb_table.aws_dynamodb_table.this
+ ├─ Write capacity unit (WCU)                                                    10  WCU                 $5.64
+ ├─ Read capacity unit (RCU)                                                     10  RCU                 $1.13
+ ├─ Data storage                                                                 20  GB                  $5.94  *
+ ├─ Point-In-Time Recovery (PITR) backup storage                                 25  GB                  $5.94  *
+ ├─ On-demand backup storage                                                     50  GB                  $5.94  *
+ ├─ Table data restored                                                          33  GB                  $5.88  *
+ └─ Streams read request unit (sRRU)                                     25,000,000  sRRUs               $5.93  *
+
+ module.s3_mc_server_assets.aws_s3_bucket.mc_s3
+ └─ Standard
+    ├─ Storage                                                                  225  GB                  $5.40  *
+    ├─ PUT, COPY, POST, LIST requests                                         1,000  1k requests         $5.30  *
+    ├─ GET, SELECT, and all other requests                                   12,500  1k requests         $5.25  *
+    ├─ Select data scanned                                                    2,500  GB                  $5.63  *
+    └─ Select data returned                                                   7,250  GB                  $5.80  *
+
+ module.s3_mc_world.aws_s3_bucket.mc_s3
+ └─ Standard
+    ├─ Storage                                                                  225  GB                  $5.40  *
+    ├─ PUT, COPY, POST, LIST requests                                         1,000  1k requests         $5.30  *
+    ├─ GET, SELECT, and all other requests                                   12,500  1k requests         $5.25  *
+    ├─ Select data scanned                                                    2,500  GB                  $5.63  *
+    └─ Select data returned                                                   7,250  GB                  $5.80  *
+
+ module.ecs_cluster.aws_cloudwatch_log_group.ecs_log_group
+ ├─ Data ingested                                                                10  GB                  $5.99  *
+ ├─ Archival Storage                                                            166  GB                  $5.23  *
+ └─ Insights queries data scanned                                             1,000  GB                  $5.90  *
+
+ module.request_lambda.aws_cloudwatch_log_group.example
+ ├─ Data ingested                                                                10  GB                  $5.99  *
+ ├─ Archival Storage                                                            166  GB                  $5.23  *
+ └─ Insights queries data scanned                                             1,000  GB                  $5.90  *
+
+ module.worker_lambda.aws_cloudwatch_log_group.example
+ ├─ Data ingested                                                                10  GB                  $5.99  *
+ ├─ Archival Storage                                                            166  GB                  $5.23  *
+ └─ Insights queries data scanned                                             1,000  GB                  $5.90  *
+
+ module.request_lambda.aws_lambda_function.lambda_function
+ ├─ Requests                                                                     25  1M requests         $5.00  *
+ └─ Duration (first 6B)                                                      78,125  GB-seconds          $1.30  *
+
+ module.worker_lambda.aws_lambda_function.lambda_function
+ ├─ Requests                                                                     25  1M requests         $5.00  *
+ └─ Duration (first 6B)                                                      78,125  GB-seconds          $1.30  *
+
+ module.api_gateway.aws_apigatewayv2_api.minecraft_http_api
+ └─ Requests (first 300M)                                                         5  1M requests         $5.80  *
+
+ module.mc_monitoring_ecr_registry.aws_ecr_repository.mc_repository
+ └─ Storage                                                                      50  GB                  $5.00  *
+
+ module.mc_world_archive_ecr_registry.aws_ecr_repository.mc_repository
+ └─ Storage                                                                      50  GB                  $5.00  *
+
+ module.eip.aws_eip.mc_server_eip
+ └─ IP address (if unused)                                                      730  hours               $3.65
+
+ OVERALL TOTAL                                                                                         $338.17
+
+*Usage costs were estimated with usage defaults from Infracost Cloud, which can also be overridden in this repo.
+
+──────────────────────────────────
+77 cloud resources were detected:
+∙ 13 were estimated
+∙ 64 were free
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
+┃ Klyde-Moradeyo/aws-minecraft-server/terraform      ┃ $174          ┃ $164        ┃ $338       ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
