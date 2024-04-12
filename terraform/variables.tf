@@ -66,7 +66,12 @@ variable "instance_type" {
 
   ### R6g Family ###
   # default = "r6i.large" 
-  default = "r6i.xlarge"
+  # default = "r6i.xlarge"
+  # default = "r6i.2xlarge"
+
+  ### Z1d Family ###
+  # default = "z1d.large"
+  default = "z1d.xlarge"
   
   // https://amazon-aws-ec2-pricing-comparison.pcapps.com/
 }
