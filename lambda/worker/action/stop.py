@@ -39,9 +39,13 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
     world_save_enabled = world_save_enabled_str == 'true'
     if world_save_enabled:
         ssh_util.run_command(f"aws s3 cp '{REMOTE_MINECRAFT_WORLD_PATH}' '{s3_util.get_minecraft_world_path()}' --recursive")
-        logger.info("Successfully Backed Up Minecraft World")
+        logger.info("### Successfully Backed Up: Minecraft Server World ###")
     else:
-        logger.info("World save is disabled...Skipping.")
+        logger.info("### World save is disabled...Skipping. ### ")
+
+    # Backup logs
+    ssh_util.run_command(f"aws s3 cp '{REMOTE_MINECRAFT_LOGS_PATH}' '{s3_util.get_server_logs_path()}' --recursive")
+    logger.info("###  Successfully Backed Up: Minecraft Server Logs ###")
 
     # Delete all files from the ec2 machine excluding the scripts logs folder
     # Note: this doesn't work as intended. Just purges everything

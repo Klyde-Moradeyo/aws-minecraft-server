@@ -16,7 +16,7 @@ class S3Util:
         """
         Get the S3 path for the Minecraft world.
         """
-        return f"{self.MC_WORLD_URI}/minecraft-world/{self.server_template}"
+        return f"{self.MC_WORLD_URI}/{self.server_template}/minecraft-world"
 
     def get_server_assets_path(self):
         """
@@ -37,6 +37,13 @@ class S3Util:
         """
         server_assets = self.get_server_assets_path()
         return f"{server_assets}/mod_config"
+    
+    def get_server_logs_path(self):
+        """
+        Get the S3 path for the server's logs
+        """
+        server_assets = self.get_server_assets_path()
+        return f"{self.MC_ASSETS_URI}/{self.server_template}/logs"
     
     def update_server_template(self, template_id):
         self.server_template = template_id
