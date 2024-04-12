@@ -16,7 +16,7 @@ class S3Util:
         """
         Get the S3 path for the Minecraft world.
         """
-        return f"{self.MC_WORLD_URI}/{self.server_template}/minecraft-world"
+        return f"{self.MC_WORLD_URI}/minecraft-world/{self.server_template}"
 
     def get_server_assets_path(self):
         """
