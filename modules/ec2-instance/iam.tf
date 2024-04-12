@@ -61,6 +61,13 @@ resource "aws_iam_role_policy" "mc_allow_ec2_to_s3" {
         ]
         Resource = ["${var.s3_mc_assets_uri}/*/assets/*"]
       },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+        ]
+        Resource = ["${var.s3_mc_assets_uri}/*/logs/*"]
+      },
     ]
   })
 }
