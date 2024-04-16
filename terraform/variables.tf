@@ -60,10 +60,11 @@ variable "instance_type" {
   type        = string
 
   ### T4g Family ###
-  default = "t4g.medium"
+  # default = "t4g.medium"
   # default = "t4g.xlarge"
 
   ### R6g Family ###
+  default = "r6g.medium"
   # default = "r6i.large" 
   # default = "r6i.xlarge"
   # default = "r6i.2xlarge"
