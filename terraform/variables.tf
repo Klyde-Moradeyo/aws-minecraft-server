@@ -58,6 +58,7 @@ variable "ssm_git_private_key_name" {
 variable "instance_type" {
   description = "EC2 Instance Type"
   type        = string
+  default = 	"t3a.large"
 
   ### T4g Family ###
   # default = "t4g.medium"
