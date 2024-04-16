@@ -60,7 +60,7 @@ variable "instance_type" {
   type        = string
 
   ### T3a Family ###
-  default = 	"t3a.large"
+  # default = 	"t3a.large"
 
   ### T4g Family ###
   # default = "t4g.medium"
@@ -73,7 +73,7 @@ variable "instance_type" {
   # default = "r6i.2xlarge"
 
   ### Z1d Family ###
-  # default = "z1d.large"
+  default = "z1d.large"
   # default = "z1d.xlarge"
   
   // https://amazon-aws-ec2-pricing-comparison.pcapps.com/
