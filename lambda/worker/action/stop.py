@@ -44,8 +44,16 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
         logger.info("### World save is disabled...Skipping. ### ")
 
     # Backup logs
-    ssh_util.run_command(f"aws s3 cp '{REMOTE_MINECRAFT_LOGS_PATH}' '{s3_util.get_server_logs_path()}' --recursive")
-    logger.info("###  Successfully Backed Up: Minecraft Server Logs ###")
+    log_exists = ssh_util.run_command(f"test -d '{REMOTE_MINECRAFT_LOGS_PATH}' && echo 'exists' || echo 'not exists'", capture_output=True)
+    if log_exists.strip() == "exists":
+        ssh_util.run_command(f"aws s3 cp '{REMOTE_MINECRAFT_LOGS_PATH}' '{s3_util.get_server_logs_path()}' --recursive")
+        logger.info("###  Successfully Backed Up: Minecraft Server Logs ###")
+
+    # Backup Crash Reports
+    log_exists = ssh_util.run_command(f"test -d '{REMOTE_MINECRAFT_CRASH_REPORTS_PATH}' && echo 'exists' || echo 'not exists'", capture_output=True)
+    if log_exists.strip() == "exists":
+        ssh_util.run_command(f"aws s3 cp '{REMOTE_MINECRAFT_CRASH_REPORTS_PATH}' '{s3_util.get_server_crash_reports_path()}' --recursive")
+        logger.info("###  Successfully Backed Up: Minecraft Server Crash Reports ###")   
 
     # Delete all files from the ec2 machine excluding the scripts logs folder
     # Note: this doesn't work as intended. Just purges everything
