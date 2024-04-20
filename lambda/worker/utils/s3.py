@@ -45,6 +45,13 @@ class S3Util:
         server_assets = self.get_server_assets_path()
         return f"{self.MC_ASSETS_URI}/{self.server_template}/logs"
     
+    def get_server_crash_reports_path(self):
+        """
+        Get the S3 path for the server's logs
+        """
+        server_logs = self.get_server_logs_path()
+        return f"{server_logs}/crash-report"
+    
     def update_server_template(self, template_id):
         self.server_template = template_id
         return self.server_template
