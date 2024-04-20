@@ -5,7 +5,7 @@
 variable "aws_region" {
   description = "Region in which AWS Resources to be created"
   type        = string
-  default     = "eu-west-2"
+  default     = "eu-west-1"
 }
 
 ########################
@@ -74,7 +74,9 @@ variable "instance_type" {
 
   ### Z1d Family ###
   # default = "z1d.large"
-  default = "z1d.xlarge"
+  # default = "z1d.xlarge"
+
+  default = "m5zn.xlarge"
   
   // https://amazon-aws-ec2-pricing-comparison.pcapps.com/
 }
