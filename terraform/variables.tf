@@ -59,22 +59,14 @@ variable "instance_type" {
   description = "EC2 Instance Type"
   type        = string
 
-  ### T3a Family ###
-  # default = 	"t3a.large"
-
   ### T4g Family ###
+  # default     = "t4g.small"
   # default = "t4g.medium"
   # default = "t4g.xlarge"
 
   ### R6g Family ###
-  # default = "r6g.medium"
   # default = "r6i.large" 
-  # default = "r6i.xlarge"
-  # default = "r6i.2xlarge"
-
-  ### Z1d Family ###
-  default = "z1d.large"
-  # default = "z1d.xlarge"
+  default = "r6i.xlarge"
   
   // https://amazon-aws-ec2-pricing-comparison.pcapps.com/
 }
