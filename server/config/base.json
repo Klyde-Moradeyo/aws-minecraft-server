@@ -11,6 +11,6 @@
     "ANNOUNCE_PLAYER_ACHIEVEMENTS": "true",
     "ENABLE_COMMAND_BLOCK": "false",
     "LOG_TIMESTAMP": "true",
-    "SAVE_MINECRAFT_WORLD": "true",
+    "SAVE_MINECRAFT_WORLD": "false",
     "OPS": "TheBlackMango"
 }
