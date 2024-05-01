@@ -18,9 +18,9 @@
             "VIEW_DISTANCE": "30",
             "SIMULATION_DISTANCE": "20"
         },
-        "test-creative": {
+        "test-vanilla-creative-1.20.1": {
             "TYPE": "VANILLA",
-            "VERSION": "LATEST",
+            "VERSION": "1.20.1",
             "MODE": "creative",
             "DIFFICULTY": "hard",
             "MAX_PLAYERS": "20",
@@ -28,15 +28,15 @@
             "SIMULATION_DISTANCE": "30",
             "SAVE_MINECRAFT_WORLD": "false"
         },
-        "test-temp-world": {
+        "test-vanilla-survival-1.20.1": {
             "TYPE": "VANILLA",
-            "VERSION": "LATEST",
-            "MODE": "creative",
+            "VERSION": "1.20.1",
+            "MODE": "survival",
             "DIFFICULTY": "hard",
             "MAX_PLAYERS": "20",
             "VIEW_DISTANCE": "30",
             "SIMULATION_DISTANCE": "30",
-            "SAVE_MINECRAFT_WORLD": "true"
+            "SAVE_MINECRAFT_WORLD": "false"
         },
         "test-fabric-survival": {
             "TYPE": "FABRIC",
