@@ -11,10 +11,6 @@ on:
         description: 'Infrastructure handler Terraform manifest directory'
         type: string
         required: true
-      aws_region:
-        description: 'AWS Region for the Terraform backend'
-        type: string
-        required: true
     secrets:
       gh_pat_token:
         required: true
@@ -36,6 +32,7 @@ on:
         value: ${{ jobs.build-fargate.outputs.image_tag }}
 
 env:
+    AWS_REGION: "eu-west-2"
     IMAGE_NAME: "mc_world_archiver"
     IMAGE_TAG: "latest"
     OUTPUT_ARTIFACT: "fargate_task.tar"
@@ -60,7 +57,7 @@ jobs:
           with:
             aws-access-key-id: ${{ secrets.aws_id }}
             aws-secret-access-key: ${{ secrets.aws_key }}
-            aws-region: ${{ inputs.aws_region }}
+            aws-region: ${{ env.AWS_REGION }}
 
         - name: Login to ECR
           id: login-ecr
