@@ -53,6 +53,7 @@ jobs:
       image_artifact_name: ${{ needs.ci-fargate.outputs.artifact_name }}
       image_tar_name: ${{ needs.ci-fargate.outputs.docker_tar_file_name }}
       image_tag: ${{ needs.ci-fargate.outputs.image_tag }}
+      aws_region: "eu-west-1"
     secrets:
       gh_pat_token: ${{ secrets.GH_PAT }}
       aws_id: ${{ secrets.AWS_ACCESS_KEY }}
