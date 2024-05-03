@@ -9,6 +9,15 @@
             "FABRIC_LAUNCHER_VERSION": "0.11.2",
             "RCON_CMDS_STARTUP": "/gamerule playersSleepingPercentage 25"
         },
+        "modify-fabric-survival": {
+            "TYPE": "FABRIC",
+            "VERSION": "1.20.1",
+            "MODE": "survival",
+            "DIFFICULTY": "hard",
+            "FABRIC_LOADER_VERSION": "0.14.25",
+            "FABRIC_LAUNCHER_VERSION": "0.11.2",
+            "RCON_CMDS_STARTUP": "/gamerule playersSleepingPercentage 25"
+        },
         "vanilla-survival": {
             "TYPE": "VANILLA",
             "VERSION": "1.20.1",
