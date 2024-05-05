@@ -5,9 +5,9 @@ module "eip" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/eip/aws"
   version = "0.0.1"
 
-  name = var.name
+  name        = var.name
   instance_id = module.minecraft_server.ec2_instance_id
-  tags = module.tags.tags
+  tags        = module.tags.tags
 }
 
 ########################
@@ -27,7 +27,7 @@ module "vpc" {
 #        Subnets       #
 ########################
 locals {
-  public_subnets      = { for i, az in data.aws_availability_zones.available.names : az => element(var.public_subnet_cidrs, i) }
+  public_subnets = { for i, az in data.aws_availability_zones.available.names : az => element(var.public_subnet_cidrs, i) }
 }
 
 module "public_subnet" {
@@ -48,7 +48,7 @@ module "public_subnet" {
 module "internet_gateway" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/internet-gateway/aws"
   version = "0.0.1"
-  
+
   name   = var.name
   vpc_id = module.vpc.vpc_id
 
@@ -62,7 +62,7 @@ module "public_route_table" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/route-table/aws"
   version = "0.0.1"
 
-  name   = "${var.name}-public" 
+  name   = "${var.name}-public"
   vpc_id = module.vpc.vpc_id
   routes = [
     {
