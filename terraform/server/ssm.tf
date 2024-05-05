@@ -13,17 +13,6 @@ module "ssm_mc_server_private_key" {
   tags     = module.tags.tags
 }
 
-module "ssm_bot_command" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ssm?ref=tf-modules"
-
-  parameter_name = var.bot_command_name
-  parameter_type = "String"
-
-  # Module tags
-  label_id = module.tags.label_id
-  tags     = module.tags.tags
-}
-
 module "ssm_api_gw_key" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ssm?ref=tf-modules"
 
