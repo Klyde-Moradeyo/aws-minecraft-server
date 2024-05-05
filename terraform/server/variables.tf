@@ -9,6 +9,39 @@ variable "aws_region" {
 }
 
 ########################
+#        tags          #
+########################
+variable "project" {
+  description = "The name of the project"
+  type        = string
+  default     = "personal-mincecraft-server"
+}
+
+variable "client" {
+  description = "The client for the project"
+  type        = string
+  default     = "Klyde-Moradeyo"
+}
+
+variable "owner" {
+  description = "The owner of the project"
+  type        = string
+  default     = "Klyde-Moradeyo"
+}
+
+variable "namespace" {
+  description = "Logical grouping for resources, such as by service"
+  type        = string
+  default     = "minecrasft"
+}
+
+variable "environment" {
+  description = "The project environment"
+  type        = string
+  default     = "prod"
+}
+
+########################
 #     Environment      #
 ########################
 variable "git_branch" {
@@ -38,12 +71,6 @@ variable "bot_command_name" {
   description = "SSM Store Containing the Command Fargate should run"
   type        = string
   default     = "mc_server/BOT_COMMAND"
-}
-
-variable "terraform_token_name" {
-  description = "Terraform token name in Systems Manager Parameter Store"
-  type        = string
-  default     = "terraform-cloud-user-api"
 }
 
 variable "ssm_git_private_key_name" {
@@ -79,12 +106,12 @@ variable "instance_type" {
 
   ### M5zn Family ###
   default = "m5zn.xlarge"
-  
+
   // https://amazon-aws-ec2-pricing-comparison.pcapps.com/
 }
 
 variable "ami" {
-  type    = list(string)
+  type = list(string)
   # default = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-server-*"]
   default = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
 }
@@ -108,7 +135,7 @@ variable "ami_virtualization_type" {
 }
 
 variable "architecture" {
-  type    = list(string)
+  type = list(string)
   # default = ["arm64"]
   default = ["x86_64"]
 }
@@ -116,6 +143,29 @@ variable "architecture" {
 variable "network_interface_id" {
   type    = string
   default = "network_id_from_aws"
+}
+
+
+########################
+#        VPC           #
+########################
+variable "vpc_cidr" {
+  description = "The CIDR block for the VPC."
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+########################
+#        Subnet        #
+########################
+variable "public_subnet_cidrs" {
+  description = "The CIDR block for the public Subnet."
+  type        = list(string)
+  default = [
+    "10.0.51.0/24",
+    "10.0.52.0/24",
+    "10.0.53.0/24"
+  ]
 }
 
 ########################
