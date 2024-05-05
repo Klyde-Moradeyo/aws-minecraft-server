@@ -1,3 +1,11 @@
+########################
+#   Resource Naming    #
+########################
+variable "name" {
+  description = "name"
+  type        = string
+  default     = "minecraft-server"
+}
 
 ########################
 #     General AWS      #
