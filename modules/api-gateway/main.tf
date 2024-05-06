@@ -46,7 +46,7 @@ resource "aws_lambda_permission" "minecraft_invoke_permission" {
 # Stage to deploy in
 resource "aws_apigatewayv2_stage" "minecraft_stage" {
   api_id      = aws_apigatewayv2_api.minecraft_http_api.id
-  name        = var.label_id
+  name        = "dev-minecraft"
   auto_deploy = true
   tags        = var.tags
 }
