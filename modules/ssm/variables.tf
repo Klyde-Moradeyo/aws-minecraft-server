@@ -1,11 +1,6 @@
 ########################
 #         Tags         #
 ########################
-variable "label_id" {
-  description = "ID from tags module"
-  type        = string
-}
-
 variable "tags" {
   description = "Tags from tags module"
   type        = map(string)
