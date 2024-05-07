@@ -2,25 +2,36 @@
 #       S3 Bucket      #
 ########################
 module "s3_mc_world" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/s3?ref=tf-modules"
+  source = "./s3"
 
-  # S3 Bucket 
-  bucket_name           = "world-data"
-  version_config_status = "Enabled"
+  name               = "${var.name}-world-data"
+  versioning_enabled = true
 
-  # Module tags
-  label_id = module.tags.label_id
-  tags     = module.tags.tags
+  # logging
+  enable_logging        = true
+  logging_target_bucket = module.s3_access_logs.bucket_name
+
+  tags = module.tags.tags
 }
 
 module "s3_mc_server_assets" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/s3?ref=tf-modules"
+  source = "./s3"
 
-  # S3 Bucket 
-  bucket_name           = "mc-server-assets"
-  version_config_status = "Enabled"
+  name               = "${var.name}-assets"
+  versioning_enabled = true
 
-  # Module tags
-  label_id = module.tags.label_id
-  tags     = module.tags.tags
+  # logging
+  enable_logging        = true
+  logging_target_bucket = module.s3_access_logs.bucket_name
+
+  tags = module.tags.tags
+}
+
+module "s3_access_logs" {
+  source = "./s3"
+
+  name               = "${var.name}-access-logs"
+  versioning_enabled = false
+
+  tags = module.tags.tags
 }

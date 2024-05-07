@@ -11,7 +11,7 @@
 #         EIP          #
 ########################
 output "eip" {
-  value = module.eip.eip_public_ip
+  value = module.minecraft_server.public_ip
 }
 
 ########################
@@ -24,7 +24,7 @@ output "vpc_id" {
 
 output "subnet_id" {
   description = "The Subnet ID"
-  value       = module.vpc.subnet_id
+  value       = module.public_subnet.subnet_ids
 }
 
 output "security_group_id" {
@@ -37,33 +37,23 @@ output "security_group_id" {
 ########################
 output "s3_mc_world_bucket_name" {
   description = "The name of the Minecraft S3 bucket"
-  value       = module.s3_mc_world.s3_bucket_name
+  value       = module.s3_mc_world.bucket_name
 }
 
 output "mc_s3_bucket_arn" {
   description = "The ARN of the Minecraft S3 bucket"
-  value       = module.s3_mc_world.s3_bucket_arn
+  value       = module.s3_mc_world.bucket_arn
 }
 
 output "s3_mc_world_bucket_name_uri" {
   description = "The S3 uri of the minecraft world data"
-  value       = module.s3_mc_world.s3_bucket_uri
+  value       = module.s3_mc_world.bucket_uri
 }
 
 output "s3_mc_server_assets_uri" {
   description = "The S3 uri of the minecraft world data"
-  value       = module.s3_mc_server_assets.s3_bucket_uri
+  value       = module.s3_mc_server_assets.bucket_uri
 }
-
-# output "mc_archive_s3_bucket_uri" {
-#   description = "The name of the S3 bucket for logs"
-#   value       = "WIP --- s3://${aws_s3_bucket.mc_s3.id}"
-# }
-
-# output "mc_archive_s3_bucket_arn" {
-#   description = "The S3 uri of the minecraft world data"
-#   value       = "module.s3_mc_world.s3_bucket_uri"
-# }
 
 ########################
 #     API Gateway      #
@@ -88,11 +78,6 @@ output "ssm_ec2_private_key" {
 ########################
 #         Tags         #
 ########################
-output "label_id" {
-  description = "Label ID"
-  value       = module.tags.label_id
-}
-
 output "tags" {
   description = "Label tags"
   value       = module.tags.tags
@@ -110,11 +95,7 @@ output "mc_port" {
 #         ECR          #
 ########################
 output "ecr_mc_world_archive_repository_name" {
-  value = module.mc_world_archive_ecr_registry.ecr_repository_name
-}
-
-output "ecr_mc_monitoring_repository_name" {
-  value = module.mc_monitoring_ecr_registry.ecr_repository_name
+  value = module.ecr_mc_world_archive.repository_name
 }
 
 ########################

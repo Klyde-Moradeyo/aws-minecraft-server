@@ -40,7 +40,7 @@ variable "owner" {
 variable "namespace" {
   description = "Logical grouping for resources, such as by service"
   type        = string
-  default     = "minecrasft"
+  default     = "minecraft"
 }
 
 variable "environment" {
@@ -185,7 +185,14 @@ variable "allowed_cidrs" {
   default     = "0.0.0.0/0" // https://cidr.xyz/
 }
 
-
+########################
+#       S3 Bucket      #
+########################
+variable "logging_target_bucket" {
+  description = "The target bucket for S3 logging"
+  type        = string
+  default     = "general-purpose-storage-s3-gminaqhj"
+}
 
 
 
