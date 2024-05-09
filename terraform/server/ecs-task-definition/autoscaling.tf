@@ -1,0 +1,1 @@
+# Add enforce autoscaling if task type is for fargate
