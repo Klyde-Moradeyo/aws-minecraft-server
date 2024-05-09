@@ -23,3 +23,25 @@ module "ecs_cluster" {
   # Module tags
   tags = module.tags.tags
 }
+
+# module "ecs_cluster" {
+#   source = "./ecs-cluster"
+
+#   name = var.name
+#   capacity_providers = ["FARGATE", "FARGATE_SPOT"]
+#   container_insights = true
+#   default_capacity_provider_strategy = [
+#     {
+#       capacity_provider = "FARGATE"
+#       weight            = 1
+#       base              = 1
+#     },
+#     {
+#       capacity_provider = "FARGATE_SPOT"
+#       weight            = 2
+#       base              = 0
+#     }
+#   ]
+  
+#   tags = module.tags.tags
+# }
