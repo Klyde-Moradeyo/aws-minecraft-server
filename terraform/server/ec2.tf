@@ -40,7 +40,7 @@ module "minecraft_server" {
 
   # Network
   subnet_id                   = module.public_subnet.subnet_ids[0]
-  security_group_ids          = [module.security_group.security_group_id]
+  security_group_ids          = [ module.security_group.security_group_id ]
   associate_public_ip_address = true
 
   tags = module.tags.tags
