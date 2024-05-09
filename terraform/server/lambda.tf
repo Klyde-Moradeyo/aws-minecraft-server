@@ -1,97 +1,91 @@
-
-########################
-#    Request Lambda    #
-########################
 module "request_lambda" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/request-lambda?ref=tf-modules"
+  source  = "./lambda"
 
-  # aws region
-  aws_region = var.aws_region
+  name                    = "${var.name}-request"
+  handler                 = "lambda_function.lambda_handler"
+  runtime                 = "python3.10"
+  description             = "Lambda Function to handle requests to the minecraft server api"
+  timeout                 = 900
+  memory_size             = 128
+  publish                 = true
 
-  # Lambda Config
-  lambda_runtime          = "python3.10"
-  lambda_timeout          = 900
-  lambda_memory_size      = 128
-  lambda_payload_zip_path = "./request_lambda_latest.zip"
+  zip_file                = "request_lambda_latest.zip"
 
-  # IAM
-  ec2_instance_arn  = module.minecraft_server.ec2_instance_arn
-  worker_lambda_arn = module.worker_lambda.lambda_function_arn
+  environment = {
+      MC_SERVER_IP                        = module.minecraft_server.public_ip
+      MC_PORT                             = var.mc_port
+      EC2_INSTANCE_ID                     = module.minecraft_server.id
+      WORKER_LAMBDA_NAME                  = module.worker_lambda.name
+      DYNAMO_DB_TABLE_NAME                = module.dynamodb_table.table_name
+      SSM_REQUEST_LAMBDA_AUTH_TOKEN       = "/${module.ssm_api_gw_key.ssm_parameter_name}"
+      ECS_CLUSTER_NAME                    = module.ecs_cluster.ecs_cluster_name
+      ECS_MC_ARCHIVE_TASK_DEFINITION_NAME = module.ecs_cluster.mc_archive_task_definition_name
+      ECS_MC_ARCHIVE_CONTAINER_NAME       = module.ecs_cluster.mc_archive_task_container_name
+      S3_MC_WORLD_URI                     = module.s3_mc_world.bucket_uri
+      S3_MC_ASSETS_URI                    = module.s3_mc_server_assets.bucket_uri
+      ECS_SUBNET_ID                       = module.public_subnet.subnet_ids[0]
+      ECS_SECURITY_GROUP_ID               = module.security_group.security_group_id
+      TAGS_JSON                           = jsonencode(module.tags.tags)
+    }
 
-  # Lambda Environment vars
-  ec2_instance_id                     = module.minecraft_server.id
-  mc_server_ip                        = module.minecraft_server.public_ip
-  mc_port                             = var.mc_port
-  worker_lambda_name                  = module.worker_lambda.lambda_function_name
-  dynamodb_table_name                 = module.dynamodb_table.table_name
-  git_branch                          = var.git_branch
-  ssm_api_key_name                    = module.ssm_api_gw_key.ssm_parameter_name
-  ecs_cluster_name                    = module.ecs_cluster.ecs_cluster_name
-  ecs_mc_archive_task_definition_name = module.ecs_cluster.mc_archive_task_definition_name
-  ecs_mc_archive_task_container_name  = module.ecs_cluster.mc_archive_task_container_name
-  ecs_subnet_id                       = module.public_subnet.subnet_ids[0]
-  ecs_security_group_id               = module.security_group.security_group_id
-  s3_minecraft_world_bucket_url       = module.s3_mc_world.bucket_uri
-  s3_minecraft_assets_bucket_url      = module.s3_mc_server_assets.bucket_uri
+  # Optional Layers
+  layers = [
+    "arn:aws:lambda:us-east-1:123456789012:layer:my-layer:1"
+  ]
 
-  # Module tags
+  # Optional Permissions
+  permissions = [
+    {
+      action     = "lambda:InvokeFunction"
+      principal  = "apigateway.amazonaws.com"
+      source_arn = module.api_gateway.execution_arn
+    }
+  ]
+
   tags = module.tags.tags
 }
 
-# module "request_lambda" {
-#   source = "./lambda"
-
-#   function_name = "example-lambda"
-#   handler       = "index.handler"
-#   runtime       = "python3.10"
-#   zip_file      = "./code/index.zip"  # Local ZIP file path (optional)
-#   s3_bucket     = "my-lambda-bucket"  # S3 bucket (optional)
-#   s3_key        = "lambda/index.zip"  # S3 key (optional)
-#   image_uri     = ""                  # Docker image URI (optional)
-
-#   environment = {
-#     LOG_LEVEL = "INFO"
-#   }
-
-#   permissions = [
-#     {
-#       action     = "lambda:InvokeFunction"
-#       principal  = "s3.amazonaws.com"
-#       source_arn = "arn:aws:s3:::my-trigger-bucket/*"
-#     }
-#   ]
-
-#   tags = module.tags.tags
-# }
-
-########################
-#     Worker Lambda    #
-########################
 module "worker_lambda" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/worker-lambda?ref=tf-modules"
+  source  = "./lambda"
 
-  # aws region
-  aws_region = var.aws_region
+  name                    = "${var.name}-worker"
+  handler                 = "lambda_function.lambda_handler"
+  runtime                 = "python3.10"
+  description             = "Worker Lambda Function to handle requests received from Request Lambda"
+  timeout                 = 900
+  memory_size             = 128
+  publish                 = true
 
-  # Lambda Config
-  lambda_runtime          = "python3.10"
-  lambda_timeout          = 900
-  lambda_memory_size      = 128
-  lambda_payload_zip_path = "./worker_lambda_latest.zip"
+  zip_file                = "worker_lambda_latest.zip"
 
-  # IAM
-  ec2_instance_arn    = module.minecraft_server.ec2_instance_arn
-  dynamodb_table_name = module.dynamodb_table.table_name
+  environment = {
+      SSM_GIT_PRIVATE_KEY           = "/${var.ssm_git_private_key_name}"
+      SSM_EC2_PRIVATE_KEY           = "/${module.ssm_mc_server_private_key.ssm_parameter_name}"
+      GIT_BRANCH                    = var.git_branch
+      S3_MC_WORLD_URI               = module.s3_mc_world.bucket_arn
+      S3_MC_ASSETS_URI              = module.s3_mc_server_assets.bucket_uri
+      API_GW_URL                    = "${module.api_gateway.api_gateway_url}/${module.api_gateway.stage_name}"
+      SSM_REQUEST_LAMBDA_AUTH_TOKEN = "/${module.ssm_api_gw_key.ssm_parameter_name}"
+    }
 
-  # Lambda Environment vars
-  ssm_git_private_key_name       = var.ssm_git_private_key_name
-  ssm_ec2_private_key_name       = module.ssm_mc_server_private_key.ssm_parameter_name
-  git_branch                     = var.git_branch
-  s3_minecraft_world_bucket_url  = module.s3_mc_world.bucket_arn
-  s3_minecraft_assets_bucket_url = module.s3_mc_server_assets.bucket_uri
-  api_gateway_url                = "${module.api_gateway.api_gateway_url}/${module.api_gateway.stage_name}"
-  ssm_api_key_name               = module.ssm_api_gw_key.ssm_parameter_name
+  layers = [
+    local.git_lambda_layer_arn
+  ]
 
-  # Module tags
+  # Optional Permissions
+  permissions = [
+    {
+      action     = "lambda:InvokeFunction"
+      principal  = "lambda.amazonaws.com"
+      source_arn = module.request_lambda.arn
+    }
+  ]
+
+  reserved_concurrent_executions = 1
+
   tags = module.tags.tags
+}
+
+locals {
+  git_lambda_layer_arn = "arn:aws:lambda:${var.aws_region}:553035198032:layer:git-lambda2:8"
 }
