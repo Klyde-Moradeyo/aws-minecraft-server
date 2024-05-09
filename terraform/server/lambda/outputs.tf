@@ -13,9 +13,9 @@ output "invoke_arn" {
   value       = aws_lambda_function.lambda.invoke_arn
 }
 
-output "iam_role" {
+output "iam_role_arn" {
   description = "The IAM role for the Lambda function."
-  value       = aws_iam_role.lambda_execution_role.arn
+  value       = module.iam_role.iam_role_arn
 }
 
 output "image_uri" {

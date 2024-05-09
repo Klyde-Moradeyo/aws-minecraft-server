@@ -28,11 +28,6 @@ module "request_lambda" {
       TAGS_JSON                           = jsonencode(module.tags.tags)
     }
 
-  # Optional Layers
-  layers = [
-    "arn:aws:lambda:us-east-1:123456789012:layer:my-layer:1"
-  ]
-
   # Optional Permissions
   permissions = [
     {

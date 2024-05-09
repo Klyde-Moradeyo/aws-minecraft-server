@@ -6,8 +6,9 @@ module "iam_role" {
   version = "0.0.1"
 
   name = var.name
+  description = "IAM Role for ${var.name} Lambda"
 
-  trust_policy_hcl = {
+  trust_policy_hcl = { 
     Version = "2012-10-17"
     Statement = [
       {
@@ -20,9 +21,15 @@ module "iam_role" {
     ]
   }
 
-  policy_arns = {}
+  policy_arns = {
+    "${local.iam_policy_name}" = module.iam_policy.policy_arn
+  }
 
   tags = var.tags
+}
+
+locals {
+  iam_policy_name = "${var.name}-lambda-cloudwatch-logs-access"
 }
 
 ############################
@@ -32,8 +39,8 @@ module "iam_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
   version = "0.0.1"
 
-  name        = var.name
-  path        = "/Lambda"
+  name        = local.iam_policy_name
+  path        = "/Lambda/"
   description = "An IAM policy for ${var.name} lambda access to cloudwatch logs"
 
   policy_hcl = {
@@ -46,7 +53,7 @@ module "iam_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        # Resource = "*"
+        Resource = module.cloudwatch_log.arn
       }
     ]
   }

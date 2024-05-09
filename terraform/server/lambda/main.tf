@@ -16,7 +16,7 @@ resource "aws_lambda_function" "lambda" {
   function_name = "${module.resource_name_prefix.resource_name}-lambda"
   handler       = var.handler != "" ? var.handler : null
   runtime       = var.runtime != "" ? var.runtime : null
-  role          = aws_iam_role.lambda_execution_role.arn
+  role          = module.iam_role.iam_role_arn
   description   = var.description
   timeout       = var.timeout
   memory_size   = var.memory_size
@@ -30,13 +30,7 @@ resource "aws_lambda_function" "lambda" {
     }
   }
 
-  # Layers (optional)
-  dynamic "layers" {
-    for_each = var.layers != [] ? [var.layers] : []
-    content {
-      layers = var.layers
-    }
-  }
+  layers = var.layers
 
   # Reserved concurrent executions
   reserved_concurrent_executions = var.reserved_concurrent_executions
