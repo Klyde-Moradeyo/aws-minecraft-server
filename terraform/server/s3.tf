@@ -30,7 +30,7 @@ module "s3_mc_server_assets" {
 module "s3_access_logs" {
   source = "./s3"
 
-  name               = "${var.name}-access-logs"
+  name               = "${var.name}-s3-access-logs"
   versioning_enabled = false
 
   tags = module.tags.tags
