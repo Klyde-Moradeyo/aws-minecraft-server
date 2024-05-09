@@ -1,12 +1,12 @@
-output "log_group_name" {
+output "name" {
   value = aws_cloudwatch_log_group.log_group.name
 }
 
-output "log_group_arn" {
+output "arn" {
   value = aws_cloudwatch_log_group.log_group.arn
 }
 
-output "log_resource_policies" {
+output "resource_policies" {
   value       = [for policy in aws_cloudwatch_log_resource_policy.resource_policy : policy.policy_name]
   description = "The names of the CloudWatch log resource policies."
 }
