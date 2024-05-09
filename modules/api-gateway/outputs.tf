@@ -9,3 +9,8 @@ output "stage_name" {
   description = "The name of the deployed stage"
   value       = aws_apigatewayv2_stage.minecraft_stage.name
 }
+
+output "execution_arn" {
+  description = "The name of the deployed stage"
+  value       = aws_apigatewayv2_api.minecraft_http_api.execution_arn
+}
