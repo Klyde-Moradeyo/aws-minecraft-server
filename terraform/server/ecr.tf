@@ -2,7 +2,8 @@
 #         ECR          #
 ########################
 module "ecr_mc_world_archive" {
-  source  = "./ecr"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/ecr/aws"
+  version = "0.0.2"
 
   name                 = "${var.name}-world-archive"
   image_tag_mutability = "MUTABLE"

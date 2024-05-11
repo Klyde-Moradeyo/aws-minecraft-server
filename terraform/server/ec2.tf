@@ -29,7 +29,8 @@ data "aws_ami" "ami" {
 #              EC2             #
 ################################
 module "minecraft_server" {
-  source = "./ec2-instance"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/ec2-instance/aws"
+  version = "0.0.1"
 
   name          = var.name
   ami           = data.aws_ami.ami.image_id

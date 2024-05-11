@@ -2,7 +2,8 @@
 #       S3 Bucket      #
 ########################
 module "s3_mc_world" {
-  source = "./s3"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/s3/aws"
+  version = "0.0.1"
 
   name               = "${var.name}-world-data"
   versioning_enabled = true
@@ -15,7 +16,8 @@ module "s3_mc_world" {
 }
 
 module "s3_mc_server_assets" {
-  source = "./s3"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/s3/aws"
+  version = "0.0.1"
 
   name               = "${var.name}-assets"
   versioning_enabled = true
@@ -28,7 +30,8 @@ module "s3_mc_server_assets" {
 }
 
 module "s3_access_logs" {
-  source = "./s3"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/s3/aws"
+  version = "0.0.1"
 
   name               = "${var.name}-s3-access-logs"
   versioning_enabled = false
