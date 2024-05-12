@@ -12,46 +12,47 @@
 #   tags = module.tags.tags
 # }
 
-module "api_gateway" {
+module "http_api_gateway" {
   source = "./http-api-gw"
 
-  name        = var.name
-  description = "${var.name} HTTP API Gateway"
-  endpoint_type = "REGIONAL"
+  name        = "MyServiceAPI"
+  description = "API Gateway for My Service."
 
-  log_retention_days = 7
-
-  resources = [
-    {
-      path_part   = "minecraft-server/prod/command"
-      http_method = "POST"
-      target_url  = module.request_lambda.invoke_arn
+  integrations = {
+    "lambda_backend" = {
+      type            = "AWS_PROXY"
+      uri             = aws_lambda_function.my_lambda_function.invoke_arn
+      payload_version = "2.0"
+    },
+    "http_backend" = {
+      type            = "HTTP_PROXY"
+      uri             = "https://examplebackend.com/"
+      payload_version = "2.0"
     }
-  ]
+  }
 
-  stages = [
-    {
-      name        = "prod"
-      description = "Production stage for Minecraft API"
+  routes = {
+    "get_lambda_data" = {
+      route_key       = "GET /lambda"
+      integration_key = "lambda_backend"
+    },
+    "get_http_data" = {
+      route_key       = "GET /http"
+      integration_key = "http_backend"
     }
-  ]
+  }
 
-  tags = module.tags.tags
-}
-
-resource "aws_lambda_permission" "api_gw_lambda_invoke" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = module.request_lambda.name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = module.api_gateway.execution_arn
-}
-
-
-output "api_gateway_url_dev" {
-  value = "${module.api_gateway.api_gateway_stage_url["dev"]}"
-}
-
-output "api_gateway_url_prod" {
-  value = "${module.api_gateway.api_gateway_stage_url["prod"]}"
+  stages = {
+    "dev" = {
+      auto_deploy = true
+      logging     = {
+        enabled        = true
+        format         = "{\"requestId\":\"$context.requestId\", \"ip\":\"$context.identity.sourceIp\"}"
+        retention_days = 14
+      }
+    },
+    "prod" = {
+      auto_deploy = true
+    }
+  }
 }

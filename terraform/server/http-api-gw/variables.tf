@@ -11,40 +11,36 @@ variable "name" {
 ########################
 variable "description" {
   type        = string
-  description = "A description of the API Gateway"
+  description = "Description of the API Gateway."
 }
 
-variable "resources" {
-  type = list(object({
-    path_part   = string
-    http_method = string
-    target_url  = string
+variable "integrations" {
+  type = map(object({
+    type           : string
+    uri            : string
+    payload_version: string
   }))
-  default = []
+  description = "Map of integrations keyed by their unique names."
+}
+
+variable "routes" {
+  type = map(object({
+    route_key      : string
+    integration_key: string
+  }))
+  description = "Map of routes keyed by their unique names."
 }
 
 variable "stages" {
-  type = list(object({
-    name        = string
-    description = string
+  type = map(object({
+    auto_deploy : bool
+    logging     : optional(object({
+      enabled        : bool
+      format         : string
+      retention_days : number
+    }))
   }))
-  default = []
-}
-
-variable "endpoint_type" {
-  description = "The type of endpoint to use for the API Gateway. Valid options are REGIONAL, EDGE_OPTIMIZED, and PRIVATE."
-  type        = string
-  default     = "REGIONAL"
-
-  validation {
-    condition     = contains(["REGIONAL", "EDGE_OPTIMIZED", "PRIVATE"], var.endpoint_type)
-    error_message = "Invalid endpoint type. Valid options are REGIONAL, EDGE_OPTIMIZED, and PRIVATE."
-  }
-}
-
-variable "log_retention_days" {
-  description = "Log Retention period in days"
-  type        = number
+  description = "Map containing stage configurations with optional logging."
 }
 
 ########################
