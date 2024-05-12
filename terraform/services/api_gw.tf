@@ -2,7 +2,8 @@
 #     API Gateway      #
 ########################
 module "api_gateway" {
-  source = "./http-api-gw"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/http-api-gw/aws"
+  version = "0.0.1"
 
   name        = var.name
   description = "API Gateway for ${var.name}"

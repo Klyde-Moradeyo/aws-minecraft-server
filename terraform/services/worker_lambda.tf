@@ -3,7 +3,8 @@ locals {
 }
 
 module "worker_lambda" {
-  source  = "./lambda"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/lambda/aws"
+  version = "0.0.1"
 
   name                    = "${var.name}-worker"
   handler                 = "lambda_function.lambda_handler"
@@ -17,7 +18,7 @@ module "worker_lambda" {
 
   environment = {
       SSM_GIT_PRIVATE_KEY           = "/${var.ssm_git_private_key_name}"
-      SSM_EC2_PRIVATE_KEY           = "/${module.ssm_mc_server_private_key.ssm_parameter_name}"
+      SSM_EC2_PRIVATE_KEY           = module.ssm_mc_server_private_key.info["ec2_private_key"].name
       GIT_BRANCH                    = var.git_branch
       S3_MC_WORLD_URI               = module.s3_mc_world.bucket_arn
       S3_MC_ASSETS_URI              = module.s3_mc_server_assets.bucket_uri

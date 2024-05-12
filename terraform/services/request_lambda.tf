@@ -1,5 +1,6 @@
 module "request_lambda" {
-  source  = "./lambda"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/lambda/aws"
+  version = "0.0.1"
 
   name                    = "${var.name}-request"
   handler                 = "lambda_function.lambda_handler"

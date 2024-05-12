@@ -2,7 +2,8 @@
 #    Systems Manager   #
 ########################
 module "ssm_mc_server_private_key" {
-  source      = "./ssm-parameter"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/ssm-parameter/aws"
+  version = "0.0.5"
 
   name = var.name
   parameters = [

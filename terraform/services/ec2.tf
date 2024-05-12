@@ -52,7 +52,7 @@ resource "null_resource" "delay_before_stop" {
   triggers   = { instance_id = module.minecraft_server.id }
 
   provisioner "local-exec" {
-    command = "sleep 60" # Delay in seconds
+    command = "sleep 30" # Delay in seconds
   }
 }
 
