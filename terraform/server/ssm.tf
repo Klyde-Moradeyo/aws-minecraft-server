@@ -2,12 +2,18 @@
 #    Systems Manager   #
 ########################
 module "ssm_mc_server_private_key" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ssm?ref=tf-modules"
+  source      = "./ssm-parameter"
 
-  parameter_name = "mc_server/private_key"
-  parameter_type = "SecureString"
-  value          = module.ec2_key_pair.private_key_pem
+  name = var.name
+  parameters = [
+    {
+      name        = "ec2_private_key"
+      description = "${var.name} EC2 instance private key."
+      type        = "SecureString"
+      value       = module.ec2_key_pair.private_key_pem
+      key_id      = "alias/aws/ssm"
+    }
+  ]
 
-  # Module tags
   tags = module.tags.tags
 }
