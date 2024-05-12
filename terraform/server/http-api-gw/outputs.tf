@@ -1,14 +1,11 @@
-output "bucket_arn" {
-  description = "The ARN of the S3 bucket"
-  value       = aws_s3_bucket.bucket.arn
+output "id" {
+  value = aws_api_gateway_rest_api.api.id
 }
 
-output "bucket_name" {
-  description = "The name of the S3 bucket"
-  value       = aws_s3_bucket.bucket.bucket
+output "execution_arn" {
+  value = aws_api_gateway_rest_api.api.execution_arn
 }
 
-output "bucket_domain_name" {
-  description = "The domain name of the S3 bucket"
-  value       = aws_s3_bucket.bucket.bucket_domain_name
+output "stage_url" {
+  value = "${aws_api_gateway_deployment.api_deployment.invoke_url}/${aws_api_gateway_stage.api_stage.stage_name}"
 }

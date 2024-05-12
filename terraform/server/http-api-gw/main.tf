@@ -12,3 +12,15 @@ module "resource_name_prefix" {
 ##########################
 #       HTTP API         #
 ##########################
+locals {
+  api_name = "${module.resource_name_prefix.resource_name}-http-api-gw"
+}
+
+resource "aws_api_gateway_rest_api" "api" {
+  name        = local.api_name
+  description = var.description
+
+  endpoint_configuration {
+    types = [ var.endpoint_type ]
+  }
+}

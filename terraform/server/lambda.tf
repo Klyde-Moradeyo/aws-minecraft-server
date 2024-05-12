@@ -4,7 +4,7 @@ module "request_lambda" {
   name                    = "${var.name}-request"
   handler                 = "lambda_function.lambda_handler"
   runtime                 = "python3.10"
-  description             = "Lambda Function to handle requests to the minecraft server api"
+  description             = "Lambda Function to handle requests to the ${var.name} api"
   timeout                 = 900
   memory_size             = 128
   publish                 = true
@@ -28,15 +28,6 @@ module "request_lambda" {
       TAGS_JSON                           = jsonencode(module.tags.tags)
     }
 
-  # Optional Permissions
-  permissions = [
-    {
-      action     = "lambda:InvokeFunction"
-      principal  = "apigateway.amazonaws.com"
-      source_arn = module.api_gateway.execution_arn
-    }
-  ]
-
   tags = module.tags.tags
 }
 
@@ -46,7 +37,7 @@ module "worker_lambda" {
   name                    = "${var.name}-worker"
   handler                 = "lambda_function.lambda_handler"
   runtime                 = "python3.10"
-  description             = "Worker Lambda Function to handle requests received from Request Lambda"
+  description             = "Worker Lambda Function to handle requests received from ${var.name} Request Lambda"
   timeout                 = 900
   memory_size             = 128
   publish                 = true
