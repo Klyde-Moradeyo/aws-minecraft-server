@@ -3,6 +3,7 @@
     "MOTD": "Mango Minecraft Server",
     "TZ": "Europe/London",
     "MAX_PLAYERS": "10",
+    "PLAYER_IDLE_TIMEOUT": "20",
     "VIEW_DISTANCE": "10",
     "PLACEHOLDER-OPS": "No one",
     "ENABLE_WHITELIST": "false",
