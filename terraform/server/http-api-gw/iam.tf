@@ -23,7 +23,7 @@ module "iam_role" {
   }
 
   policy_arns = {
-    
+    "${var.name}-http-api-gw-log-grp-access" = module.iam_policy.policy_arn
   }
 
   tags = var.tags
@@ -37,7 +37,7 @@ module "iam_policy" {
   version = "0.0.1"
 
   name        = var.name
-  description = "IAM Policy for ${local.api_name} HTTP API Gateway"
+  description = "IAM Policy for ${local.api_name} HTTP API Gateway Cloudwatch log group access"
 
   policy_hcl = {
       Version = "2012-10-17"
@@ -53,10 +53,12 @@ module "iam_policy" {
             "logs:FilterLogEvents"
           ],
           Effect   = "Allow",
-          Resource = module.cloudwatch_log.arn
+          Resource =  [
+            for k, v in module.cloudwatch_log : v.arn
+          ]
         },
       ]
     }
 
-  tags = module.tags.tags
+  tags = var.tags
 }

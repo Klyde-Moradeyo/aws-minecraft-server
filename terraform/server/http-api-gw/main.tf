@@ -20,6 +20,7 @@ resource "aws_apigatewayv2_api" "http_api" {
   name          = local.api_name
   protocol_type = "HTTP"
   description   = var.description
+  tags = var.tags
 }
 
 resource "aws_apigatewayv2_integration" "api_integrations" {
@@ -39,15 +40,6 @@ resource "aws_apigatewayv2_route" "api_routes" {
   target    = "integrations/${aws_apigatewayv2_integration.api_integrations[each.value.integration_key].id}"
 }
 
-resource "aws_cloudwatch_log_group" "api_log_group" {
-  for_each = {
-    for k, v in var.stages : k => v if v.logging != null && v.logging.enabled
-  }
-
-  name              = "/aws/apigateway/${var.api_name}-${each.key}"
-  retention_in_days = each.value.logging.retention_days
-}
-
 resource "aws_apigatewayv2_stage" "api_stages" {
   for_each = var.stages
 
@@ -58,7 +50,7 @@ resource "aws_apigatewayv2_stage" "api_stages" {
   dynamic "access_log_settings" {
     for_each = each.value.logging != null && each.value.logging.enabled ? [1] : []
     content {
-      destination_arn = aws_cloudwatch_log_group.api_log_group[each.key].arn
+      destination_arn = module.cloudwatch_log[each.key].arn
       format          = each.value.logging.format
     }
   }
@@ -66,5 +58,7 @@ resource "aws_apigatewayv2_stage" "api_stages" {
   lifecycle {
     create_before_destroy = true
   }
+
+  tags = var.tags
 }
 

@@ -59,7 +59,7 @@ output "s3_mc_server_assets_uri" {
 #     API Gateway      #
 ########################
 output "api_gateway_url" {
-  value = "${module.api_gateway.api_gateway_url}/${module.api_gateway.stage_name}"
+  value = "${module.api_gateway.api_endpoint}"
 }
 
 ########################

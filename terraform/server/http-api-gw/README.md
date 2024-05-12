@@ -48,3 +48,50 @@ No requirements.
 | <a name="output_bucket_domain_name"></a> [bucket\_domain\_name](#output\_bucket\_domain\_name) | The domain name of the S3 bucket |
 | <a name="output_bucket_id"></a> [bucket\_id](#output\_bucket\_id) | The name of the bucket |
 <!-- END_TF_DOCS -->
+
+module "http_api_gateway" {
+  source = "./http-api-gw"
+
+  name        = var.name
+  description = "API Gateway for ${var.name}"
+
+  integrations = {
+    "lambda_backend" = {
+      type            = "AWS_PROXY"
+      uri             = module.request_lambda.invoke_arn
+      payload_version = "2.0"
+    },
+    "http_backend" = {
+      type            = "HTTP_PROXY"
+      uri             = "https://examplebackend.com/"
+      payload_version = "2.0"
+    }
+  }
+
+  routes = {
+    "get_lambda_data" = {
+      route_key       = "GET /lambda"
+      integration_key = "lambda_backend"
+    },
+    "get_http_data" = {
+      route_key       = "GET /http"
+      integration_key = "http_backend"
+    }
+  }
+
+  stages = {
+    "dev" = {
+      auto_deploy = true
+      logging     = {
+        enabled        = true
+        format         = "{\"requestId\":\"$context.requestId\", \"ip\":\"$context.identity.sourceIp\"}"
+        retention_days = 14
+      }
+    },
+    "prod" = {
+      auto_deploy = true
+    }
+  }
+
+  tags = module.tags.tags
+}

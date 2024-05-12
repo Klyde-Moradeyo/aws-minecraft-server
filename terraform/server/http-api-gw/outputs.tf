@@ -12,7 +12,7 @@ output "stage_invoke_urls" {
   value = {
     for k, v in aws_apigatewayv2_stage.api_stages : k => {
       "stage_name" = k
-      "url"        = "https://${aws_apigatewayv2_api.http_api.api_id}.execute-api.${var.region}.amazonaws.com/${k}"
+      "url"        = "${aws_apigatewayv2_api.http_api.api_endpoint}/${k}"
     }
   }
   description = "A map containing the invoke URLs for each stage."
@@ -42,7 +42,7 @@ output "route_details" {
 
 output "log_group_details" {
   value = {
-    for k, v in aws_cloudwatch_log_group.api_log_group : k => {
+    for k, v in module.cloudwatch_log: k => {
       "log_group_name" = v.name
       "log_group_arn"  = v.arn
     }

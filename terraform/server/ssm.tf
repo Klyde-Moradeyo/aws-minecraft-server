@@ -11,14 +11,3 @@ module "ssm_mc_server_private_key" {
   # Module tags
   tags = module.tags.tags
 }
-
-module "ssm_api_gw_key" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ssm?ref=tf-modules"
-
-  parameter_name = "request_lambda_api_gw_auth_token"
-  parameter_type = "String"
-  value          = "null"
-
-  # Module tags
-  tags = module.tags.tags
-}

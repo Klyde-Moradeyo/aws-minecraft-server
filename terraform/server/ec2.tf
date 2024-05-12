@@ -61,7 +61,7 @@ resource "null_resource" "stop_instance" {
   triggers   = { instance_id = module.minecraft_server.id }
 
   provisioner "local-exec" {
-    command = "aws ec2 stop-instances --instance-ids ${module.minecraft_server.id}"
+    command = "aws ec2 stop-instances --instance-ids ${module.minecraft_server.id} --region ${var.aws_region}"
   }
 }
 
@@ -74,6 +74,7 @@ module "ec2_key_pair" {
 
   key_name           = "dev-test-key"
   create_private_key = true
+  tags = module.tags.tags
 }
 
 ################################

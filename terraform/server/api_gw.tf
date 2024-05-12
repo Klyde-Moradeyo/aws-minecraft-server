@@ -12,47 +12,50 @@
 #   tags = module.tags.tags
 # }
 
-module "http_api_gateway" {
+module "api_gateway" {
   source = "./http-api-gw"
 
-  name        = "MyServiceAPI"
-  description = "API Gateway for My Service."
+  name        = var.name
+  description = "API Gateway for ${var.name}"
 
   integrations = {
     "lambda_backend" = {
       type            = "AWS_PROXY"
-      uri             = aws_lambda_function.my_lambda_function.invoke_arn
-      payload_version = "2.0"
-    },
-    "http_backend" = {
-      type            = "HTTP_PROXY"
-      uri             = "https://examplebackend.com/"
+      uri             = module.request_lambda.invoke_arn
       payload_version = "2.0"
     }
   }
 
   routes = {
     "get_lambda_data" = {
-      route_key       = "GET /lambda"
+      route_key       = "POST /command"
       integration_key = "lambda_backend"
-    },
-    "get_http_data" = {
-      route_key       = "GET /http"
-      integration_key = "http_backend"
     }
   }
 
   stages = {
-    "dev" = {
+    "mango-minecraft-api" = {
       auto_deploy = true
       logging     = {
         enabled        = true
-        format         = "{\"requestId\":\"$context.requestId\", \"ip\":\"$context.identity.sourceIp\"}"
-        retention_days = 14
+        format = jsonencode({
+          requestId          = "$context.requestId",
+          ip                 = "$context.identity.sourceIp",
+          caller             = "$context.identity.caller",
+          user               = "$context.identity.user",
+          requestTime        = "$context.requestTime",
+          httpMethod         = "$context.httpMethod",
+          resourcePath       = "$context.resourcePath",
+          status             = "$context.status",
+          protocol           = "$context.protocol",
+          responseLength     = "$context.responseLength",
+          integrationLatency = "$context.integrationLatency",
+          backendLatency     = "$context.responseLatency"
+        })
+        retention_days = 60
       }
-    },
-    "prod" = {
-      auto_deploy = true
     }
   }
+
+  tags = module.tags.tags
 }

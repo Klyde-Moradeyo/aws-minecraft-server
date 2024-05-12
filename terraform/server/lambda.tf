@@ -17,7 +17,6 @@ module "request_lambda" {
       EC2_INSTANCE_ID                     = module.minecraft_server.id
       WORKER_LAMBDA_NAME                  = module.worker_lambda.name
       DYNAMO_DB_TABLE_NAME                = module.dynamodb_table.table_name
-      SSM_REQUEST_LAMBDA_AUTH_TOKEN       = "/${module.ssm_api_gw_key.ssm_parameter_name}"
       ECS_CLUSTER_NAME                    = module.ecs_cluster.ecs_cluster_name
       ECS_MC_ARCHIVE_TASK_DEFINITION_NAME = module.ecs_cluster.mc_archive_task_definition_name
       ECS_MC_ARCHIVE_CONTAINER_NAME       = module.ecs_cluster.mc_archive_task_container_name
@@ -50,8 +49,7 @@ module "worker_lambda" {
       GIT_BRANCH                    = var.git_branch
       S3_MC_WORLD_URI               = module.s3_mc_world.bucket_arn
       S3_MC_ASSETS_URI              = module.s3_mc_server_assets.bucket_uri
-      API_GW_URL                    = "${module.api_gateway.api_gateway_url}/${module.api_gateway.stage_name}"
-      SSM_REQUEST_LAMBDA_AUTH_TOKEN = "/${module.ssm_api_gw_key.ssm_parameter_name}"
+      API_GW_URL                    = "${module.api_gateway.api_endpoint}"
     }
 
   layers = [
