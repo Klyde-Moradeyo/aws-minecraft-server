@@ -37,6 +37,7 @@ jobs:
     with:
       TF_CONFIG_DIR: terraform
       WORKING_DIR: "fargate/mc_world_archiver"
+      aws_region: "eu-west-1"
     secrets:
       gh_pat_token: ${{ secrets.GH_PAT }}
       aws_id: ${{ secrets.AWS_ACCESS_KEY }}
