@@ -14,23 +14,6 @@ variable "description" {
   description = "Description of the API Gateway."
 }
 
-variable "integrations" {
-  type = map(object({
-    type           : string
-    uri            : string
-    payload_version: string
-  }))
-  description = "Map of integrations keyed by their unique names."
-}
-
-variable "routes" {
-  type = map(object({
-    route_key      : string
-    integration_key: string
-  }))
-  description = "Map of routes keyed by their unique names."
-}
-
 variable "stages" {
   type = map(object({
     auto_deploy : bool
@@ -39,8 +22,17 @@ variable "stages" {
       format         : string
       retention_days : number
     }))
+    integrations : map(object({
+      type           : string
+      uri            : string
+      payload_version: string
+    }))
+    routes : map(object({
+      route_key      : string
+      integration_key: string
+    }))
   }))
-  description = "Map containing stage configurations with optional logging."
+  description = "Map containing stage configurations with optional logging, integrations, and routes."
 }
 
 ########################

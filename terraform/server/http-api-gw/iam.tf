@@ -5,7 +5,7 @@ module "iam_role" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-role/aws"
   version = "0.0.1"
 
-  name        = var.name
+  name        = "${var.name}-http-api-gw"
   path        = "/http-api-gw/"
   description = "IAM Role for ${local.api_name} HTTP API Gateway"
 
@@ -23,7 +23,7 @@ module "iam_role" {
   }
 
   policy_arns = {
-    "${var.name}-http-api-gw-log-grp-access" = module.iam_policy.policy_arn
+    "${local.access_log_group_policy}" = module.iam_policy.policy_arn
   }
 
   tags = var.tags
@@ -32,11 +32,15 @@ module "iam_role" {
 ############################
 #       IAM Policy         #
 ############################
+locals {
+  access_log_group_policy = "${var.name}-http-api-gw-log-grp-access"
+}
+
 module "iam_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
   version = "0.0.1"
 
-  name        = var.name
+  name        = local.access_log_group_policy
   description = "IAM Policy for ${local.api_name} HTTP API Gateway Cloudwatch log group access"
 
   policy_hcl = {

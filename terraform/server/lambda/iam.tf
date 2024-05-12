@@ -5,7 +5,8 @@ module "iam_role" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-role/aws"
   version = "0.0.1"
 
-  name = var.name
+  name = "${var.name}-lambda"
+  path        = "/lambda/"
   description = "IAM Role for ${var.name} Lambda"
 
   trust_policy_hcl = { 
@@ -28,13 +29,13 @@ module "iam_role" {
   tags = var.tags
 }
 
+############################
+#       IAM Policy         #
+############################
 locals {
   iam_policy_name = "${var.name}-lambda-cloudwatch-logs-access"
 }
 
-############################
-#       IAM Policy         #
-############################
 module "iam_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
   version = "0.0.1"

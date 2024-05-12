@@ -23,23 +23,58 @@ resource "aws_apigatewayv2_api" "http_api" {
   tags = var.tags
 }
 
-resource "aws_apigatewayv2_integration" "api_integrations" {
-  for_each = var.integrations
+##########################
+#     Integrations       #
+##########################
+locals {
+  all_integrations = merge([
+    for stage_name, stage in var.stages : {
+      for integration_key, integration in stage.integrations : "${stage_name}-${integration_key}" => {
+        api_id              = aws_apigatewayv2_api.http_api.id
+        integration_type    = integration.type
+        integration_uri     = integration.uri
+        payload_format_version = integration.payload_version
+      }
+    }
+  ]...)
+}
 
-  api_id               = aws_apigatewayv2_api.http_api.id
-  integration_type     = each.value.type
-  integration_uri      = each.value.uri
-  payload_format_version = each.value.payload_version
+resource "aws_apigatewayv2_integration" "api_integrations" {
+  for_each = local.all_integrations
+
+  api_id                  = each.value.api_id
+  integration_type        = each.value.integration_type
+  integration_uri         = each.value.integration_uri
+  payload_format_version  = each.value.payload_format_version
+}
+
+##########################
+#        Routes          #
+##########################
+locals {
+  all_routes = merge([
+    for stage_name, stage in var.stages : {
+      for route_key, route in stage.routes : "${stage_name}-${route_key}" => {
+        api_id    = aws_apigatewayv2_api.http_api.id
+        route_key = route.route_key
+        integration_key = route.integration_key,
+        stage_name = stage_name
+      }
+    }
+  ]...)
 }
 
 resource "aws_apigatewayv2_route" "api_routes" {
-  for_each = var.routes
+  for_each = local.all_routes
 
-  api_id    = aws_apigatewayv2_api.http_api.id
+  api_id    = each.value.api_id
   route_key = each.value.route_key
-  target    = "integrations/${aws_apigatewayv2_integration.api_integrations[each.value.integration_key].id}"
+  target    = "integrations/${aws_apigatewayv2_integration.api_integrations["${each.value.stage_name}-${each.value.integration_key}"].id}"
 }
 
+##########################
+#        Stages          #
+##########################
 resource "aws_apigatewayv2_stage" "api_stages" {
   for_each = var.stages
 
@@ -61,4 +96,3 @@ resource "aws_apigatewayv2_stage" "api_stages" {
 
   tags = var.tags
 }
-
