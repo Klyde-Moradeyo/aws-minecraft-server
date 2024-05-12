@@ -9,7 +9,7 @@ terraform {
 
   backend "s3" {
     bucket  = "terraform-state-s3-pfqdhvmq"
-    key     = "aws-minecraft-server/build-pipeline/feature/migrate-infra-to-terraform-registry/terraform.tfstate"
+    key     = "aws-minecraft-server/build_pipeline/terraform.tfstate"
     region  = "eu-west-2"
     encrypt = true
   }
