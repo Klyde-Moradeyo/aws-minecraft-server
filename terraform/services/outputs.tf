@@ -2,10 +2,10 @@
 ########################
 #     General AWS      #
 ########################
-# output "aws_account_id" {
-#   description = "The AWS Account ID"
-#   value       = data.aws_caller_identity.aws.account_id
-# }
+output "aws_region" {
+  description = "The AWS Account ID"
+  value       = var.aws_region
+}
 
 ########################
 #         EIP          #
