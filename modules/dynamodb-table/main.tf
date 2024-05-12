@@ -1,16 +1,19 @@
 ########################
 #   Resource Naming    #
 ########################
-module "resource_naming" {
-  source = "../resource-naming"
-  tags   = var.tags
+module "resource_name_prefix" {
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/resource-name-prefix/aws"
+  version = "0.0.1"
+
+  name = var.name
+  tags = var.tags
 }
 
 ########################
 #        DynamoDB      #
 ########################
 resource "aws_dynamodb_table" "this" {
-  name           = "${module.resource_naming.name}-${var.table_name}"
+  name           = "${module.resource_name_prefix.resource_name}-${var.table_name}"
   billing_mode   = var.billing_mode
   hash_key       = var.hash_key
   range_key      = var.range_key

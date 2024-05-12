@@ -1,17 +1,19 @@
 ########################
 #   Resource Naming    #
 ########################
-module "resource_naming" {
-  source = "../resource-naming"
-  tags   = var.tags
-}
+module "resource_name_prefix" {
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/resource-name-prefix/aws"
+  version = "0.0.1"
 
+  name = var.name
+  tags = var.tags
+}
 
 data "aws_caller_identity" "aws" {}
 
 locals {
-  cluster_name   = "${module.resource_naming.name}-cluster"
-  container_name = "${module.resource_naming.name}-world-archiver"
+  cluster_name   = "${module.resource_name_prefix.resource_name}-cluster"
+  container_name = "${module.resource_name_prefix.resource_name}-world-archiver"
 }
 
 ########################
