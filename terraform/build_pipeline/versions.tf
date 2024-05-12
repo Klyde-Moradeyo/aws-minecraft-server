@@ -16,5 +16,5 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region = data.terraform_remote_state.my_state.outputs.aws_region
 }
