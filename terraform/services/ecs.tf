@@ -17,8 +17,8 @@ module "ecs_cluster" {
   mc_archive_ecr_repo_name = module.ecr_mc_world_archive.repository_name
 
   # S3 
-  minecraft_world_s3_bucket  = module.s3_mc_world.bucket_arn
-  minecraft_assets_s3_bucket = module.s3_mc_server_assets.bucket_arn
+  minecraft_world_s3_bucket  = module.s3_mc_world.arn
+  minecraft_assets_s3_bucket = module.s3_mc_server_assets.arn
 
   # Module tags
   tags = module.tags.tags

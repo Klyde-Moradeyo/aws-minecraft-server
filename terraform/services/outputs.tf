@@ -49,7 +49,7 @@ output "s3_mc_world_bucket_name" {
 
 output "mc_s3_bucket_arn" {
   description = "The ARN of the Minecraft S3 bucket"
-  value       = module.s3_mc_world.bucket_arn
+  value       = module.s3_mc_world.arn
 }
 
 output "s3_mc_world_bucket_name_uri" {

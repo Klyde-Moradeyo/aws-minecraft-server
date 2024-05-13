@@ -20,7 +20,7 @@ module "worker_lambda" {
       SSM_GIT_PRIVATE_KEY           = "/${var.ssm_git_private_key_name}"
       SSM_EC2_PRIVATE_KEY           = module.ssm_mc_server_private_key.info["ec2_private_key"].name
       GIT_BRANCH                    = var.git_branch
-      S3_MC_WORLD_URI               = module.s3_mc_world.bucket_arn
+      S3_MC_WORLD_URI               = module.s3_mc_world.arn
       S3_MC_ASSETS_URI              = module.s3_mc_server_assets.bucket_uri
       API_GW_URL                    = "${module.api_gateway.api_endpoint}/${local.minecraft_api_stage_name}"
     }

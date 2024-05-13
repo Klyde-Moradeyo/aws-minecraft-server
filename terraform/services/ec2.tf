@@ -128,8 +128,8 @@ module "ec2_s3_iam_policy" {
         Effect = "Allow"
         Action = ["s3:ListBucket"]
         Resource = [
-          module.s3_mc_world.bucket_arn,
-          module.s3_mc_server_assets.bucket_arn
+          module.s3_mc_world.arn,
+          module.s3_mc_server_assets.arn
         ]
       },
       {
@@ -140,7 +140,7 @@ module "ec2_s3_iam_policy" {
           "s3:DeleteObject",
         ]
         Resource = [
-          "${module.s3_mc_world.bucket_arn}/*"
+          "${module.s3_mc_world.arn}/*"
         ]
       },
       {
@@ -149,7 +149,7 @@ module "ec2_s3_iam_policy" {
           "s3:GetObject",
         ]
         Resource = [
-          "${module.s3_mc_server_assets.bucket_arn}/*/assets/*"
+          "${module.s3_mc_server_assets.arn}/*/assets/*"
         ]
       },
       {
@@ -158,7 +158,7 @@ module "ec2_s3_iam_policy" {
           "s3:PutObject",
         ]
         Resource = [
-          "${module.s3_mc_server_assets.bucket_arn}/*/logs/*"
+          "${module.s3_mc_server_assets.arn}/*/logs/*"
         ]
       },
     ]

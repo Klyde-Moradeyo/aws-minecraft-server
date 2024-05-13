@@ -3,7 +3,7 @@
 ########################
 module "s3_mc_world" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/s3/aws"
-  version = "0.0.1"
+  version = "0.0.2"
 
   name               = "${var.name}-world-data"
   versioning_enabled = true
