@@ -60,7 +60,7 @@ resource "aws_cloudwatch_event_rule" "monthly_schedule" {
 resource "aws_cloudwatch_event_target" "trigger_lambda" {
   rule      = aws_cloudwatch_event_rule.monthly_schedule.name
   target_id = "TriggerLambdaFunction"
-  arn       = aws_lambda_function.lambda_function.arn
+  arn       = module.request_lambda.arn
 
   input = jsonencode({
     "body": {
@@ -134,7 +134,7 @@ module "request_lambda_s3_iam_policy" {
   tags = module.tags.tags
 }
 
-resource "aws_iam_role_policy_attachment" "example_role_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "request_lambda_s3_iam_policy_role_policy_attachment" {
   role       = module.request_lambda.iam_role_name
   policy_arn = module.request_lambda_s3_iam_policy.policy_arn
 }

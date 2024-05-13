@@ -118,7 +118,7 @@ module "worker_lambda_s3_iam_policy" {
   tags = module.tags.tags
 }
 
-resource "aws_iam_role_policy_attachment" "example_role_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "worker_lambda_s3_iam_policy_role_policy_attachment" {
   role       = module.worker_lambda.iam_role_name
   policy_arn = module.worker_lambda_s3_iam_policy.policy_arn
 }
