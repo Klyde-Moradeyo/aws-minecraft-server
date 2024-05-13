@@ -10,7 +10,7 @@ module "s3_mc_world" {
 
   # logging
   enable_logging        = true
-  logging_target_bucket = module.s3_access_logs.bucket_name
+  logging_target_bucket = module.s3_access_logs.name
 
   tags = module.tags.tags
 }
@@ -24,7 +24,7 @@ module "s3_mc_server_assets" {
 
   # logging
   enable_logging        = true
-  logging_target_bucket = module.s3_access_logs.bucket_name
+  logging_target_bucket = module.s3_access_logs.name
 
   tags = module.tags.tags
 }
