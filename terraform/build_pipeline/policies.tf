@@ -24,32 +24,18 @@ module "iam_policy_create" {
         Effect = "Allow"
         Action = [
           "ec2:Create*",
-          "ec2:Delete*",
           "iam:Create*",
-          "iam:Delete*",
           "s3:CreateBucket",
-          "s3:DeleteBucket",
-          "s3:DeleteObject",
           "apigateway:POST",
-          "apigateway:DELETE",
           "ecs:RegisterTaskDefinition",
           "ecs:CreateCluster",
-          "ecs:DeregisterTaskDefinition",
-          "ecs:DeleteCluster",
           "ecr:CreateRepository",
-          "ecr:DeleteRepository",
-          "ecr:DeleteLifecyclePolicy",
           "logs:CreateLogGroup",
-          "logs:DeleteLogGroup",
           "lambda:CreateFunction",
-          "lambda:DeleteFunction",
           "ssm:AddTagsToResource",
           "dynamodb:CreateTable",
-          "dynamodb:DeleteTable",
           "events:PutRule",
           "events:PutTargets",
-          "events:DeleteRule",
-          "events:RemoveTargets",
           "ssm:PutParameter"
         ]
       Resource = "*"
