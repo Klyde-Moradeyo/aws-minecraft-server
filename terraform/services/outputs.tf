@@ -54,12 +54,12 @@ output "mc_s3_bucket_arn" {
 
 output "s3_mc_world_bucket_name_uri" {
   description = "The S3 uri of the minecraft world data"
-  value       = module.s3_mc_world.bucket_uri
+  value       = module.s3_mc_world.uri
 }
 
 output "s3_mc_server_assets_uri" {
   description = "The S3 uri of the minecraft world data"
-  value       = module.s3_mc_server_assets.bucket_uri
+  value       = module.s3_mc_server_assets.uri
 }
 
 ########################
