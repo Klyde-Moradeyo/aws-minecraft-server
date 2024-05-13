@@ -67,7 +67,7 @@ module "worker_lambda_s3_iam_policy" {
         Action = ["ssm:GetParameter"]
         Resource = [
           "arn:aws:ssm:*:847399026905:parameter/${var.ssm_git_private_key_name}",
-          module.ssm_mc_server_private_key.info["arn"]
+          module.ssm_mc_server_private_key.info["ec2_private_key"].arn
         ]
       },
       {
