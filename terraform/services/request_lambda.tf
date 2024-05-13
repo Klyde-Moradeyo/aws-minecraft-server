@@ -17,7 +17,7 @@ module "request_lambda" {
       MC_PORT                             = var.mc_port
       EC2_INSTANCE_ID                     = module.minecraft_server.id
       WORKER_LAMBDA_NAME                  = module.worker_lambda.name
-      DYNAMO_DB_TABLE_NAME                = module.dynamodb_table.table_name
+      DYNAMO_DB_TABLE_NAME                = module.dynamodb_table.name
       ECS_CLUSTER_NAME                    = module.ecs_cluster.ecs_cluster_name
       ECS_MC_ARCHIVE_TASK_DEFINITION_NAME = module.ecs_cluster.mc_archive_task_definition_name
       ECS_MC_ARCHIVE_CONTAINER_NAME       = module.ecs_cluster.mc_archive_task_container_name

@@ -22,7 +22,7 @@ variable "aws_region" {
 variable "project" {
   description = "The name of the project"
   type        = string
-  default     = "personal-mincecraft-server"
+  default     = "personal-minecraft-server"
 }
 
 variable "client" {
@@ -95,7 +95,7 @@ variable "instance_type" {
   type        = string
 
   ### T3a Family ###
-  # default = 	"t3a.large"
+  default = 	"t3a.large"
 
   ### T4g Family ###
   # default = "t4g.medium"
@@ -113,7 +113,7 @@ variable "instance_type" {
   # default = "z1d.2xlarge"
 
   ### M5zn Family ###
-  default = "m5zn.xlarge"
+  # default = "m5zn.xlarge"
 
   // https://amazon-aws-ec2-pricing-comparison.pcapps.com/
 }

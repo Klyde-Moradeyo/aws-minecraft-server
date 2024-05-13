@@ -22,7 +22,7 @@ module "worker_lambda" {
       GIT_BRANCH                    = var.git_branch
       S3_MC_WORLD_URI               = module.s3_mc_world.bucket_arn
       S3_MC_ASSETS_URI              = module.s3_mc_server_assets.bucket_uri
-      API_GW_URL                    = "${module.api_gateway.api_endpoint}"
+      API_GW_URL                    = "${module.api_gateway.api_endpoint}/${local.minecraft_api_stage_name}"
     }
 
   layers = [

@@ -1,15 +1,19 @@
 ########################
 #     API Gateway      #
 ########################
+locals {
+  minecraft_api_stage_name = "mango-minecraft-api"
+}
+
 module "api_gateway" {
-  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/http-api-gw/aws"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/http-api-gateway/aws"
   version = "0.0.1"
 
   name        = var.name
   description = "API Gateway for ${var.name}"
 
   stages = {
-    "mango-minecraft-api" = {
+    "${local.minecraft_api_stage_name}" = {
       auto_deploy = true
       logging     = {
         enabled        = true
