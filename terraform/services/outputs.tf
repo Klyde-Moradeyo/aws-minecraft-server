@@ -44,7 +44,7 @@ output "security_group_id" {
 ########################
 output "s3_mc_world_bucket_name" {
   description = "The name of the Minecraft S3 bucket"
-  value       = module.s3_mc_world.bucket_name
+  value       = module.s3_mc_world.name
 }
 
 output "mc_s3_bucket_arn" {
