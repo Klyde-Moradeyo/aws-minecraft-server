@@ -7,7 +7,7 @@ locals {
 
 module "api_gateway" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/http-api-gateway/aws"
-  version = "0.0.1"
+  version = "0.0.2"
 
   name        = var.name
   description = "API Gateway for ${var.name}"
