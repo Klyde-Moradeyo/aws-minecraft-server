@@ -7,7 +7,7 @@ on:
       - dev
       - prod
     paths:
-      - "terraform/**"
+      - "terraform/services**"
       - "lambda/**"
       - ".github/workflows/ci-cd.yml"
       - "fargate/**"
@@ -65,7 +65,7 @@ jobs:
     needs: [ ci-worker-lambda, ci-request-lambda ]
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-cd-terraform-apply.yml@github-workflows
     with:
-      config_dir: terraform
+      config_dir: terraform/services
       aws_region: "eu-west-1"
     secrets:
       gh_pat_token: ${{ secrets.GH_PAT }}
