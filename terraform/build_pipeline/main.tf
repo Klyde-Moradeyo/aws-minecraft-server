@@ -12,7 +12,7 @@ module "iam-user" {
   version = "0.0.1"
 
   name = var.name
-  path = "/CI-CD/${data.terraform_remote_state.my_state.outputs.tags["Project"]}/"
+  path = "/ci-cd/${data.terraform_remote_state.my_state.outputs.tags["Project"]}/"
 
   policy_arns = {
   "${local.iam_policy_create}" = "${var.name}-create"
