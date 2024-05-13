@@ -144,12 +144,12 @@ module "iam_policy_update" {
           "events:PutTargets"
         ]
         Resource = "*"
-        Condition = {
-          StringEquals = {
-            "aws:ResourceTag/Project"   = data.terraform_remote_state.my_state.outputs.tags["Project"]
-            "aws:ResourceTag/Namespace" = data.terraform_remote_state.my_state.outputs.tags["Namespace"]
-          }
-        }
+        # Condition = {
+        #   StringEquals = {
+        #     "aws:ResourceTag/Project"   = data.terraform_remote_state.my_state.outputs.tags["Project"]
+        #     "aws:ResourceTag/Namespace" = data.terraform_remote_state.my_state.outputs.tags["Namespace"]
+        #   }
+        # }
       }
     ]
   }
@@ -190,12 +190,12 @@ module "iam_policy_delete" {
           "ssm:DeleteParameter"
         ]
         Resource = "*"
-        Condition = {
-          StringEquals = {
-            "aws:ResourceTag/Project"   = data.terraform_remote_state.my_state.outputs.tags["Project"]
-            "aws:ResourceTag/Namespace" = data.terraform_remote_state.my_state.outputs.tags["Namespace"]
-          }
-        }
+        # Condition = {
+        #   StringEquals = {
+        #     "aws:ResourceTag/Project"   = data.terraform_remote_state.my_state.outputs.tags["Project"]
+        #     "aws:ResourceTag/Namespace" = data.terraform_remote_state.my_state.outputs.tags["Namespace"]
+        #   }
+        # }
       }
     ]
   }
