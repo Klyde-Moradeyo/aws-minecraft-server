@@ -18,6 +18,7 @@ resource "aws_iam_role" "ecs_task_execution_role" {
       }
     ]
   })
+  tags          = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
@@ -45,6 +46,7 @@ resource "aws_iam_policy" "ecs_ecr_pull_images" {
       }
     ]
   })
+  tags          = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_ecr_pull_images_role_policy" {
@@ -69,6 +71,7 @@ resource "aws_iam_policy" "ecs_cloudwatch_logs" {
       }
     ]
   })
+  tags          = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_cloudwatch_logs_role_policy" {
@@ -93,6 +96,7 @@ resource "aws_iam_policy" "ecs_ssm_access" {
       }
     ]
   })
+  tags          = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_ssm_access_role_policy" {
@@ -135,6 +139,7 @@ resource "aws_iam_policy" "mc_allow_ecs_to_s3" {
       }
     ]
   })
+  tags          = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "mc_allow_ecs_to_s3_role_policy" {
