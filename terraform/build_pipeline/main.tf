@@ -15,7 +15,10 @@ module "iam-user" {
   path = "/CI-CD/${data.terraform_remote_state.my_state.outputs.tags["Project"]}/"
 
   policy_arns = {
-    "${var.name}" = module.iam_policy.policy_arn
+  "${local.iam_policy_create}" = "${var.name}-create"
+  "${local.iam_policy_read}" = "${var.name}-read"
+  "${local.iam_policy_update}" = "${var.name}-update"
+  "${local.iam_policy_delete}" = "${var.name}-delete"
   }
 
   tags = data.terraform_remote_state.my_state.outputs.tags
