@@ -28,3 +28,9 @@ variable "remote_state_aws_region" {
   default     = "eu-west-2"
 }
 
+variable "remote_state_s3_bucket" {
+  description = "The AWS region where the S3 bucket for remote state is located"
+  type        = string
+  default     = "terraform-state-s3-pfqdhvmq"
+}
+
