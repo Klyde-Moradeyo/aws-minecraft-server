@@ -1,3 +1,10 @@
+########################
+#       Naming         #
+########################
+output "name" {
+  description = "The AWS Account ID"
+  value       = var.name
+}
 
 ########################
 #     General AWS      #
