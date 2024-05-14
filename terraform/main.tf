@@ -149,7 +149,12 @@ module "ecs_cluster" {
   minecraft_assets_s3_bucket = module.s3_mc_server_assets.s3_bucket_arn
 
   # Module tags
-  tags = module.tags.tags
+  tags = merge(
+    {
+      Environment = "prod"
+    },
+    module.tags.tags
+  )
 }
 
 ########################
@@ -237,7 +242,12 @@ module "dynamodb_table" {
   write_capacity_units = 10
   ttl_enabled          = true
   ttl_attribute        = "TTL"
-  tags                 = module.tags.tags
+  tags = merge(
+    {
+      Environment = "prod"
+    },
+    module.tags.tags
+  )
 }
 
 ########################
