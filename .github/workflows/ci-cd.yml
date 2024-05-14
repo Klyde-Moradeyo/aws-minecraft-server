@@ -3,9 +3,9 @@ name: CI/CD Infra handler + lambda
 on:
   push:
     branches:
-      - main
       - dev
       - prod
+      - feature/*
     paths:
       - "terraform/services**"
       - "lambda/**"
