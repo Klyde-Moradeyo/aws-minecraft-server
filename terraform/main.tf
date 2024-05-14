@@ -219,7 +219,6 @@ module "api_gateway" {
   lambda_invoke_arn    = module.request_lambda.lambda_function_invoke_arn
 
   # Module tags
-  label_id = module.tags.label_id
   tags     = module.tags.tags
 }
 
