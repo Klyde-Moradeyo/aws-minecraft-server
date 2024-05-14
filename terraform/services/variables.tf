@@ -46,7 +46,7 @@ variable "namespace" {
 variable "environment" {
   description = "The project environment"
   type        = string
-  default     = "prod"
+  default     = "dev"
 }
 
 ########################
