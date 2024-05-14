@@ -37,6 +37,7 @@ module "iam_policy_create" {
           "apigateway:Tag*",
           "ecs:CreateCluster",
           "ecs:RegisterTaskDefinition",
+          "ecr:InitiateLayerUpload",
           "ecr:CreateRepository",
           "ecr:PutLifecyclePolicy",
           "ecr:Tag*",
