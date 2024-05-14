@@ -34,8 +34,6 @@ module "iam_policy_create" {
           "lambda:CreateFunction",
           "ssm:AddTagsToResource",
           "dynamodb:CreateTable",
-          "events:PutRule",
-          "events:PutTargets",
           "ssm:PutParameter"
         ]
       Resource = "*"
@@ -72,6 +70,8 @@ module "iam_policy_read" {
           "apigateway:GET",
           "ecs:Describe*",
           "ecr:Describe*",
+          "ecr:Get*",
+          "ecr:List*",
           "logs:Describe*",
           "logs:List*",
           "lambda:Get*",
@@ -81,8 +81,7 @@ module "iam_policy_read" {
           "dynamodb:Describe*",
           "dynamodb:List*",
           "events:Describe*",
-          "ecr:Get*",
-          "ecr:List*"
+          "events:List*"
         ]
         Resource = "*"
       }
@@ -109,7 +108,9 @@ module "iam_policy_update" {
         Action = [
           "ec2:Modify*",
           "ec2:AssociateAddress",
+          "ec2:AllocateAddress",
           "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:AuthorizeSecurityGroupEgress",
           "ec2:RunInstances",
           "ec2:StartInstances",
           "ec2:StopInstances",
@@ -138,10 +139,15 @@ module "iam_policy_update" {
           "logs:Tag*",
           "lambda:UpdateFunctionConfiguration",
           "lambda:UpdateFunctionCode",
+          "lambda:Tag*",
+          "lambda:Put*",
+          "lambda:AddPermission",
           "dynamodb:UpdateTable",
+          "dynamodb:UpdateTimeToLive",
           "dynamodb:Tag*",
           "events:PutRule",
-          "events:PutTargets"
+          "events:PutTargets",
+          "events:Tag*"
         ]
         Resource = "*"
         # Condition = {
