@@ -80,6 +80,7 @@ jobs:
             # Define the branch name
             BRANCH=${{ github.ref }}
             BRANCH=${BRANCH#refs/heads/}
+            BRANCH=$(echo $BRANCH | sed 's/\//\\\//g')
 
             # Path to your Terraform file
             TF_FILE="versions.tf"
