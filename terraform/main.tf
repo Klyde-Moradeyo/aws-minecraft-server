@@ -151,7 +151,7 @@ module "ecs_cluster" {
   # Module tags
   tags = merge(
     {
-      Environment = "prod"
+      Environment = "prod-old"
     },
     module.tags.tags
   )
@@ -244,7 +244,7 @@ module "dynamodb_table" {
   ttl_attribute        = "TTL"
   tags = merge(
     {
-      Environment = "prod"
+      Environment = "prod-old"
     },
     module.tags.tags
   )
