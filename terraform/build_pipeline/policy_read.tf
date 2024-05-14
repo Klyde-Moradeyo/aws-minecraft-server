@@ -26,6 +26,7 @@ module "iam_policy_read" {
           "ecr:Get*",
           "logs:Describe*",
           "logs:ListLogDeliveries",
+          "logs:GetLogDelivery",
           "lambda:Get*",
           "lambda:ListVersionsByFunction",
           "ssm:DescribeParameters",
