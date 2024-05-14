@@ -184,7 +184,6 @@ module "ssm_mc_server_private_key" {
   value          = module.ec2_key_pair.private_key_pem
 
   # Module tags
-  label_id = module.tags.label_id
   tags     = module.tags.tags
 }
 
@@ -195,7 +194,6 @@ module "ssm_bot_command" {
   parameter_type = "String"
 
   # Module tags
-  label_id = module.tags.label_id
   tags     = module.tags.tags
 }
 
@@ -207,7 +205,6 @@ module "ssm_api_gw_key" {
   value          = "null"
 
   # Module tags
-  label_id = module.tags.label_id
   tags     = module.tags.tags
 }
 
