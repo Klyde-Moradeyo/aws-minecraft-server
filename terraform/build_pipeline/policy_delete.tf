@@ -19,6 +19,7 @@ module "iam_policy_delete" {
           "ec2:ReleaseAddress",
           "ec2:RevokeSecurityGroupIngress",
           "ec2:RevokeSecurityGroupEgress",
+          "ec2:DisassociateRouteTable",
           "iam:Delete*",
           "iam:RemoveRoleFromInstanceProfile",
           "s3:Delete*",
@@ -30,9 +31,18 @@ module "iam_policy_delete" {
           "lambda:RemovePermission",
           "dynamodb:DeleteTable",
           "events:DeleteRule",
-          "events:RemoveTargets"
+          "events:RemoveTargets",
+          "ecs:DeregisterTaskDefinition",
         ]
         Resource = ["*"]
+      },
+      {
+        Sid    = "CICDUserReadSSMParamPermissions"
+        Effect = "Allow"
+        Action = [
+          "ssm:DeleteParameter"
+        ]
+        Resource = "arn:aws:ssm:*:*:parameter/${data.terraform_remote_state.my_state.outputs.name}-*/ec2_private_key"
       }
     ]
   }

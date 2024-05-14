@@ -15,6 +15,7 @@ module "iam_policy_read" {
         Action = [
           "ec2:Describe*",
           "ec2:GetConsoleOutput",
+          "ec2:DetachInternetGateway",
           "iam:Get*",
           "iam:List*",
           "s3:ListBucket",
@@ -24,7 +25,9 @@ module "iam_policy_read" {
           "ecr:Describe*",
           "ecr:Get*",
           "logs:Describe*",
+          "logs:ListLogDeliveries",
           "lambda:Get*",
+          "lambda:ListVersionsByFunction",
           "ssm:DescribeParameters",
           "dynamodb:Describe*",
           "events:Describe*",
@@ -41,7 +44,7 @@ module "iam_policy_read" {
           "ssm:GetParameters",
           "ssm:ListTagsForResource",
         ]
-        Resource = "arn:aws:ssm:*:*:parameter/${data.terraform_remote_state.my_state.outputs.name}-*"
+        Resource = "arn:aws:ssm:*:*:parameter/${data.terraform_remote_state.my_state.outputs.name}-*/ec2_private_key"
       }
     ]
   }

@@ -170,5 +170,4 @@ terraform.rc
 #     Build    #
 ################
 # lambda function payload
-lambda_function/package
-lambda_function_payload.zip
+terraform/services/*.zip

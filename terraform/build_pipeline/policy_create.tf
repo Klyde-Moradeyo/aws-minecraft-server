@@ -22,6 +22,7 @@ module "iam_policy_create" {
           "ec2:AttachInternetGateway",
           "ec2:AssociateRouteTable",
           "iam:Create*",
+          "iam:Tag*",
           "iam:AddRoleToInstanceProfile",
           "s3:CreateBucket",
           "s3:PutObject",
@@ -33,16 +34,26 @@ module "iam_policy_create" {
           "s3:PutBucketOwnershipControls",
           "s3:PutLifecycleConfiguration",
           "apigateway:POST",
+          "apigateway:Tag*",
           "ecs:CreateCluster",
           "ecs:RegisterTaskDefinition",
           "ecr:CreateRepository",
           "ecr:PutLifecyclePolicy",
+          "ecr:Tag*",
+          "ecr:ListTagsForResource",
           "logs:CreateLogGroup",
           "lambda:CreateFunction",
           "lambda:AddPermission",
+          "lambda:TagResource",
           "dynamodb:CreateTable",
+          "dynamodb:Tag*",
+          "dynamodb:ListTagsOfResource",
           "events:PutRule",
-          "events:PutTargets"
+          "events:PutTargets",
+          "events:Tag*",
+          "logs:Tag*",
+          "logs:ListTagsLogGroup",
+          "logs:CreateLogDelivery"
         ]
         Resource = ["*"]
       }
