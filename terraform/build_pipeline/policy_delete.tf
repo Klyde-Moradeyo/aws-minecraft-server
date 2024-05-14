@@ -14,38 +14,28 @@ module "iam_policy_delete" {
         Effect = "Allow"
         Action = [
           "ec2:Delete*",
+          "ec2:TerminateInstances",
+          "ec2:DisassociateAddress",
+          "ec2:ReleaseAddress",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupEgress",
           "iam:Delete*",
+          "iam:RemoveRoleFromInstanceProfile",
           "s3:Delete*",
           "apigateway:DELETE",
-          "ecs:DeleteCluster",
-          "ecs:DeregisterTaskDefinition",
-          "ecr:DeleteRepository",
+          "ecs:Delete*",
+          "ecr:Delete*",
           "logs:DeleteLogGroup",
           "lambda:DeleteFunction",
-          "route53:DeleteHostedZone",
+          "lambda:RemovePermission",
           "dynamodb:DeleteTable",
           "events:DeleteRule",
           "events:RemoveTargets"
         ]
-        Resource = [
-          "arn:aws:ec2:*:*:instance/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:iam::*:role/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:s3:::${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:apigateway:*::/restapis/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:ecs:*:*:cluster/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:ecr:*:*:repository/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:logs:*:*:log-group:${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:lambda:*:*:function:${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:ssm:*:*:parameter/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:route53:::hostedzone/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:dynamodb:*:*:table/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:events:*:*:rule/${data.terraform_remote_state.my_state.outputs.name}-*"
-        ]
+        Resource = ["*"]
       }
     ]
   }
-
-
 
   tags = data.terraform_remote_state.my_state.outputs.tags
 }

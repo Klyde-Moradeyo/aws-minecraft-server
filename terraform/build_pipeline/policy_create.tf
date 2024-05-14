@@ -14,36 +14,37 @@ module "iam_policy_create" {
         Effect = "Allow"
         Action = [
           "ec2:Create*",
+          "ec2:ImportKeyPair",
+          "ec2:AllocateAddress",
+          "ec2:AssociateAddress",
+          "ec2:AuthorizeSecurityGroupIngress",
           "ec2:RunInstances",
+          "ec2:AttachInternetGateway",
+          "ec2:AssociateRouteTable",
           "iam:Create*",
+          "iam:AddRoleToInstanceProfile",
           "s3:CreateBucket",
-          "s3:PutBucket*",
+          "s3:PutObject",
+          "s3:PutBucketTagging",
+          "s3:PutBucketLogging",
+          "s3:PutBucketPolicy",
+          "s3:PutBucketAcl",
+          "s3:PutBucketPublicAccessBlock",
+          "s3:PutBucketOwnershipControls",
+          "s3:PutLifecycleConfiguration",
           "apigateway:POST",
-          "ecs:RegisterTaskDefinition",
           "ecs:CreateCluster",
+          "ecs:RegisterTaskDefinition",
           "ecr:CreateRepository",
+          "ecr:PutLifecyclePolicy",
           "logs:CreateLogGroup",
           "lambda:CreateFunction",
-          "ssm:AddTagsToResource",
-          "route53:CreateHostedZone",
+          "lambda:AddPermission",
           "dynamodb:CreateTable",
           "events:PutRule",
           "events:PutTargets"
         ]
-        Resource = [
-          "arn:aws:ec2:*:*:instance/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:iam::*:role/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:s3:::${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:apigateway:*::/restapis/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:ecs:*:*:cluster/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:ecr:*:*:repository/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:logs:*:*:log-group:${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:lambda:*:*:function:${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:ssm:*:*:parameter/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:route53:::hostedzone/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:dynamodb:*:*:table/${data.terraform_remote_state.my_state.outputs.name}-*",
-          "arn:aws:events:*:*:rule/${data.terraform_remote_state.my_state.outputs.name}-*"
-        ]
+        Resource = ["*"]
       }
     ]
   }

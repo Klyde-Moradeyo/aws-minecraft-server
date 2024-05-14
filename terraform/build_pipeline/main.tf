@@ -1,6 +1,7 @@
 locals {
   iam_policy_create             = "${var.name}-create"
   iam_policy_read               = "${var.name}-read"
+  iam_policy_update             = "${var.name}-update"
   iam_policy_delete             = "${var.name}-delete"
   iam_policy_tf_s3_state_access = "${var.name}-tf-s3-state-access"
   iam_path                      = "/ci-cd/${data.terraform_remote_state.my_state.outputs.tags["Project"]}/"
@@ -26,6 +27,7 @@ module "iam-user" {
     "${local.iam_policy_create}"             = module.iam_policy_create.policy_arn
     "${local.iam_policy_read}"               = module.iam_policy_read.policy_arn
     "${local.iam_policy_delete}"             = module.iam_policy_delete.policy_arn
+    "${local.iam_policy_update}"             = module.iam_policy_update.policy_arn
     "${local.iam_policy_tf_s3_state_access}" = module.iam_policy_tf_s3_state_access.policy_arn
   }
 
