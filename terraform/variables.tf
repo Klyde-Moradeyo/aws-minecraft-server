@@ -78,6 +78,12 @@ variable "instance_type" {
   # default = "z1d.2xlarge"
 
   # default = "m5zn.xlarge"
+  # default = "z1d.large"
+  # default = "z1d.xlarge"
+  # default = "z1d.2xlarge"
+
+  ### M5zn Family ###
+  default = "m5zn.xlarge"
   
   // https://amazon-aws-ec2-pricing-comparison.pcapps.com/
 }

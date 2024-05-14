@@ -149,7 +149,12 @@ module "ecs_cluster" {
   minecraft_assets_s3_bucket = module.s3_mc_server_assets.s3_bucket_arn
 
   # Module tags
-  tags = module.tags.tags
+  tags = merge(
+    {
+      Environment = "dev-old"
+    },
+    module.tags.tags
+  )
 }
 
 ########################
@@ -184,7 +189,6 @@ module "ssm_mc_server_private_key" {
   value          = module.ec2_key_pair.private_key_pem
 
   # Module tags
-  label_id = module.tags.label_id
   tags     = module.tags.tags
 }
 
@@ -195,7 +199,6 @@ module "ssm_bot_command" {
   parameter_type = "String"
 
   # Module tags
-  label_id = module.tags.label_id
   tags     = module.tags.tags
 }
 
@@ -207,7 +210,6 @@ module "ssm_api_gw_key" {
   value          = "null"
 
   # Module tags
-  label_id = module.tags.label_id
   tags     = module.tags.tags
 }
 
@@ -222,7 +224,6 @@ module "api_gateway" {
   lambda_invoke_arn    = module.request_lambda.lambda_function_invoke_arn
 
   # Module tags
-  label_id = module.tags.label_id
   tags     = module.tags.tags
 }
 
@@ -241,7 +242,12 @@ module "dynamodb_table" {
   write_capacity_units = 10
   ttl_enabled          = true
   ttl_attribute        = "TTL"
-  tags                 = module.tags.tags
+  tags = merge(
+    {
+      Environment = "dev-old"
+    },
+    module.tags.tags
+  )
 }
 
 ########################
