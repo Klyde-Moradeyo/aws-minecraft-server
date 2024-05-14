@@ -45,6 +45,7 @@ module "iam_policy_create" {
           "lambda:CreateFunction",
           "lambda:AddPermission",
           "lambda:TagResource",
+          "lambda:PublishVersion",
           "dynamodb:CreateTable",
           "dynamodb:Tag*",
           "dynamodb:ListTagsOfResource",
