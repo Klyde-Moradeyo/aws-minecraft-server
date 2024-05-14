@@ -82,7 +82,6 @@ class EnvironmentVariables:
             raise ValueError("Error decoding TAGS_JSON. Ensure it's a valid JSON string.")
 
         self.env_vars.update({
-            'TAG_NAME': tags.get('Name'),
             'TAG_NAMESPACE': tags.get('Namespace'),
             'TAG_ENVIRONMENT': tags.get('Environment'),
             'TAG_RUNNING_COMMAND': self.action
