@@ -7,35 +7,45 @@ module "iam_policy_delete" {
   path        = local.iam_path
 
   policy_hcl = {
-    "Version": "2012-10-17",
-    "Statement": [
+    Version = "2012-10-17"
+    Statement = [
       {
-        "Effect": "Allow",
-        "Action": [
+        Sid    = "CICDUserDeletePermissions"
+        Effect = "Allow"
+        Action = [
           "ec2:Delete*",
-          "ec2:TerminateInstances",
-          "ec2:DisassociateAddress",
-          "ec2:ReleaseAddress",
-          "s3:DeleteBucket",
-          "s3:DeleteObject",
           "iam:Delete*",
+          "s3:Delete*",
+          "apigateway:DELETE",
+          "ecs:DeleteCluster",
+          "ecs:DeregisterTaskDefinition",
+          "ecr:DeleteRepository",
           "logs:DeleteLogGroup",
           "lambda:DeleteFunction",
           "route53:DeleteHostedZone",
           "dynamodb:DeleteTable",
           "events:DeleteRule",
           "events:RemoveTargets"
-        ],
-        "Resource": "*",
-        "Condition": {
-          "StringEquals": {
-            "aws:ResourceTag/Project": data.terraform_remote_state.my_state.outputs.tags["Project"],
-            "aws:ResourceTag/Namespace": data.terraform_remote_state.my_state.outputs.tags["Namespace"]
-          }
-        }
+        ]
+        Resource = [
+          "arn:aws:ec2:*:*:instance/${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:iam::*:role/${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:s3:::${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:apigateway:*::/restapis/${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:ecs:*:*:cluster/${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:ecr:*:*:repository/${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:logs:*:*:log-group:${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:lambda:*:*:function:${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:ssm:*:*:parameter/${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:route53:::hostedzone/${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:dynamodb:*:*:table/${data.terraform_remote_state.my_state.outputs.name}-*",
+          "arn:aws:events:*:*:rule/${data.terraform_remote_state.my_state.outputs.name}-*"
+        ]
       }
     ]
   }
+
+
 
   tags = data.terraform_remote_state.my_state.outputs.tags
 }

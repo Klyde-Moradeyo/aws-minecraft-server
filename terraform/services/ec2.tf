@@ -72,7 +72,7 @@ module "ec2_key_pair" {
   source  = "terraform-aws-modules/key-pair/aws"
   version = "2.0.2"
 
-  key_name           = "dev-test-key"
+  key_name           = "${module.resource_name_prefix.resource_name}-key"
   create_private_key = true
   tags = module.tags.tags
 }
