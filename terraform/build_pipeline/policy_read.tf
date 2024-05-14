@@ -7,40 +7,32 @@ module "iam_policy_read" {
   path        = local.iam_path
 
   policy_hcl = {
-    Version = "2012-10-17"
-    Statement = [
+    "Version": "2012-10-17",
+    "Statement": [
       {
-        Sid    = "ResourceManagementRead"
-        Effect = "Allow"
-        Action = [
+        "Effect": "Allow",
+        "Action": [
           "ec2:Describe*",
-          "ecs:Describe*",
+          "s3:ListBucket",
           "iam:Get*",
           "iam:List*",
-          "ssm:GetParameter",
-          "ssm:GetParameters",
-          "s3:Get*",
-          "s3:List*",
-          "apigateway:GET",
-          "ecs:Describe*",
-          "ecr:Describe*",
-          "ecr:Get*",
-          "ecr:List*",
-          "logs:Describe*",
-          "logs:List*",
-          "lambda:Get*",
-          "lambda:List*",
-          "ssm:Describe*",
-          "ssm:List*",
-          "dynamodb:Describe*",
-          "dynamodb:List*",
-          "events:Describe*",
-          "events:List*"
-        ]
-        Resource = "*"
+          "logs:DescribeLogGroups",
+          "logs:ListTagsLogGroup",
+          "lambda:GetFunction",
+          "lambda:ListVersionsByFunction",
+          "route53:GetHostedZone",
+          "route53:ListResourceRecordSets",
+          "dynamodb:DescribeTable",
+          "dynamodb:ListTagsOfResource",
+          "events:DescribeRule",
+          "events:ListTagsForResource",
+          "events:ListTargetsByRule"
+        ],
+        "Resource": "*"
       }
     ]
   }
+  
 
   tags = data.terraform_remote_state.my_state.outputs.tags
 }

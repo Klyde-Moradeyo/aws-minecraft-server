@@ -7,34 +7,30 @@ module "iam_policy_delete" {
   path        = local.iam_path
 
   policy_hcl = {
-    Version = "2012-10-17"
-    Statement = [
+    "Version": "2012-10-17",
+    "Statement": [
       {
-        Sid    = "ResourceManagementDelete"
-        Effect = "Allow"
-        Action = [
+        "Effect": "Allow",
+        "Action": [
           "ec2:Delete*",
+          "ec2:TerminateInstances",
           "ec2:DisassociateAddress",
+          "ec2:ReleaseAddress",
+          "s3:DeleteBucket",
+          "s3:DeleteObject",
           "iam:Delete*",
-          "s3:Delete*",
-          "apigateway:DELETE",
-          "ecs:DeregisterTaskDefinition",
-          "ecs:DeleteCluster",
-          "ecr:DeleteRepository",
-          "ecr:DeleteLifecyclePolicy",
           "logs:DeleteLogGroup",
           "lambda:DeleteFunction",
-          "lambda:RemovePermission",
+          "route53:DeleteHostedZone",
           "dynamodb:DeleteTable",
           "events:DeleteRule",
-          "events:RemoveTargets",
-          "ssm:DeleteParameter"
-        ]
-        Resource = "*"
-        Condition = {
-          StringEquals = {
-            "aws:ResourceTag/Project"   = data.terraform_remote_state.my_state.outputs.tags["Project"]
-            "aws:ResourceTag/Namespace" = data.terraform_remote_state.my_state.outputs.tags["Namespace"]
+          "events:RemoveTargets"
+        ],
+        "Resource": "*",
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/Project": data.terraform_remote_state.my_state.outputs.tags["Project"],
+            "aws:ResourceTag/Namespace": data.terraform_remote_state.my_state.outputs.tags["Namespace"]
           }
         }
       }

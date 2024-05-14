@@ -7,29 +7,25 @@ module "iam_policy_create" {
   path        = local.iam_path
 
   policy_hcl = {
-    Version = "2012-10-17"
-    Statement = [
+    "Version": "2012-10-17",
+    "Statement": [
       {
-        Sid    = "ResourceManagementCreate"
-        Effect = "Allow"
-        Action = [
+        "Effect": "Allow",
+        "Action": [
           "ec2:Create*",
-          "iam:Create*",
+          "ec2:RunInstances",
           "s3:CreateBucket",
-          "apigateway:POST",
-          "ecs:RegisterTaskDefinition",
-          "ecs:CreateCluster",
-          "ecr:CreateRepository",
+          "iam:Create*",
           "logs:CreateLogGroup",
           "lambda:CreateFunction",
-          "ssm:AddTagsToResource",
           "dynamodb:CreateTable",
-          "ssm:PutParameter"
-        ]
-      Resource = "*"
+          "events:PutRule",
+          "events:PutTargets"
+        ],
+        "Resource": "*"
       }
     ]
-  } 
+  }
 
   tags = data.terraform_remote_state.my_state.outputs.tags
 }
