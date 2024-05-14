@@ -123,7 +123,6 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
         "RCON_PASSWORD": additional_configs["RCON_PASSWORD"],
         "DYNMAP_ENABLED": "True",
         "API_GW_URL": envs["API_GW_URL"],
-        "SSM_API_KEY": envs["SSM_REQUEST_LAMBDA_AUTH_TOKEN"],
         "PROMETHEUS_PORT": None,
     }
     monitor_config = generate_env_file(monitor_config)

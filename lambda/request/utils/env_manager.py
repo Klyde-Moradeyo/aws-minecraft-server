@@ -15,9 +15,6 @@ class EnvironmentVariables:
         required_configs = [    
                                 # Minecraft Specifi\c Env Vars
                                 'MC_PORT', 'MC_SERVER_IP', 
-                                
-                                # Authorization Token
-                                'SSM_REQUEST_LAMBDA_AUTH_TOKEN',
 
                                 # Worker Lambda
                                 'WORKER_LAMBDA_NAME',
