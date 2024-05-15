@@ -5,6 +5,10 @@ locals {
   iam_policy_delete             = "${var.name}-delete"
   iam_policy_tf_s3_state_access = "${var.name}-tf-s3-state-access"
   iam_path                      = "/ci-cd/${local.tags["Project"]}/"
+  tags = merge(
+    data.terraform_remote_state.my_state.outputs.tags,
+    { "Namespace" = "ci-cd" }
+  )
 }
 
 data "terraform_remote_state" "my_state" {
@@ -14,13 +18,6 @@ data "terraform_remote_state" "my_state" {
     key    = var.remote_state_key
     region = var.remote_state_aws_region
   }
-}
-
-locals {
-  tags = merge(
-    data.terraform_remote_state.my_state.outputs.tags,
-    { "Namespace" = "ci-cd" }
-  )
 }
 
 module "iam-user" {
