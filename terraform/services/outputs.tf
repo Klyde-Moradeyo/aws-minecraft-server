@@ -2,7 +2,7 @@
 #       Naming         #
 ########################
 output "name" {
-  description = "The AWS Account ID"
+  description = "Resource name variable"
   value       = var.name
 }
 
@@ -10,7 +10,7 @@ output "name" {
 #     General AWS      #
 ########################
 output "aws_region" {
-  description = "The AWS Account ID"
+  description = "The AWS Region"
   value       = var.aws_region
 }
 
