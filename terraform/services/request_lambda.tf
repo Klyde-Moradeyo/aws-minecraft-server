@@ -33,10 +33,16 @@ module "request_lambda" {
 
   permissions = [
     {
-      statement_id = "allow-event-bridge-invoke"
+      statement_id = "${module.resource_name_prefix.resource_name}-allow-event-bridge-invoke"
       action     = "lambda:InvokeFunction"
       principal  = "events.amazonaws.com"
       source_arn = aws_cloudwatch_event_rule.monthly_schedule.arn
+    },
+    {
+      statement_id = "${module.resource_name_prefix.resource_name}-allow-api-gateway-invoke"
+      action     = "lambda:InvokeFunction"
+      principal  = "apigateway.amazonaws.com"
+      source_arn = module.api_gateway.execution_arn
     }
   ]
 
