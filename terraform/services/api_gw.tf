@@ -15,7 +15,7 @@ module "api_gateway" {
   stages = {
     "${local.minecraft_api_stage_name}" = {
       auto_deploy = true
-      logging     = {
+      logging = {
         enabled        = true
         retention_days = 60
         format = jsonencode({

@@ -22,9 +22,9 @@ module "public_subnet" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/subnet/aws"
   version = "0.0.1"
 
-  name                    = "${var.name}-public"
-  vpc_id                  = module.vpc.vpc_id
-  subnets                 = {
+  name   = "${var.name}-public"
+  vpc_id = module.vpc.vpc_id
+  subnets = {
     keys(local.public_subnets)[0] = local.public_subnets[keys(local.public_subnets)[0]]
   }
   map_public_ip_on_launch = false

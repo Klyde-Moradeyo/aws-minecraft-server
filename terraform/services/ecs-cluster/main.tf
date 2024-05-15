@@ -24,8 +24,8 @@ resource "aws_ecs_cluster" "cluster" {
 }
 
 resource "aws_ecs_cluster_capacity_providers" "this" {
-  count            = length(var.capacity_providers) > 0 ? 1 : 0
-  cluster_name     = aws_ecs_cluster.cluster.id
+  count              = length(var.capacity_providers) > 0 ? 1 : 0
+  cluster_name       = aws_ecs_cluster.cluster.id
   capacity_providers = var.capacity_providers
 
   dynamic "default_capacity_provider_strategy" {

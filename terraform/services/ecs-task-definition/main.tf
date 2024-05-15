@@ -58,9 +58,9 @@ resource "aws_ecs_task_definition" "this" {
   dynamic "proxy_configuration" {
     for_each = var.proxy_configuration != null ? [var.proxy_configuration] : []
     content {
-      type            = proxy_configuration.value.type
-      container_name  = proxy_configuration.value.container_name
-      properties      = proxy_configuration.value.properties
+      type           = proxy_configuration.value.type
+      container_name = proxy_configuration.value.container_name
+      properties     = proxy_configuration.value.properties
     }
   }
 }

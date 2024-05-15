@@ -3,7 +3,7 @@
 ########################
 module "ecs_cluster" {
   source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ecs?ref=tf-modules"
-  
+
   aws_region = var.aws_region
 
   # Task Resources
@@ -42,6 +42,6 @@ module "ecs_cluster" {
 #       base              = 0
 #     }
 #   ]
-  
+
 #   tags = module.tags.tags
 # }

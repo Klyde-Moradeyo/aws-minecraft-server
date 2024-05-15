@@ -95,7 +95,7 @@ variable "instance_type" {
   type        = string
 
   ### T3a Family ###
-  default = 	"t3a.large"
+  default = "t3a.large"
 
   ### T4g Family ###
   # default = "t4g.medium"

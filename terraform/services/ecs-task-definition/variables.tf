@@ -52,14 +52,14 @@ variable "memory" {
 
 variable "container_definitions" {
   description = "A list of container definitions as specified in the ECS task definition [Fargate and EC2]"
-  type        = list(object({
+  type = list(object({
     name               = string
     image              = string
     cpu                = number
     memory             = number
     memory_reservation = number
     essential          = bool
-    port_mappings      = list(object({
+    port_mappings = list(object({
       container_port = number
       host_port      = number
       protocol       = string
@@ -82,29 +82,29 @@ variable "container_definitions" {
 
 variable "placement_constraints" {
   description = "A list of placement constraints [EC2 only]"
-  type        = list(object({
+  type = list(object({
     type       = string
     expression = string
   }))
-  default     = []
+  default = []
 }
 
 variable "volumes" {
   description = "A list of volume definitions [EC2 only]"
-  type        = list(object({
+  type = list(object({
     name      = string
     host_path = string
   }))
-  default     = []
+  default = []
 }
 
 variable "inference_accelerators" {
   description = "A list of inference accelerators [EC2 only]"
-  type        = list(object({
+  type = list(object({
     device_name = string
     device_type = string
   }))
-  default     = []
+  default = []
 }
 
 variable "ipc_mode" {
@@ -121,7 +121,7 @@ variable "pid_mode" {
 
 variable "proxy_configuration" {
   description = "Configuration details for the App Mesh proxy [EC2 only]"
-  type        = object({
+  type = object({
     type           = string
     container_name = string
     properties     = map(string)
