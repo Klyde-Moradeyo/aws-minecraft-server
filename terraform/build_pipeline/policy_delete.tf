@@ -47,5 +47,5 @@ module "iam_policy_delete" {
     ]
   }
 
-  tags = data.terraform_remote_state.my_state.outputs.tags
+  tags = local.tags
 }

@@ -34,5 +34,5 @@ module "iam_policy_tf_s3_state_access" {
     ]
   }
 
-  tags = data.terraform_remote_state.my_state.outputs.tags
+  tags = local.tags
 }

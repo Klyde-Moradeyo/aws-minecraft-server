@@ -46,7 +46,7 @@ module "iam_policy_update" {
     ]
   }
 
-  tags = data.terraform_remote_state.my_state.outputs.tags
+  tags = local.tags
 }
 
 

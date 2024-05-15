@@ -50,7 +50,7 @@ module "iam_policy_read" {
     ]
   }
 
-  tags = data.terraform_remote_state.my_state.outputs.tags
+  tags = local.tags
 }
 
 

@@ -19,7 +19,7 @@ variable "remote_state_bucket" {
 variable "remote_state_key" {
   description = "The key path at which the remote state is stored in the S3 bucket"
   type        = string
-  default     = "aws-minecraft-server/service/migrate-infra-to-terraform-registry/terraform.tfstate"
+  default     = "aws-minecraft-server/service/feature/migrate-infra-to-terraform-registry/terraform.tfstate"
 }
 
 variable "remote_state_aws_region" {
