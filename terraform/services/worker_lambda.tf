@@ -31,10 +31,10 @@ module "worker_lambda" {
 
   permissions = [
     {
-      statement_id = "allow-request-lambda-invoke"
+      statement_id = "${module.resource_name_prefix.resource_name}-allow-request-lambda-invoke"
       action     = "lambda:InvokeFunction"
       principal  = "lambda.amazonaws.com"
-      source_arn = module.request_lambda.arn
+      source_arn = module.request_lambda.invoke_arn
     }
   ]
 
