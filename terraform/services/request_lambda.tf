@@ -2,8 +2,9 @@
 #        Lambda          #
 ##########################
 module "request_lambda" {
-  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/lambda/aws"
-  version = "0.0.4"
+  source = "./lambda"
+  # source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/lambda/aws"
+  # version = "0.0.4"
 
   name        = "${var.name}-request"
   handler     = "lambda_function.lambda_handler"
@@ -169,7 +170,7 @@ module "request_lambda_invoke_worker_lambda_policy" {
   tags = module.tags.tags
 }
 
-resource "aws_iam_role_policy_attachment" "request_lambda_s3_iam_policy_role_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "request_lambda_invoke_worker_lambda_policy_policy_attachment" {
   role       = module.request_lambda.iam_role_name
   policy_arn = module.request_lambda_invoke_worker_lambda_policy.policy_arn
 }

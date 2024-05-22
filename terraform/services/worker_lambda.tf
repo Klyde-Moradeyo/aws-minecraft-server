@@ -3,8 +3,9 @@ locals {
 }
 
 module "worker_lambda" {
-  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/lambda/aws"
-  version = "0.0.4"
+  source = "./lambda"
+  # source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/lambda/aws"
+  # version = "0.0.4"
 
   name        = "${var.name}-worker"
   handler     = "lambda_function.lambda_handler"
