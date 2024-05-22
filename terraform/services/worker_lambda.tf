@@ -49,7 +49,7 @@ module "worker_lambda" {
 #    Worker Lambda Policy      #
 ################################
 locals {
-  worker_lambda_s3_iam_policy = "${var.name}-worker-lambda-s3"
+  worker_lambda_s3_iam_policy = "${var.name}-worker-lambda-s3-ec2-ecs-dynamodb"
 }
 module "worker_lambda_s3_iam_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"

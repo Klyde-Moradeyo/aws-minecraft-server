@@ -81,8 +81,10 @@ resource "aws_cloudwatch_event_target" "trigger_lambda" {
 #   Request Lambda Policy      #
 ################################
 locals {
-  request_lambda_s3_iam_policy = "${var.name}-request-lambda-s3"
+  request_lambda_s3_iam_policy = "${var.name}-request-lambda-ecs-dynamodb-s3"
+  request_lambda_invoke_worker_lambda_policy = "${var.name}-request-lambda-invoke-worker-lambda"
 }
+
 module "request_lambda_s3_iam_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
   version = "0.0.1"
@@ -133,7 +135,28 @@ module "request_lambda_s3_iam_policy" {
           module.s3_mc_world.arn,
           module.s3_mc_server_assets.arn
         ]
-      },
+      }
+    ]
+  }
+
+  tags = module.tags.tags
+}
+
+resource "aws_iam_role_policy_attachment" "request_lambda_s3_iam_policy_role_policy_attachment" {
+  role       = module.request_lambda.iam_role_name
+  policy_arn = module.request_lambda_s3_iam_policy.policy_arn
+}
+
+module "request_lambda_invoke_worker_lambda_policy" {
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
+  version = "0.0.1"
+
+  name        = local.request_lambda_invoke_worker_lambda_policy
+  description = "IAM Policy for ${var.name} Request Lambda to Allow Request Lambda Invoke the Worker Lambda"
+
+  policy_hcl = {
+    Version = "2012-10-17"
+    Statement = [
       {
         Sid      = "AllowRequestLambdaInvoke"
         Effect   = "Allow",
@@ -148,5 +171,5 @@ module "request_lambda_s3_iam_policy" {
 
 resource "aws_iam_role_policy_attachment" "request_lambda_s3_iam_policy_role_policy_attachment" {
   role       = module.request_lambda.iam_role_name
-  policy_arn = module.request_lambda_s3_iam_policy.policy_arn
+  policy_arn = module.request_lambda_invoke_worker_lambda_policy.policy_arn
 }
