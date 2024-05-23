@@ -45,3 +45,36 @@ module "ecs_cluster" {
 
 #   tags = module.tags.tags
 # }
+
+module "ecs_task_definition" {
+  source                = "../ecs-fargate-task-definition"
+  
+  task_name             = "my-task"
+  docker_image          = "my-docker-image:latest"
+  cpu                   = "256"
+  memory                = "512"
+  cluster_arn           = "arn:aws:ecs:us-east-1:123456789012:cluster/my-cluster"
+  enable_autoscaling    = true
+  max_capacity          = 10
+  min_capacity          = 1
+  autoscaling_policies  = [
+    {
+      name               = "cpu-scaling"
+      policy_type        = "TargetTrackingScaling"
+      target_value       = 75
+      metric_type        = "ECSServiceAverageCPUUtilization"
+      scale_in_cooldown  = 300
+      scale_out_cooldown = 300
+      disable_scale_in   = false
+    },
+    {
+      name               = "memory-scaling"
+      policy_type        = "TargetTrackingScaling"
+      target_value       = 75
+      metric_type        = "ECSServiceAverageMemoryUtilization"
+      scale_in_cooldown  = 300
+      scale_out_cooldown = 300
+      disable_scale_in   = true
+    }
+  ]
+}
