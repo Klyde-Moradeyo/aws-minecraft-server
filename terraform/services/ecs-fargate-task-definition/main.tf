@@ -64,13 +64,4 @@ resource "aws_ecs_service" "this" {
       task_definition,
     ]
   }
-
-  dynamic "capacity_provider_strategy" {
-    for_each = var.use_spot_instances ? ["spot", "fargate"] : ["fargate"]
-    content {
-      capacity_provider = each.value == "spot" ? "FARGATE_SPOT" : "FARGATE"
-      weight            = each.value == "spot" ? var.fargate_spot_weight : var.fargate_weight
-      base              = each.value == "spot" ? 0 : var.min_capacity
-    }
-  }
 }

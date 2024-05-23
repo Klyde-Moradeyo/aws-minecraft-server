@@ -98,25 +98,6 @@ variable "security_groups" {
   description = "List of security group IDs to associate with the ECS task or service."
 }
 
-variable "use_spot_instances" {
-  type        = bool
-  description = "Whether to use Fargate Spot instances."
-  default     = false
-}
-
-variable "fargate_spot_weight" {
-  type        = number
-  description = "The relative percentage of Spot instances."
-  default     = 0
-}
-
-variable "fargate_weight" {
-  type        = number
-  description = "The relative percentage of standard Fargate instances."
-  default     = 100
-}
-
-
 ##########################
 #      CloudWatch        #
 ##########################
