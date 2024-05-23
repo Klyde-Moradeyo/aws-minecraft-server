@@ -24,27 +24,22 @@ module "ecs_cluster" {
   tags = module.tags.tags
 }
 
-# module "ecs_cluster" {
-#   source = "./ecs-cluster"
+module "ecs_cluster" {
+  source = "../ecs-cluster"
 
-#   name = var.name
-#   capacity_providers = ["FARGATE", "FARGATE_SPOT"]
-#   container_insights = true
-#   default_capacity_provider_strategy = [
-#     {
-#       capacity_provider = "FARGATE"
-#       weight            = 1
-#       base              = 1
-#     },
-#     {
-#       capacity_provider = "FARGATE_SPOT"
-#       weight            = 2
-#       base              = 0
-#     }
-#   ]
+  name = var.name
+  capacity_providers = ["FARGATE"]
+  container_insights = true
+  default_capacity_provider_strategy = [
+    {
+      capacity_provider = "FARGATE"
+      weight            = 1
+      base              = 1
+    }
+  ]
 
-#   tags = module.tags.tags
-# }
+  tags = module.tags.tags
+}
 
 module "ecs_task_definition" {
   source                = "../ecs-fargate-task-definition"
@@ -77,4 +72,58 @@ module "ecs_task_definition" {
       disable_scale_in   = true
     }
   ]
+
+  task_role_policy_arns = {
+    "${local.ecs_to_s3_access_policy}" = module.ecs_to_s3_access_policy.policy_arn
+  }
+}
+
+################################
+#       ECS IAM Policy         #
+################################
+locals {
+  ecs_to_s3_access_policy = "${var.name}-ecs-to-s3-access"
+}
+
+module "ecs_to_s3_access_policy" {
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
+  version = "0.0.1"
+
+  name        = local.ecs_to_s3_access_policy
+  description = "IAM Policy for ${var.name} Request Lambda to access various AWS services"
+
+  policy_hcl = {
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = ["s3:ListBucket"]
+        Resource = [
+          module.s3_mc_world.arn,
+          module.s3_mc_server_assets.arn
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = ["s3:GetObject"]
+        Resource = [
+          "${module.s3_mc_world.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:CreateMultipartUpload"
+        ]
+        Resource = [
+          "${module.s3_mc_server_assets.arn}/*/world_bck_up/*"
+        ]
+      }
+    ]
+  }
+
+  tags = module.tags.tags
 }
