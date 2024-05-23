@@ -45,6 +45,13 @@ resource "aws_lambda_function" "lambda" {
     var.s3_file_hash != "" ? var.s3_file_hash : null
   )
 
+  logging_config {
+    log_format             = var.log_format
+    application_log_level  = var.application_log_level
+    log_group              = module.cloudwatch_log.name
+    system_log_level       = var.system_log_level
+  }
+
   tags = var.tags
 }
 

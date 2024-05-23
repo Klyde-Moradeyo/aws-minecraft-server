@@ -22,24 +22,7 @@ variable "runtime" {
   default     = ""
 }
 
-##########################
-#        IAM Policy      #
-##########################
-variable "iam_policy_statements" {
-  description = "The list of policy statements for the Lambda execution role."
-  type        = list(any)
-  default = [
-    {
-      Effect   = "Allow"
-      Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
-      Resource = "*"
-    }
-  ]
-}
 
-##########################
-#        S3 Bucket       #
-##########################
 variable "s3_bucket" {
   description = "The name of the S3 bucket containing the Lambda function code."
   type        = string
@@ -52,9 +35,6 @@ variable "s3_key" {
   default     = ""
 }
 
-##########################
-#       Zip and Image    #
-##########################
 variable "zip_file" {
   description = "Path to the local ZIP file containing the Lambda function code."
   type        = string
@@ -124,6 +104,39 @@ variable "reserved_concurrent_executions" {
   description = "The maximum number of concurrent executions reserved for this function."
   type        = number
   default     = -1
+}
+
+variable "log_format" {
+  description = "Log format for the Lambda function (plain or json)"
+  type        = string
+  default     = "Text"
+}
+
+variable "application_log_level" {
+  description = "Application log level for the Lambda function"
+  type        = string
+  default     = "INFO"
+}
+
+variable "system_log_level" {
+  description = "System log level for the Lambda function"
+  type        = string
+  default     = "INFO"
+}
+
+##########################
+#        IAM Policy      #
+##########################
+variable "iam_policy_statements" {
+  description = "The list of policy statements for the Lambda execution role."
+  type        = list(any)
+  default = [
+    {
+      Effect   = "Allow"
+      Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
+      Resource = "*"
+    }
+  ]
 }
 
 ##########################
