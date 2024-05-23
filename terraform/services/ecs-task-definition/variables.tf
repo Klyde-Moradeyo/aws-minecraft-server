@@ -9,7 +9,7 @@ variable "name" {
 #############################
 #    ECS Task Definition    #
 #############################
-variable "family" {
+variable "ecs_cluster_name" {
   description = "The family of the ECS task definition"
   type        = string
 }
