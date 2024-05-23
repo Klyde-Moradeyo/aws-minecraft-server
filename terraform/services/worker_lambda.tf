@@ -43,6 +43,10 @@ module "worker_lambda" {
 
   log_retention_in_days = 30
 
+  iam_role_policy_arns = {
+    (local.worker_lambda_s3_iam_policy) = module.worker_lambda_s3_iam_policy.policy_arn
+  }
+
   tags = module.tags.tags
 }
 
@@ -52,6 +56,7 @@ module "worker_lambda" {
 locals {
   worker_lambda_s3_iam_policy = "${var.name}-worker-lambda-s3-ec2-ecs-dynamodb"
 }
+
 module "worker_lambda_s3_iam_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
   version = "0.0.1"
@@ -117,9 +122,4 @@ module "worker_lambda_s3_iam_policy" {
   }
 
   tags = module.tags.tags
-}
-
-resource "aws_iam_role_policy_attachment" "worker_lambda_s3_iam_policy_role_policy_attachment" {
-  role       = module.worker_lambda.iam_role_name
-  policy_arn = module.worker_lambda_s3_iam_policy.policy_arn
 }
