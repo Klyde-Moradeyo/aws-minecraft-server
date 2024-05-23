@@ -5,5 +5,6 @@ module "cloudwatch_log" {
 
   name              = "/ecs/${var.name}"
   retention_in_days = var.log_retention_in_days
+  
   tags              = var.tags
 }

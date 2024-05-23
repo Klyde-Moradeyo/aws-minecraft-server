@@ -13,16 +13,17 @@ module "resource_name_prefix" {
 #    ECS Task Definition    #
 #############################
 resource "aws_ecs_task_definition" "this" {
-  family                   = var.task_name
+  family                   = "${module.resource_name_prefix.resource_name}-ecs-task-def"
   cpu                      = var.cpu
   memory                   = var.memory
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  execution_role_arn       = module.execution_role.arn
+  task_role_arn            = module.task_role.arn
 
+  # This can be enhanced to support multiple container definitions
   container_definitions    = jsonencode([{
-    name      = var.task_name
+    name      = var.container_name
     image     = var.docker_image
     cpu       = var.cpu
     memory    = var.memory
@@ -46,7 +47,7 @@ resource "aws_ecs_service" "this" {
     aws_ecs_task_definition.this
   ]
 
-  name            = "${var.task_name}-service"
+  name            = "${module.resource_name_prefix.resource_name}-ecs-service"
   cluster         = var.cluster_arn
   task_definition = aws_ecs_task_definition.this.arn
   desired_count   = var.min_capacity

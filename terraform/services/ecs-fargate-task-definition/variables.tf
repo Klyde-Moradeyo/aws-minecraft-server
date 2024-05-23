@@ -9,11 +9,6 @@ variable "name" {
 #############################
 #    ECS Task Definition    #
 #############################
-variable "task_name" {
-  type        = string
-  description = "The name of the ECS task."
-}
-
 variable "docker_image" {
   type        = string
   description = "The Docker image to use in the task."
@@ -96,6 +91,21 @@ variable "subnets" {
 variable "security_groups" {
   type        = list(string)
   description = "List of security group IDs to associate with the ECS task or service."
+}
+
+##########################
+#      IAM Policy        #
+##########################
+variable "ecr_repo_arns" {
+  description = "The list of policy statements for the Lambda execution role."
+  type        = list(string)
+  default = []
+}
+
+variable "task_role_policy_arns" {
+  description = "A map of policy names to policy ARNs to attach to the ECS Task IAM role."
+  type        = map(string)
+  default = {}
 }
 
 ##########################
