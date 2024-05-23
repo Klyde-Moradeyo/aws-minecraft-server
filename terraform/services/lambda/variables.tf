@@ -127,16 +127,10 @@ variable "system_log_level" {
 ##########################
 #        IAM Policy      #
 ##########################
-variable "iam_policy_statements" {
-  description = "The list of policy statements for the Lambda execution role."
-  type        = list(any)
-  default = [
-    {
-      Effect   = "Allow"
-      Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
-      Resource = "*"
-    }
-  ]
+variable "iam_role_policy_arns" {
+  description = "A map of policy names to policy ARNs to attach to the IAM role."
+  type        = map(string)
+  default = {}
 }
 
 ##########################

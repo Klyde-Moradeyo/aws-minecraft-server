@@ -22,9 +22,12 @@ module "iam_role" {
     ]
   }
 
-  policy_arns = {
-    "${local.iam_policy_name}" = module.iam_policy.policy_arn
-  }
+  policy_arns = merge(
+    var.iam_role_policy_arns,
+    { 
+      (local.iam_policy_name) = module.iam_policy.policy_arn 
+    }
+  )
 
   tags = var.tags
 }
@@ -41,7 +44,7 @@ module "iam_policy" {
   version = "0.0.1"
 
   name        = local.iam_policy_name
-  path        = "/Lambda/"
+  path        = "/lambda/"
   description = "An IAM policy for ${var.name} lambda access to cloudwatch logs"
 
   policy_hcl = {
