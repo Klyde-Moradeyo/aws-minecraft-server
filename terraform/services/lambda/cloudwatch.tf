@@ -3,7 +3,7 @@ module "cloudwatch_log" {
   # version = "0.0.1"
   source = "../cloudwatch-log-group"
 
-  name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}"
+  name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}" # Has to be the same name as the lambda function.
   retention_in_days = var.log_retention_in_days
   tags              = var.tags
 }
