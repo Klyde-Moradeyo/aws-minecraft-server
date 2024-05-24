@@ -9,7 +9,7 @@ module "task_role" {
 
   name        = "${var.name}-task"
   path        = "/ecs/"
-  description = "IAM Task Role for ECS ${var.name} Task Defintion in ${var.ecs_cluster_name} cluster"
+  description = "IAM Task Role for ECS ${var.name} Task Defintion"
 
   trust_policy_hcl = {
     Version = "2012-10-17"

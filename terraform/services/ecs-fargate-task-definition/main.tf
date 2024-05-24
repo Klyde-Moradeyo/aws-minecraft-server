@@ -12,14 +12,14 @@ module "resource_name_prefix" {
 #############################
 #    ECS Task Definition    #
 #############################
-resource "aws_ecs_task_definition" "this" {
+resource "aws_ecs_task_definition" "task_definition" {
   family                   = "${module.resource_name_prefix.resource_name}-ecs-task-def"
   cpu                      = var.cpu
   memory                   = var.memory
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = module.execution_role.arn
-  task_role_arn            = module.task_role.arn
+  execution_role_arn       = module.execution_role.iam_role_arn
+  task_role_arn            = module.task_role.iam_role_arn
 
   container_definitions = jsonencode([for container in var.containers : {
     name         = container.name
@@ -43,19 +43,19 @@ resource "aws_ecs_task_definition" "this" {
 
 resource "aws_ecs_service" "this" {
   depends_on = [
-    aws_ecs_task_definition.this
+    aws_ecs_task_definition.task_definition
   ]
 
   name            = "${module.resource_name_prefix.resource_name}-ecs-service"
   cluster         = var.cluster_arn
-  task_definition = aws_ecs_task_definition.this.arn
+  task_definition = aws_ecs_task_definition.task_definition.arn
   desired_count   = var.min_capacity
   launch_type     = "FARGATE"
 
   network_configuration {
     subnets          = var.subnets
     security_groups  = var.security_groups
-    assign_public_ip = true
+    assign_public_ip = var.assign_public_ip
   }
 
   lifecycle {

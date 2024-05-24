@@ -9,7 +9,7 @@ module "execution_role" {
 
   name        = "${var.name}-task"
   path        = "/ecs/"
-  description = "IAM Execution Role for ECS ${var.name} Task Defintion in ${var.ecs_cluster_name} cluster"
+  description = "IAM Execution Role for ECS ${var.name} Task Defintion"
 
   trust_policy_hcl = {
     Version = "2012-10-17"
@@ -24,10 +24,12 @@ module "execution_role" {
     ]
   }
 
-  policy_arns = {
-    "${local.execution_role_ecr_policy}"            = module.execution_role_ecr_policy.policy_arn
+policy_arns = merge(
+  {
     "${local.execution_role_cloudwatch_log_policy}" = module.execution_role_cloudwatch_log_policy.policy_arn
-  }
+  },
+  length(var.ecr_repo_arns) > 0 ? { "${local.execution_role_ecr_policy}" = module.execution_role_ecr_policy[0].policy_arn } : {}
+)
 
   tags = var.tags
 }
@@ -71,8 +73,6 @@ module "execution_role_ecr_policy" {
 module "execution_role_cloudwatch_log_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
   version = "0.0.1"
-
-  count = length(var.ecr_repo_arns) > 0 ? 1 : 0
 
   name        = local.execution_role_cloudwatch_log_policy
   path        = "/ecs/"

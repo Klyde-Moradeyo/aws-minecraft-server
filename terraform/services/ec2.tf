@@ -44,6 +44,9 @@ module "minecraft_server" {
   security_group_ids          = [module.security_group.security_group_id]
   associate_public_ip_address = true
 
+  # Update to use user data
+  # user_data = 
+
   tags = module.tags.tags
 }
 

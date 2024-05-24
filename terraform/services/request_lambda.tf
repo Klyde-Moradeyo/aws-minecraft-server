@@ -22,9 +22,9 @@ module "request_lambda" {
     EC2_INSTANCE_ID                     = module.minecraft_server.id
     WORKER_LAMBDA_NAME                  = module.worker_lambda.name
     DYNAMO_DB_TABLE_NAME                = module.dynamodb.name
-    ECS_CLUSTER_NAME                    = module.ecs_cluster.ecs_cluster_name
-    ECS_MC_ARCHIVE_TASK_DEFINITION_NAME = module.ecs_cluster.mc_archive_task_definition_name
-    ECS_MC_ARCHIVE_CONTAINER_NAME       = module.ecs_cluster.mc_archive_task_container_name
+    ECS_CLUSTER_NAME                    = module.ecs_cluster.name
+    ECS_MC_ARCHIVE_TASK_DEFINITION_NAME = "[]" # module.ecs_task_definition.container_definitions_json[local.mc_archive_world_container_name]["name"]
+    ECS_MC_ARCHIVE_CONTAINER_NAME       = "[]" # module.ecs_task_definition.container_definitions_json[local.mc_archive_world_container_name]["name"]
     S3_MC_WORLD_URI                     = module.s3_mc_world.uri
     S3_MC_ASSETS_URI                    = module.s3_mc_server_assets.uri
     ECS_SUBNET_ID                       = module.public_subnet.subnet_ids[0]

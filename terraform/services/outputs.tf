@@ -108,6 +108,6 @@ output "ecr_mc_world_archive_repository_name" {
 ########################
 #         ECS          #
 ########################
-output "ecs_mc_archive_image_arn" {
-  value = module.ecs_cluster.ecs_task_definition_container_image
+output "ecs_mc_archive_container_definitions" {
+  value = module.ecs_task_definition.container_definitions_json
 }

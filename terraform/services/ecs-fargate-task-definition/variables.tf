@@ -80,6 +80,12 @@ variable "security_groups" {
   default = []
 }
 
+variable "assign_public_ip" {
+  type        = bool
+  description = "Whether to assign public ip if subnet is public."
+  default = false
+}
+
 ##########################
 #      IAM Policy        #
 ##########################

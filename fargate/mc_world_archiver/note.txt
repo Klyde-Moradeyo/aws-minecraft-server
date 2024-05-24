@@ -1,4 +1,4 @@
-Fargate gives 10gb storage by default - we will need to monitor how much storage the container is usiung and set salarms
+Fargate gives 10gb storage by default (but up to 20gb for free?) - we will need to monitor how much storage the container is usiung and set salarms
 CPU = 1 
 Memory = between 2 and 4 gb
 

@@ -18,6 +18,11 @@ module "ecs_cluster" {
   tags = module.tags.tags
 }
 
+locals {
+  mc_archive_world_container_name = "${var.name}-world-archive-runner"
+  mc_archive_world_container_image = "${module.ecr_mc_world_archive.repository_arn}:latest"
+}
+
 module "ecs_task_definition" {
   source = "./ecs-fargate-task-definition"
 
@@ -30,8 +35,8 @@ module "ecs_task_definition" {
 
   containers = [
     {
-      name                  = "${var.name}-world-archive-runner"
-      image                 = "${module.ecr_mc_world_archive.repository_arn}:latest"
+      name                  = local.mc_archive_world_container_name
+      image                 = local.mc_archive_world_container_image
       cpu                   = "128"
       memory                = "256"
       essential             = true
