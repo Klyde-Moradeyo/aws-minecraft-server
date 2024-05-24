@@ -19,32 +19,32 @@ module "ecs_cluster" {
 }
 
 locals {
-  mc_archive_world_container_name = "${var.name}-world-archive-runner"
+  mc_archive_world_container_name  = "${var.name}-world-archive-runner"
   mc_archive_world_container_image = "${module.ecr_mc_world_archive.repository_arn}:latest"
 }
 
 module "ecs_task_definition" {
   source = "./ecs-fargate-task-definition"
 
-  name          = "${var.name}-world-archive"
-  cpu                = 256
-  memory             = 1024
-  cluster_arn        = module.ecs_cluster.arn
+  name        = "${var.name}-world-archive"
+  cpu         = 256
+  memory      = 1024
+  cluster_arn = module.ecs_cluster.arn
 
   containers = [
     {
-      name                  = local.mc_archive_world_container_name
-      image                 = local.mc_archive_world_container_image
-      cpu                   = "128"
-      memory                = "256"
-      essential             = true
+      name      = local.mc_archive_world_container_name
+      image     = local.mc_archive_world_container_image
+      cpu       = "128"
+      memory    = "256"
+      essential = true
       environment_variables = [
-        { 
-          name = "S3_MC_WORLD_NAME", 
+        {
+          name  = "S3_MC_WORLD_NAME",
           value = module.s3_mc_world.name
         },
-        { 
-          name = "S3_MC_ASSETS_NAME", 
+        {
+          name  = "S3_MC_ASSETS_NAME",
           value = module.s3_mc_server_assets.name
         }
       ]
@@ -55,7 +55,7 @@ module "ecs_task_definition" {
     "${local.ecs_to_s3_access_policy}" = module.ecs_to_s3_access_policy.policy_arn
   }
 
-  ecr_repo_arns = [ module.ecr_mc_world_archive.repository_arn ]
+  ecr_repo_arns = [module.ecr_mc_world_archive.repository_arn]
 
   log_retention_in_days = 120
 

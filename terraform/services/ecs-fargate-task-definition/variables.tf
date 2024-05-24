@@ -18,7 +18,7 @@ variable "containers" {
     essential             = optional(bool, true)
     environment_variables = optional(list(map(string)), [])
     secrets               = optional(list(map(string)), [])
-    port_mappings         = optional(list(object({
+    port_mappings = optional(list(object({
       containerPort = number
       hostPort      = number
       protocol      = string

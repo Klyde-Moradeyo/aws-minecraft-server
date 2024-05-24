@@ -24,12 +24,12 @@ module "execution_role" {
     ]
   }
 
-policy_arns = merge(
-  {
-    "${local.execution_role_cloudwatch_log_policy}" = module.execution_role_cloudwatch_log_policy.policy_arn
-  },
-  length(var.ecr_repo_arns) > 0 ? { "${local.execution_role_ecr_policy}" = module.execution_role_ecr_policy[0].policy_arn } : {}
-)
+  policy_arns = merge(
+    {
+      "${local.execution_role_cloudwatch_log_policy}" = module.execution_role_cloudwatch_log_policy.policy_arn
+    },
+    length(var.ecr_repo_arns) > 0 ? { "${local.execution_role_ecr_policy}" = module.execution_role_ecr_policy[0].policy_arn } : {}
+  )
 
   tags = var.tags
 }
@@ -71,9 +71,9 @@ module "execution_role_ecr_policy" {
 }
 
 locals {
-  cloudwatch_log_arns       = values(module.cloudwatch_log)[*].arn
-  cloudwatch_log_arns_wild  = [for arn in local.cloudwatch_log_arns : "${arn}:*"]
-  all_cloudwatch_log_arns   = concat(local.cloudwatch_log_arns, local.cloudwatch_log_arns_wild)
+  cloudwatch_log_arns      = values(module.cloudwatch_log)[*].arn
+  cloudwatch_log_arns_wild = [for arn in local.cloudwatch_log_arns : "${arn}:*"]
+  all_cloudwatch_log_arns  = concat(local.cloudwatch_log_arns, local.cloudwatch_log_arns_wild)
 }
 
 module "execution_role_cloudwatch_log_policy" {
