@@ -1,15 +1,15 @@
 # Add enforce autoscaling if task type is for fargate
 resource "aws_appautoscaling_target" "ecs_target" {
-  count              = length(var.autoscaling_policies) > 0 ? 1 : 0
+  count              = length(var.autoscaling_policies) > 0 && var.network_config != null ? 1 : 0
   max_capacity       = var.max_capacity
   min_capacity       = var.min_capacity
-  resource_id        = "service/${var.cluster_arn}/${aws_ecs_service.this.name}"
+  resource_id        = "service/${var.cluster_arn}/${aws_ecs_service.this[0].name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }
 
 resource "aws_appautoscaling_policy" "ecs_policy" {
-  count = length(var.autoscaling_policies)
+  count = length(var.autoscaling_policies) > 0 && var.network_config != null ? length(var.autoscaling_policies) : 0
 
   name               = var.autoscaling_policies[count.index].name
   policy_type        = var.autoscaling_policies[count.index].policy_type

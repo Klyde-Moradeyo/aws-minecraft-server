@@ -4,7 +4,7 @@
 module "ecs_cluster" {
   source = "./ecs-cluster"
 
-  name               = var.name
+  name               = "${var.name}-world-archive"
   capacity_providers = ["FARGATE"]
   container_insights = true
   default_capacity_provider_strategy = [
@@ -26,12 +26,10 @@ locals {
 module "ecs_task_definition" {
   source = "./ecs-fargate-task-definition"
 
-  name          = "my-task"
-  cpu                = "256"
-  memory             = "1024"
+  name          = "${var.name}-world-archive"
+  cpu                = 256
+  memory             = 1024
   cluster_arn        = module.ecs_cluster.arn
-  max_capacity       = 1
-  min_capacity       = 1
 
   containers = [
     {

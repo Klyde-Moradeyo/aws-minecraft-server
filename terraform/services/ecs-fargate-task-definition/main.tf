@@ -38,13 +38,12 @@ resource "aws_ecs_task_definition" "task_definition" {
         awslogs-stream-prefix = "ecs"
       }
     }
+    tags = var.tags
   }])
 }
 
 resource "aws_ecs_service" "this" {
-  depends_on = [
-    aws_ecs_task_definition.task_definition
-  ]
+  count = var.network_config != null ? 1 : 0
 
   name            = "${module.resource_name_prefix.resource_name}-ecs-service"
   cluster         = var.cluster_arn
@@ -53,15 +52,14 @@ resource "aws_ecs_service" "this" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = var.subnets
-    security_groups  = var.security_groups
-    assign_public_ip = var.assign_public_ip
+    subnets          = var.network_config.subnets
+    security_groups  = var.network_config.security_groups
+    assign_public_ip = var.network_config.assign_public_ip
   }
 
   lifecycle {
     ignore_changes = [
-      desired_count,
-      task_definition,
+      desired_count
     ]
   }
 }

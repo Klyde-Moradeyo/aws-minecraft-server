@@ -13,8 +13,8 @@ variable "containers" {
   type = list(object({
     name                  = string
     image                 = string
-    cpu                   = string
-    memory                = string
+    cpu                   = number
+    memory                = number
     essential             = optional(bool, true)
     environment_variables = optional(list(map(string)), [])
     secrets               = optional(list(map(string)), [])
@@ -52,7 +52,7 @@ variable "autoscaling_policies" {
     scale_out_cooldown = number
     disable_scale_in   = bool
   }))
-  description = "List of autoscaling policies for the ECS service."
+  description = "(ECS Service Only) List of autoscaling policies for the ECS service."
   default     = []
 }
 
@@ -68,22 +68,14 @@ variable "min_capacity" {
   default     = 1
 }
 
-variable "subnets" {
-  type        = list(string)
-  description = "List of subnet IDs for the ECS service deployment."
-  default = []
-}
-
-variable "security_groups" {
-  type        = list(string)
-  description = "List of security group IDs to associate with the ECS task or service."
-  default = []
-}
-
-variable "assign_public_ip" {
-  type        = bool
-  description = "Whether to assign public ip if subnet is public."
-  default = false
+variable "network_config" {
+  description = "(ECS Service Only) Network configuration required to deploy the ECS service. Set to null if no service is to be deployed."
+  type = object({
+    subnets          = list(string)
+    security_groups  = list(string)
+    assign_public_ip = bool
+  })
+  default = null
 }
 
 ##########################

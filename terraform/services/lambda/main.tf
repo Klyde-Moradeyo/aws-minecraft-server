@@ -47,9 +47,9 @@ resource "aws_lambda_function" "lambda" {
 
   logging_config {
     log_format            = var.log_format
-    application_log_level = var.application_log_level
     log_group             = module.cloudwatch_log.name
-    system_log_level      = var.system_log_level
+    application_log_level = var.log_format == "JSON" ? var.application_log_level: null
+    system_log_level      = var.log_format == "JSON" ? var.system_log_level: null
   }
 
   tags = var.tags

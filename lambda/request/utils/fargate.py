@@ -23,6 +23,7 @@ class FargateUtil:
                 count=1,
                 platformVersion="LATEST",
                 networkConfiguration=self.network_configuration,
+                # This Should be able to be removed now
                 overrides={
                     "containerOverrides": [{
                         "name": self.container_name,

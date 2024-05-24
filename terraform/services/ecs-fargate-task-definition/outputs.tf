@@ -3,28 +3,28 @@ output "task_definition_arn" {
   description = "ARN of the ECS task definition."
 }
 
-output "ecs_service_name" {
-  value       = aws_ecs_service.this.name
-  description = "Name of the ECS service."
+output "task_definition_name" {
+  value       = aws_ecs_task_definition.task_definition.family
+  description = "The name of the ECS task definition."
 }
 
-output "ecs_service_arn" {
-  value       = aws_ecs_service.this.id
-  description = "ARN of the ECS service."
+output "ecs_service_name" {
+  value       = length(aws_ecs_service.this) > 0 ? aws_ecs_service.this[0].name : ""
+  description = "Name of the ECS service, if created."
 }
 
 output "ecs_service_id" {
-  value       = aws_ecs_service.this.id
-  description = "ID of the ECS service."
+  value       = length(aws_ecs_service.this) > 0 ? aws_ecs_service.this[0].id : ""
+  description = "ID of the ECS service, if created."
 }
 
 output "ecs_service_network_configuration" {
-  value = {
-    subnets          = var.subnets
-    security_groups  = var.security_groups
-    assign_public_ip = var.assign_public_ip
-  }
-  description = "Network configuration for the ECS service."
+  value = length(aws_ecs_service.this) > 0 ? {
+    subnets          = aws_ecs_service.this[0].network_configuration[0].subnets
+    security_groups  = aws_ecs_service.this[0].network_configuration[0].security_groups
+    assign_public_ip = aws_ecs_service.this[0].network_configuration[0].assign_public_ip
+  } : {}
+  description = "Network configuration for the ECS service, if created."
 }
 
 output "autoscaling_target_id" {
@@ -38,7 +38,11 @@ output "active_scaling_policies" {
 }
 
 output "container_definitions_json" {
-  value       = aws_ecs_task_definition.task_definition.container_definitions
+  value = jsonencode(
+    tomap({
+      for container in jsondecode(aws_ecs_task_definition.task_definition.container_definitions) : container.name => container
+    })
+  )
   description = "JSON string of the container definitions used in the task."
 }
 

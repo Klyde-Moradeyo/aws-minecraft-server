@@ -7,7 +7,7 @@ module "execution_role" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-role/aws"
   version = "0.0.1"
 
-  name        = "${var.name}-task"
+  name        = "${var.name}-execution"
   path        = "/ecs/"
   description = "IAM Execution Role for ECS ${var.name} Task Defintion"
 
@@ -70,6 +70,12 @@ module "execution_role_ecr_policy" {
   tags = var.tags
 }
 
+locals {
+  cloudwatch_log_arns       = values(module.cloudwatch_log)[*].arn
+  cloudwatch_log_arns_wild  = [for arn in local.cloudwatch_log_arns : "${arn}:*"]
+  all_cloudwatch_log_arns   = concat(local.cloudwatch_log_arns, local.cloudwatch_log_arns_wild)
+}
+
 module "execution_role_cloudwatch_log_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
   version = "0.0.1"
@@ -82,15 +88,12 @@ module "execution_role_cloudwatch_log_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow"
         Action = [
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        Resource = concat(
-          [ for container in var.containers : "/ecs/${container.name}"],
-          [ for container in var.containers : "/ecs/${container.name}:*" ]
-        )
+        Effect   = "Allow",
+        Resource = local.all_cloudwatch_log_arns
       }
     ]
   }
