@@ -23,7 +23,6 @@ class FargateUtil:
                 count=1,
                 platformVersion="LATEST",
                 networkConfiguration=self.network_configuration,
-                # This Should be able to be removed now
                 overrides={
                     "containerOverrides": [{
                         "name": self.container_name,
@@ -91,12 +90,8 @@ class FargateUtil:
         If environment_variables is None, create a default set.
         """
         if environment_variables is None:
-            # Define default environment variables
-            # You can customize these based on your application's requirements
             default_env_vars = [
-                {'name': 'DEFAULT_ENV_VAR_1', 'value': 'DefaultValue1'},
-                {'name': 'DEFAULT_ENV_VAR_2', 'value': 'DefaultValue2'}
-                # Add more default environment variables as needed
+                {'name': 'DEFAULT_ENV_VARS', 'value': 'DefaultValue1'},
             ]
             return default_env_vars
         else:
@@ -108,7 +103,7 @@ class FargateUtil:
             return formatted_env_vars
     
     @staticmethod
-    def create_network_config(subnets, security_groups, assign_public_ip='DISABLED'):
+    def create_network_config(subnets, security_groups=[], assign_public_ip='DISABLED'):
         """
         Set the network configuration for the Fargate task.
         

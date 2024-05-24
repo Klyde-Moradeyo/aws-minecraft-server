@@ -35,8 +35,8 @@ module "ecs_task_definition" {
     {
       name      = local.mc_archive_world_container_name
       image     = local.mc_archive_world_container_image
-      cpu       = "128"
-      memory    = "256"
+      cpu       = "256"
+      memory    = "1024"
       essential = true
       environment_variables = [
         {

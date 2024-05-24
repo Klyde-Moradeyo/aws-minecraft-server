@@ -25,10 +25,7 @@ module "request_lambda" {
     ECS_CLUSTER_NAME                    = module.ecs_cluster.name
     ECS_MC_ARCHIVE_TASK_DEFINITION_NAME = module.ecs_task_definition.task_definition_name
     ECS_MC_ARCHIVE_CONTAINER_NAME       = local.mc_archive_world_container_name
-    S3_MC_WORLD_URI                     = module.s3_mc_world.uri
-    S3_MC_ASSETS_URI                    = module.s3_mc_server_assets.uri
-    ECS_SUBNET_ID                       = module.public_subnet.subnet_ids[0]
-    ECS_SECURITY_GROUP_ID               = module.security_group.security_group_id
+    ECS_SUBNET_ID                       = module.ecs_mc_archiver_private_subnet_cidrs.subnet_ids[0]
     TAGS_JSON                           = jsonencode(module.tags.tags)
   }
 

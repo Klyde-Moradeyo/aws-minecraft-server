@@ -166,13 +166,25 @@ variable "vpc_cidr" {
 ########################
 #        Subnet        #
 ########################
+# Only the first subnet is used 
 variable "public_subnet_cidrs" {
   description = "The CIDR block for the public Subnet."
   type        = list(string)
   default = [
-    "10.0.51.0/24",
-    "10.0.52.0/24",
-    "10.0.53.0/24"
+    "10.0.50.0/24",
+    # "10.0.51.0/24",
+    # "10.0.52.0/24"
+  ]
+}
+
+# Only the first subnet is used 
+variable "ecs_mc_archiver_private_subnet_cidrs" {
+  description = "The CIDR block for the public Subnet."
+  type        = list(string)
+  default = [
+    "10.0.60.0/24",
+    # "10.0.62.0/24",
+    # "10.0.61.0/24"
   ]
 }
 

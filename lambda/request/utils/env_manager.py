@@ -13,7 +13,7 @@ class EnvironmentVariables:
 
     def get_required_vars(self):
         required_configs = [    
-                                # Minecraft Specifi\c Env Vars
+                                # Minecraft Specific Env Vars
                                 'MC_PORT', 'MC_SERVER_IP', 
 
                                 # Worker Lambda
@@ -30,11 +30,6 @@ class EnvironmentVariables:
                                 'ECS_MC_ARCHIVE_TASK_DEFINITION_NAME', 
                                 'ECS_MC_ARCHIVE_CONTAINER_NAME',
                                 'ECS_SUBNET_ID',
-                                'ECS_SECURITY_GROUP_ID',
-
-                                # S3 (used for fargate task)
-                                'S3_MC_WORLD_URI',
-                                'S3_MC_ASSETS_URI'
                             ]
         return required_configs
 

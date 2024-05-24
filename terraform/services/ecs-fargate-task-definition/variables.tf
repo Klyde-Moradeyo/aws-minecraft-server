@@ -59,7 +59,7 @@ variable "autoscaling_policies" {
 variable "max_capacity" {
   type        = number
   description = "Maximum number of tasks to scale out to."
-  default     = 10
+  default     = 3
 }
 
 variable "min_capacity" {
