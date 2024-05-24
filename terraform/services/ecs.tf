@@ -2,30 +2,7 @@
 #         ECS          #
 ########################
 module "ecs_cluster" {
-  source = "git@github.com:Klyde-Moradeyo/aws-minecraft-server.git//modules/ecs?ref=tf-modules"
-
-  aws_region = var.aws_region
-
-  # Task Resources
-  task_cpu_limit    = 256
-  task_memory_limit = 1024
-
-  # SSM
-  ssm_git_private_key_name = "dark-mango-bot-private-key"
-
-  # Task Defintion 
-  mc_archive_ecr_repo_name = module.ecr_mc_world_archive.repository_name
-
-  # S3 
-  minecraft_world_s3_bucket  = module.s3_mc_world.arn
-  minecraft_assets_s3_bucket = module.s3_mc_server_assets.arn
-
-  # Module tags
-  tags = module.tags.tags
-}
-
-module "ecs_cluster" {
-  source = "../ecs-cluster"
+  source = "./ecs-cluster"
 
   name               = var.name
   capacity_providers = ["FARGATE"]
@@ -42,40 +19,44 @@ module "ecs_cluster" {
 }
 
 module "ecs_task_definition" {
-  source = "../ecs-fargate-task-definition"
+  source = "./ecs-fargate-task-definition"
 
-  task_name          = "my-task"
-  docker_image       = "my-docker-image:latest"
+  name          = "my-task"
   cpu                = "256"
-  memory             = "512"
-  cluster_arn        = "arn:aws:ecs:us-east-1:123456789012:cluster/my-cluster"
-  enable_autoscaling = true
-  max_capacity       = 10
+  memory             = "1024"
+  cluster_arn        = module.ecs_cluster.arn
+  max_capacity       = 1
   min_capacity       = 1
-  autoscaling_policies = [
+
+  containers = [
     {
-      name               = "cpu-scaling"
-      policy_type        = "TargetTrackingScaling"
-      target_value       = 75
-      metric_type        = "ECSServiceAverageCPUUtilization"
-      scale_in_cooldown  = 300
-      scale_out_cooldown = 300
-      disable_scale_in   = false
-    },
-    {
-      name               = "memory-scaling"
-      policy_type        = "TargetTrackingScaling"
-      target_value       = 75
-      metric_type        = "ECSServiceAverageMemoryUtilization"
-      scale_in_cooldown  = 300
-      scale_out_cooldown = 300
-      disable_scale_in   = true
+      name                  = "${var.name}-world-archive-runner"
+      image                 = "${module.ecr_mc_world_archive.repository_arn}:latest"
+      cpu                   = "128"
+      memory                = "256"
+      essential             = true
+      environment_variables = [
+        { 
+          name = "S3_MC_WORLD_NAME", 
+          value = module.s3_mc_world.name
+        },
+        { 
+          name = "S3_MC_ASSETS_NAME", 
+          value = module.s3_mc_server_assets.name
+        }
+      ]
     }
   ]
 
   task_role_policy_arns = {
     "${local.ecs_to_s3_access_policy}" = module.ecs_to_s3_access_policy.policy_arn
   }
+
+  ecr_repo_arns = [ module.ecr_mc_world_archive.repository_arn ]
+
+  log_retention_in_days = 120
+
+  tags = module.tags.tags
 }
 
 ################################
