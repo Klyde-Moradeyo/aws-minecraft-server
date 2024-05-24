@@ -27,7 +27,7 @@ module "ecs_cluster" {
 module "ecs_cluster" {
   source = "../ecs-cluster"
 
-  name = var.name
+  name               = var.name
   capacity_providers = ["FARGATE"]
   container_insights = true
   default_capacity_provider_strategy = [
@@ -42,17 +42,17 @@ module "ecs_cluster" {
 }
 
 module "ecs_task_definition" {
-  source                = "../ecs-fargate-task-definition"
-  
-  task_name             = "my-task"
-  docker_image          = "my-docker-image:latest"
-  cpu                   = "256"
-  memory                = "512"
-  cluster_arn           = "arn:aws:ecs:us-east-1:123456789012:cluster/my-cluster"
-  enable_autoscaling    = true
-  max_capacity          = 10
-  min_capacity          = 1
-  autoscaling_policies  = [
+  source = "../ecs-fargate-task-definition"
+
+  task_name          = "my-task"
+  docker_image       = "my-docker-image:latest"
+  cpu                = "256"
+  memory             = "512"
+  cluster_arn        = "arn:aws:ecs:us-east-1:123456789012:cluster/my-cluster"
+  enable_autoscaling = true
+  max_capacity       = 10
+  min_capacity       = 1
+  autoscaling_policies = [
     {
       name               = "cpu-scaling"
       policy_type        = "TargetTrackingScaling"

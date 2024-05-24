@@ -130,7 +130,7 @@ variable "system_log_level" {
 variable "iam_role_policy_arns" {
   description = "A map of policy names to policy ARNs to attach to the IAM role."
   type        = map(string)
-  default = {}
+  default     = {}
 }
 
 ##########################

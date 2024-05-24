@@ -18,7 +18,7 @@ locals {
 
   // Determine the log group name based on whether var.name starts with any of the specified prefixes
   starts_with_prefix = anytrue([for prefix in local.prefix_list : startswith(var.name, prefix)])
-  log_group_name = local.starts_with_prefix ? "${var.name}" : "${module.resource_name_prefix.resource_name}-logs"
+  log_group_name     = local.starts_with_prefix ? "${var.name}" : "${module.resource_name_prefix.resource_name}-logs"
 }
 
 

@@ -50,7 +50,7 @@ module "request_lambda" {
   log_retention_in_days = 30
 
   iam_role_policy_arns = {
-    (local.request_lambda_s3_iam_policy) = module.request_lambda_s3_iam_policy.policy_arn
+    (local.request_lambda_s3_iam_policy)               = module.request_lambda_s3_iam_policy.policy_arn
     (local.request_lambda_invoke_worker_lambda_policy) = module.request_lambda_invoke_worker_lambda_policy.policy_arn
   }
 
@@ -87,7 +87,7 @@ resource "aws_cloudwatch_event_target" "trigger_lambda" {
 #   Request Lambda Policy      #
 ################################
 locals {
-  request_lambda_s3_iam_policy = "${var.name}-request-lambda-ecs-dynamodb-s3"
+  request_lambda_s3_iam_policy               = "${var.name}-request-lambda-ecs-dynamodb-s3"
   request_lambda_invoke_worker_lambda_policy = "${var.name}-request-lambda-invoke-worker-lambda"
 }
 

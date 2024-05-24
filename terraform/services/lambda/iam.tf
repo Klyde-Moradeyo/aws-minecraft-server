@@ -24,8 +24,8 @@ module "iam_role" {
 
   policy_arns = merge(
     var.iam_role_policy_arns,
-    { 
-      (local.iam_policy_name) = module.iam_policy.policy_arn 
+    {
+      (local.iam_policy_name) = module.iam_policy.policy_arn
     }
   )
 

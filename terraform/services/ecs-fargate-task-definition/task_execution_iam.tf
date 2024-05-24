@@ -25,7 +25,7 @@ module "execution_role" {
   }
 
   policy_arns = {
-    "${local.execution_role_ecr_policy}" = module.execution_role_ecr_policy.policy_arn
+    "${local.execution_role_ecr_policy}"            = module.execution_role_ecr_policy.policy_arn
     "${local.execution_role_cloudwatch_log_policy}" = module.execution_role_cloudwatch_log_policy.policy_arn
   }
 
@@ -36,7 +36,7 @@ module "execution_role" {
 #       IAM Policy         #
 ############################
 locals {
-  execution_role_ecr_policy = "${var.name}-ecr-access"
+  execution_role_ecr_policy            = "${var.name}-ecr-access"
   execution_role_cloudwatch_log_policy = "${var.name}-cloudwatch-log-access"
 }
 
@@ -88,7 +88,7 @@ module "execution_role_cloudwatch_log_policy" {
           "logs:PutLogEvents"
         ],
         Resource = [
-            module.cloudwatch_log.arn,
+          module.cloudwatch_log.arn,
           "${module.cloudwatch_log.arn}:*"
         ]
       }

@@ -22,14 +22,14 @@ resource "aws_ecs_task_definition" "this" {
   task_role_arn            = module.task_role.arn
 
   # This can be enhanced to support multiple container definitions
-  container_definitions    = jsonencode([{
-    name      = var.container_name
-    image     = var.docker_image
-    cpu       = var.cpu
-    memory    = var.memory
-    essential = var.container_essential
-    environment = var.environment_variables
-    secrets     = var.secrets
+  container_definitions = jsonencode([{
+    name         = var.container_name
+    image        = var.docker_image
+    cpu          = var.cpu
+    memory       = var.memory
+    essential    = var.container_essential
+    environment  = var.environment_variables
+    secrets      = var.secrets
     portMappings = var.port_mappings
     logConfiguration = {
       logDriver = "awslogs"
