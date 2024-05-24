@@ -9,9 +9,22 @@ variable "name" {
 #############################
 #    ECS Task Definition    #
 #############################
-variable "docker_image" {
-  type        = string
-  description = "The Docker image to use in the task."
+variable "containers" {
+  type = list(object({
+    name                  = string
+    image                 = string
+    cpu                   = string
+    memory                = string
+    essential             = optional(bool, true)
+    environment_variables = optional(list(map(string)), [])
+    secrets               = optional(list(map(string)), [])
+    port_mappings         = optional(list(object({
+      containerPort = number
+      hostPort      = number
+      protocol      = string
+    })), [])
+  }))
+  description = "List of containers to be used in the task."
 }
 
 variable "cpu" {
@@ -22,34 +35,6 @@ variable "cpu" {
 variable "memory" {
   type        = string
   description = "The amount of memory to allocate for the task."
-}
-
-variable "container_essential" {
-  type        = bool
-  description = "Determines if the container is marked as essential. If the essential container fails, all other containers in the task are stopped."
-  default     = true
-}
-
-variable "environment_variables" {
-  type        = list(map(string))
-  description = "List of environment variables for the container."
-  default     = []
-}
-
-variable "secrets" {
-  type        = list(map(string))
-  description = "List of secrets for the container."
-  default     = []
-}
-
-variable "port_mappings" {
-  type = list(object({
-    containerPort = number
-    hostPort      = number
-    protocol      = string
-  }))
-  description = "List of port mappings for the container."
-  default     = []
 }
 
 variable "cluster_arn" {
@@ -86,11 +71,13 @@ variable "min_capacity" {
 variable "subnets" {
   type        = list(string)
   description = "List of subnet IDs for the ECS service deployment."
+  default = []
 }
 
 variable "security_groups" {
   type        = list(string)
   description = "List of security group IDs to associate with the ECS task or service."
+  default = []
 }
 
 ##########################

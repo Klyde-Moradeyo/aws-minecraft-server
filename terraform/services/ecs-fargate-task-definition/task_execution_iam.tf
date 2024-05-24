@@ -76,7 +76,7 @@ module "execution_role_cloudwatch_log_policy" {
 
   name        = local.execution_role_cloudwatch_log_policy
   path        = "/ecs/"
-  description = "An IAM policy for ${var.name} ECS Task Definition access to Cloudwatch logs"
+  description = "An IAM policy for ${var.name} ECS Task Definitions Containers' access to Cloudwatch logs"
 
   policy_hcl = {
     Version = "2012-10-17"
@@ -87,10 +87,10 @@ module "execution_role_cloudwatch_log_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        Resource = [
-          module.cloudwatch_log.arn,
-          "${module.cloudwatch_log.arn}:*"
-        ]
+        Resource = concat(
+          [ for container in var.containers : "/ecs/${container.name}"],
+          [ for container in var.containers : "/ecs/${container.name}:*" ]
+        )
       }
     ]
   }

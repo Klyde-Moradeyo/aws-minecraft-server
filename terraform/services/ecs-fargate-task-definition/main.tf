@@ -21,20 +21,19 @@ resource "aws_ecs_task_definition" "this" {
   execution_role_arn       = module.execution_role.arn
   task_role_arn            = module.task_role.arn
 
-  # This can be enhanced to support multiple container definitions
-  container_definitions = jsonencode([{
-    name         = var.container_name
-    image        = var.docker_image
-    cpu          = var.cpu
-    memory       = var.memory
-    essential    = var.container_essential
-    environment  = var.environment_variables
-    secrets      = var.secrets
-    portMappings = var.port_mappings
+  container_definitions = jsonencode([for container in var.containers : {
+    name         = container.name
+    image        = container.image
+    cpu          = container.cpu
+    memory       = container.memory
+    essential    = container.essential
+    environment  = container.environment_variables
+    secrets      = container.secrets
+    portMappings = container.port_mappings
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        awslogs-group         = module.cloudwatch_log.name
+        awslogs-group         = "/ecs/${container.name}"
         awslogs-region        = data.aws_region.current.name
         awslogs-stream-prefix = "ecs"
       }
