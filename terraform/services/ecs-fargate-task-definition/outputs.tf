@@ -23,7 +23,7 @@ output "ecs_service_network_configuration" {
     subnets          = aws_ecs_service.this[0].network_configuration[0].subnets
     security_groups  = aws_ecs_service.this[0].network_configuration[0].security_groups
     assign_public_ip = aws_ecs_service.this[0].network_configuration[0].assign_public_ip
-  } : {
+    } : {
     subnets          = []
     security_groups  = []
     assign_public_ip = false
