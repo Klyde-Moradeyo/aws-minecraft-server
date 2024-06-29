@@ -125,6 +125,16 @@ module "request_lambda_ecs_iam_policy" {
             "ecs:cluster": module.ecs_cluster.arn
           }
         }
+      },
+      {
+        Sid    = "IAMPassRole"
+        Effect = "Allow"
+        Action = [
+          "iam:PassRole",
+        ]
+        Resource = [
+          "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecs/${var.name}-*-role"
+          ]
       }
     ]
   }
@@ -142,18 +152,6 @@ module "request_lambda_iam_policy" {
   policy_hcl = {
     Version = "2012-10-17"
     Statement = [
-      {
-        Sid    = "ECSFargateAccess"
-        Effect = "Allow"
-        Action = [
-          "ecs:RunTask",
-          "ecs:StopTask",
-          "ecs:DescribeTasks",
-          "ecs:ListTasks",
-          "ecs:TagResource",
-        ]
-        Resource = ["*"] # needs to be replaced once ecs module is done
-      },
       {
         Sid      = "EC2Access"
         Effect   = "Allow"
