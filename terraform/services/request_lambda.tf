@@ -47,7 +47,8 @@ module "request_lambda" {
   log_retention_in_days = 30
 
   iam_role_policy_arns = {
-    (local.request_lambda_s3_iam_policy)               = module.request_lambda_s3_iam_policy.policy_arn
+    (local.request_lambda_iam_policy)               = module.request_lambda_iam_policy.policy_arn
+    (local.request_lambda_ecs_iam_policy)  = module.request_lambda_ecs_iam_policy.policy_arn
     (local.request_lambda_invoke_worker_lambda_policy) = module.request_lambda_invoke_worker_lambda_policy.policy_arn
   }
 
@@ -84,15 +85,58 @@ resource "aws_cloudwatch_event_target" "trigger_lambda" {
 #   Request Lambda Policy      #
 ################################
 locals {
-  request_lambda_s3_iam_policy               = "${var.name}-request-lambda-ecs-dynamodb-s3"
+  request_lambda_iam_policy               = "${var.name}-request-lambda-dynamodb-s3"
+  request_lambda_ecs_iam_policy               = "${var.name}-request-lambda-ecs"
   request_lambda_invoke_worker_lambda_policy = "${var.name}-request-lambda-invoke-worker-lambda"
 }
 
-module "request_lambda_s3_iam_policy" {
+module "request_lambda_ecs_iam_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
   version = "0.0.1"
 
-  name        = local.request_lambda_s3_iam_policy
+  name        = local.request_lambda_ecs_iam_policy
+  description = "IAM Policy for ${var.name} Request Lambda to access ECS"
+
+  policy_hcl = {
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "ECSFargateAccess"
+        Effect = "Allow"
+        Action = [
+          "ecs:StopTask",
+          "ecs:DescribeTasks",
+          "ecs:ListTasks",
+          "ecs:TagResource",
+        ]
+        Resource = ["*"]
+      },
+      {
+        Sid    = "ECSTaskRunLimit"
+        Effect = "Allow"
+        Action = [
+          "ecs:RunTask",
+        ]
+        Resource = [
+          module.ecs_task_definition.task_definition_arn
+        ],
+        Condition = {
+          "ForAllValues:StringEquals": {
+            "ecs:cluster": module.ecs_cluster.arn
+          }
+        }
+      }
+    ]
+  }
+
+  tags = module.tags.tags
+}
+
+module "request_lambda_iam_policy" {
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
+  version = "0.0.1"
+
+  name        = local.request_lambda_iam_policy
   description = "IAM Policy for ${var.name} Request Lambda to access various AWS services"
 
   policy_hcl = {
