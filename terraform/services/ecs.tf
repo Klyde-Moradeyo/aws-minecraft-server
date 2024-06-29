@@ -20,7 +20,7 @@ module "ecs_cluster" {
 
 locals {
   mc_archive_world_container_name  = "${var.name}-world-archive-runner"
-  mc_archive_world_container_image = "${module.ecr_mc_world_archive.repository_arn}:latest"
+  mc_archive_world_container_image = "${module.ecr_mc_world_archive.repository_url}:latest"
 }
 
 module "ecs_task_definition" {
