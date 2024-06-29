@@ -21,7 +21,7 @@ module "s3_mc_world" {
 
   # Logging configuration
   enable_logging        = true
-  logging_target_bucket = data.terraform_remote_state.services.outputs.s3_bucket_name
+  logging_target_bucket = module.s3_access_logs.arn
 
   tags = module.tags.tags
 }
