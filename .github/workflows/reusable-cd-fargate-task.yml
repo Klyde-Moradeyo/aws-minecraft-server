@@ -96,7 +96,11 @@ jobs:
             terraform init
 
             # Attempt to capture the Terraform output
-            ECR_IMAGE_ARN=$(terraform output -raw ecs_mc_archive_image_arn || echo "")
+            JSON_OUTPUT=$(terraform output -raw ecs_mc_archive_container_definitions)
+
+            # Get ECR image arn
+            ECR_IMAGE_ARN=$(echo $JSON_OUTPUT | jq -r '.["minecraft-server-world-archive-runner"].image')
+            echo "ECR_IMAGE_ARN=$ECR_IMAGE_ARN" >> $GITHUB_ENV
 
             # Check if the Terraform output is non-empty
             if [ -z "$ECR_IMAGE_ARN" ]; then
