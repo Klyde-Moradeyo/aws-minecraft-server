@@ -33,7 +33,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        awslogs-group         = "/ecs/${container.name}"
+        awslogs-group         = "/ecs/${local.cluster_name}/${container.name}"
         awslogs-region        = data.aws_region.current.name
         awslogs-stream-prefix = "ecs"
       }
