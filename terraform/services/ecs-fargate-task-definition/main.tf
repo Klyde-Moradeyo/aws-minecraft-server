@@ -40,6 +40,9 @@ resource "aws_ecs_task_definition" "task_definition" {
     }
     tags = var.tags
   }])
+
+  
+  tags = var.tags
 }
 
 resource "aws_ecs_service" "this" {
@@ -62,4 +65,6 @@ resource "aws_ecs_service" "this" {
       desired_count
     ]
   }
+  
+  tags = var.tags
 }
