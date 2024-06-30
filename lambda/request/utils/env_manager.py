@@ -29,6 +29,7 @@ class EnvironmentVariables:
                                 'ECS_CLUSTER_NAME', 
                                 'ECS_MC_ARCHIVE_TASK_DEFINITION_NAME', 
                                 'ECS_MC_ARCHIVE_CONTAINER_NAME',
+                                'ECS_SUBNET_ID',
                             ]
         return required_configs
 
