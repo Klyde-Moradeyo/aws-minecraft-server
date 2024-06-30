@@ -59,6 +59,12 @@ module "execution_role_ecr_policy" {
         Effect = "Allow"
         Action = [
           "ecr:GetAuthorizationToken",
+        ],
+        Resource = ["*"]
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
         ],
