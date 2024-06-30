@@ -2,7 +2,8 @@
 #         ECS          #
 ########################
 module "ecs_cluster" {
-  source = "./ecs-cluster"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/ecs-cluster/aws"
+  version = "0.0.1"
 
   name               = "${var.name}-world-archive"
   capacity_providers = ["FARGATE"]
