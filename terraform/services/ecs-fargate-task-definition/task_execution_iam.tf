@@ -26,7 +26,7 @@ module "execution_role" {
 
   policy_arns = {
     "${local.execution_role_cloudwatch_log_policy}" = module.execution_role_cloudwatch_log_policy.policy_arn
-    "${local.execution_role_ecr_policy}"            = module.execution_role_ecr_policy.policy_arn
+    "${local.execution_role_ecr_policy}"            = module.execution_role_ecr_policy[0].policy_arn
   }
 
   tags = var.tags
@@ -43,6 +43,8 @@ locals {
 module "execution_role_ecr_policy" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/iam-policy/aws"
   version = "0.0.1"
+
+  count = length(var.ecr_repo_arns) > 0 ? 1 : 0
 
   name        = local.execution_role_ecr_policy
   path        = "/ecs/"
