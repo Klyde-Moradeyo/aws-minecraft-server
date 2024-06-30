@@ -25,7 +25,8 @@ locals {
 }
 
 module "ecs_task_definition" {
-  source = "./ecs-fargate-task-definition"
+  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/ecs-fargate-task-definition/aws"
+  version = "0.0.1"
 
   name        = "${var.name}-world-archive"
   cpu         = 256
