@@ -81,12 +81,6 @@ variable "network_config" {
 ##########################
 #      IAM Policy        #
 ##########################
-variable "ecr_repo_arns" {
-  description = "The list of policy statements for the Lambda execution role."
-  type        = list(string)
-  default     = []
-}
-
 variable "task_role_policy_arns" {
   description = "A map of policy names to policy ARNs to attach to the ECS Task IAM role."
   type        = map(string)

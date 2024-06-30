@@ -69,7 +69,7 @@ module "execution_role_ecr_policy" {
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
         ],
-        Resource = var.ecr_repo_arns
+        Resource = ["*"]
       }
     ]
   }
