@@ -51,6 +51,12 @@ module "ecs_task_definition" {
     }
   ]
 
+  network_config = {
+    subnets          =  module.public_subnet.subnet_ids
+    security_groups  = []
+    assign_public_ip = false
+  }
+
   task_role_policy_arns = {
     "${local.ecs_to_s3_access_policy}" = module.ecs_to_s3_access_policy.policy_arn
   }

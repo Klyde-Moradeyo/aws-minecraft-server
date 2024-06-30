@@ -33,19 +33,19 @@ module "public_subnet" {
   tags = module.tags.tags
 }
 
-module "ecs_mc_archiver_private_subnet_cidrs" {
-  source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/subnet/aws"
-  version = "0.0.1"
+# module "ecs_mc_archiver_private_subnet_cidrs" {
+#   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/subnet/aws"
+#   version = "0.0.1"
 
-  name   = "${var.name}-world-archive-ecs"
-  vpc_id = module.vpc.vpc_id
-  subnets = {
-    keys(local.ecs_mc_archiver_private_subnet_cidrs)[0] = local.ecs_mc_archiver_private_subnet_cidrs[keys(local.ecs_mc_archiver_private_subnet_cidrs)[0]]
-  }
-  map_public_ip_on_launch = false
+#   name   = "${var.name}-world-archive-ecs"
+#   vpc_id = module.vpc.vpc_id
+#   subnets = {
+#     keys(local.ecs_mc_archiver_private_subnet_cidrs)[0] = local.ecs_mc_archiver_private_subnet_cidrs[keys(local.ecs_mc_archiver_private_subnet_cidrs)[0]]
+#   }
+#   map_public_ip_on_launch = false
 
-  tags = module.tags.tags
-}
+#   tags = module.tags.tags
+# }
 
 ########################
 #   Internet Gateway   #

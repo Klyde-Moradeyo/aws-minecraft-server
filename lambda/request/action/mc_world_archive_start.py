@@ -4,9 +4,6 @@ def handle(task_data, envs, mc_server, ec2_util, logger):
     logger.info("Handling 'Start Minecraft World Archive' Action...")
     action = task_data["action"]
     task_id = None # Not used for this action
-
-    # Create Network Config for Fargate
-    network_config = FargateUtil.create_network_config([envs["ECS_SUBNET_ID"]])
     
     # Create environment_vars
     environment_vars = None # [ {'name': 'S3_MC_WORLD_URI', 'value': envs["S3_MC_WORLD_URI"]}, ]
