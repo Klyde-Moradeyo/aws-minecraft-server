@@ -59,7 +59,7 @@ module "s3_access_logs" {
   name = "${var.name}-s3-access-logs"
 
   # S3 Bucket settings
-  force_destroy      = true
+  force_destroy      = var.environment == "prod" ? false : true
   versioning_enabled = true
   lifecycle_rules = [
     {
