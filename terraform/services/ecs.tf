@@ -61,6 +61,8 @@ module "ecs_task_definition" {
     "${local.ecs_to_s3_access_policy}" = module.ecs_to_s3_access_policy.policy_arn
   }
 
+  ecr_repo_arns = [module.ecr_mc_world_archive.repository_arn]
+
   log_retention_in_days = 120
 
   tags = module.tags.tags
