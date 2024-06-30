@@ -72,3 +72,21 @@ module "s3_access_logs" {
 
   tags = module.tags.tags
 }
+
+resource "aws_s3_bucket_policy" "logging_bucket_policy" {
+  bucket = module.s3_access_logs.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = "s3:PutObject"
+        Effect   = "Allow"
+        Resource = "${module.s3_access_logs.arn}/*"
+        Principal = {
+          Service = "logging.s3.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
