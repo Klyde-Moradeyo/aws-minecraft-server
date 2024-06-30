@@ -33,7 +33,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        awslogs-group         =  module.cloudwatch_log[container.name].name
+        awslogs-group         = module.cloudwatch_log[container.name].name
         awslogs-region        = data.aws_region.current.name
         awslogs-stream-prefix = "ecs"
       }
@@ -41,7 +41,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     tags = var.tags
   }])
 
-  
+
   tags = var.tags
 }
 
@@ -65,6 +65,6 @@ resource "aws_ecs_service" "this" {
       desired_count
     ]
   }
-  
+
   tags = var.tags
 }

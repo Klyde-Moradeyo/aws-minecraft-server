@@ -5,7 +5,7 @@ module "s3_mc_world" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/s3/aws"
   version = "0.0.3"
 
-  name               = "${var.name}-world-data"
+  name = "${var.name}-world-data"
 
   # S3 Bucket settings
   force_destroy      = false
@@ -30,7 +30,7 @@ module "s3_mc_server_assets" {
   source  = "km-tf-registry.onrender.com/klyde-moradeyo__dev-generic-tf-modules/s3/aws"
   version = "0.0.3"
 
-  name               = "${var.name}-assets"
+  name = "${var.name}-assets"
 
   # S3 Bucket settings
   force_destroy      = false

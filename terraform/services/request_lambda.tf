@@ -47,8 +47,8 @@ module "request_lambda" {
   log_retention_in_days = 30
 
   iam_role_policy_arns = {
-    (local.request_lambda_iam_policy)               = module.request_lambda_iam_policy.policy_arn
-    (local.request_lambda_ecs_iam_policy)  = module.request_lambda_ecs_iam_policy.policy_arn
+    (local.request_lambda_iam_policy)                  = module.request_lambda_iam_policy.policy_arn
+    (local.request_lambda_ecs_iam_policy)              = module.request_lambda_ecs_iam_policy.policy_arn
     (local.request_lambda_invoke_worker_lambda_policy) = module.request_lambda_invoke_worker_lambda_policy.policy_arn
   }
 
@@ -85,8 +85,8 @@ resource "aws_cloudwatch_event_target" "trigger_lambda" {
 #   Request Lambda Policy      #
 ################################
 locals {
-  request_lambda_iam_policy               = "${var.name}-request-lambda-dynamodb-s3"
-  request_lambda_ecs_iam_policy               = "${var.name}-request-lambda-ecs"
+  request_lambda_iam_policy                  = "${var.name}-request-lambda-dynamodb-s3"
+  request_lambda_ecs_iam_policy              = "${var.name}-request-lambda-ecs"
   request_lambda_invoke_worker_lambda_policy = "${var.name}-request-lambda-invoke-worker-lambda"
 }
 
@@ -121,8 +121,8 @@ module "request_lambda_ecs_iam_policy" {
           module.ecs_task_definition.task_definition_arn
         ],
         Condition = {
-          "ForAllValues:StringEquals": {
-            "ecs:cluster": module.ecs_cluster.arn
+          "ForAllValues:StringEquals" : {
+            "ecs:cluster" : module.ecs_cluster.arn
           }
         }
       },
@@ -134,7 +134,7 @@ module "request_lambda_ecs_iam_policy" {
         ]
         Resource = [
           "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecs/${var.name}-*-role"
-          ]
+        ]
       }
     ]
   }

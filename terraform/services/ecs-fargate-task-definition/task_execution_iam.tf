@@ -24,10 +24,10 @@ module "execution_role" {
     ]
   }
 
-  policy_arns =     {
-      "${local.execution_role_cloudwatch_log_policy}" = module.execution_role_cloudwatch_log_policy.policy_arn
-      "${local.execution_role_ecr_policy}" = module.execution_role_ecr_policy[0].policy_arn 
-    }
+  policy_arns = {
+    "${local.execution_role_cloudwatch_log_policy}" = module.execution_role_cloudwatch_log_policy.policy_arn
+    "${local.execution_role_ecr_policy}"            = module.execution_role_ecr_policy[0].policy_arn
+  }
 
   tags = var.tags
 }
