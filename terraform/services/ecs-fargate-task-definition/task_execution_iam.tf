@@ -65,6 +65,7 @@ module "execution_role_ecr_policy" {
       {
         Effect = "Allow"
         Action = [
+          "ecr:BatchGetImage",
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
         ],
