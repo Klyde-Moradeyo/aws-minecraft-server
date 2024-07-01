@@ -1,3 +1,11 @@
+########################
+#   Resource Naming    #
+########################
+variable "name" {
+  description = "name"
+  type        = string
+  default     = "minecraft-server"
+}
 
 ########################
 #     General AWS      #
@@ -6,6 +14,39 @@ variable "aws_region" {
   description = "Region in which AWS Resources to be created"
   type        = string
   default     = "eu-west-1"
+}
+
+########################
+#        tags          #
+########################
+variable "project" {
+  description = "The name of the project"
+  type        = string
+  default     = "personal-minecraft-server"
+}
+
+variable "client" {
+  description = "The client for the project"
+  type        = string
+  default     = "Klyde-Moradeyo"
+}
+
+variable "owner" {
+  description = "The owner of the project"
+  type        = string
+  default     = "Klyde-Moradeyo"
+}
+
+variable "namespace" {
+  description = "Logical grouping for resources, such as by service"
+  type        = string
+  default     = "minecraft"
+}
+
+variable "environment" {
+  description = "The project environment"
+  type        = string
+  default     = "dev"
 }
 
 ########################
@@ -40,12 +81,6 @@ variable "bot_command_name" {
   default     = "mc_server/BOT_COMMAND"
 }
 
-variable "terraform_token_name" {
-  description = "Terraform token name in Systems Manager Parameter Store"
-  type        = string
-  default     = "terraform-cloud-user-api"
-}
-
 variable "ssm_git_private_key_name" {
   description = "Private Key name for Github SSH in Systems Manager Parameter Store"
   type        = string
@@ -60,7 +95,7 @@ variable "instance_type" {
   type        = string
 
   ### T3a Family ###
-  # default = 	"t3a.large"
+  # default = "t3a.large"
 
   ### T4g Family ###
   # default = "t4g.medium"
@@ -73,18 +108,18 @@ variable "instance_type" {
   # default = "r6i.2xlarge"
 
   ### Z1d Family ###
-  # default = "z1d.large"
+  default = "z1d.large"
   # default = "z1d.xlarge"
   # default = "z1d.2xlarge"
 
   ### M5zn Family ###
-  default = "m5zn.xlarge"
-  
+  # default = "m5zn.xlarge"
+
   // https://amazon-aws-ec2-pricing-comparison.pcapps.com/
 }
 
 variable "ami" {
-  type    = list(string)
+  type = list(string)
   # default = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-server-*"]
   default = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
 }
@@ -108,7 +143,7 @@ variable "ami_virtualization_type" {
 }
 
 variable "architecture" {
-  type    = list(string)
+  type = list(string)
   # default = ["arm64"]
   default = ["x86_64"]
 }
@@ -116,6 +151,41 @@ variable "architecture" {
 variable "network_interface_id" {
   type    = string
   default = "network_id_from_aws"
+}
+
+
+########################
+#        VPC           #
+########################
+variable "vpc_cidr" {
+  description = "The CIDR block for the VPC."
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+########################
+#        Subnet        #
+########################
+# Only the first subnet is used 
+variable "public_subnet_cidrs" {
+  description = "The CIDR block for the public Subnet."
+  type        = list(string)
+  default = [
+    "10.0.50.0/24",
+    # "10.0.51.0/24",
+    # "10.0.52.0/24"
+  ]
+}
+
+# Only the first subnet is used 
+variable "ecs_mc_archiver_private_subnet_cidrs" {
+  description = "The CIDR block for the public Subnet."
+  type        = list(string)
+  default = [
+    "10.0.60.0/24",
+    # "10.0.62.0/24",
+    # "10.0.61.0/24"
+  ]
 }
 
 ########################
@@ -127,7 +197,14 @@ variable "allowed_cidrs" {
   default     = "0.0.0.0/0" // https://cidr.xyz/
 }
 
-
+########################
+#       S3 Bucket      #
+########################
+variable "logging_target_bucket" {
+  description = "The target bucket for S3 logging"
+  type        = string
+  default     = "general-purpose-storage-s3-gminaqhj"
+}
 
 
 

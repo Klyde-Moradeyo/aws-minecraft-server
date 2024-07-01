@@ -3,11 +3,11 @@ name: CI/CD Infra handler + lambda
 on:
   push:
     branches:
-      - main
       - dev
       - prod
+      - feature/*
     paths:
-      - "terraform/**"
+      - "terraform/services/**"
       - "lambda/**"
       - ".github/workflows/ci-cd.yml"
       - "fargate/**"
@@ -35,7 +35,7 @@ jobs:
     name: Fargate MC World Archiver - CI
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-ci-fargate-task.yml@github-workflows
     with:
-      TF_CONFIG_DIR: terraform
+      TF_CONFIG_DIR: terraform/services
       WORKING_DIR: "fargate/mc_world_archiver"
       aws_region: "eu-west-1"
     secrets:
@@ -49,7 +49,7 @@ jobs:
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-cd-fargate-task.yml@github-workflows
     needs: [ ci-fargate ]
     with:
-      tf_config_dir: terraform
+      tf_config_dir: terraform/services
       working_dir: "fargate/mc_world_archiver"
       image_artifact_name: ${{ needs.ci-fargate.outputs.artifact_name }}
       image_tar_name: ${{ needs.ci-fargate.outputs.docker_tar_file_name }}
@@ -65,7 +65,7 @@ jobs:
     needs: [ ci-worker-lambda, ci-request-lambda ]
     uses: Klyde-Moradeyo/aws-minecraft-server/.github/workflows/reusable-cd-terraform-apply.yml@github-workflows
     with:
-      config_dir: terraform
+      config_dir: terraform/services
       aws_region: "eu-west-1"
     secrets:
       gh_pat_token: ${{ secrets.GH_PAT }}

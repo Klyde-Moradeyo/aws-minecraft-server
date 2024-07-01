@@ -1,5 +1,5 @@
 # https://gallery.ecr.aws/sam
-FROM public.ecr.aws/sam/build-python3.10:1.103.0-20231116223523
+FROM public.ecr.aws/sam/build-python3.10:1.120.0-20240626164104
 
 # Install required dependencies
 RUN yum install -y \
