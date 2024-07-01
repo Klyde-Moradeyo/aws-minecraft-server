@@ -13,7 +13,6 @@ variable "name" {
 variable "aws_region" {
   description = "Region in which AWS Resources to be created"
   type        = string
-  default     = "eu-west-1"
 }
 
 ########################
@@ -22,31 +21,26 @@ variable "aws_region" {
 variable "project" {
   description = "The name of the project"
   type        = string
-  default     = "personal-minecraft-server"
 }
 
 variable "client" {
   description = "The client for the project"
   type        = string
-  default     = "Klyde-Moradeyo"
 }
 
 variable "owner" {
   description = "The owner of the project"
   type        = string
-  default     = "Klyde-Moradeyo"
 }
 
 variable "namespace" {
   description = "Logical grouping for resources, such as by service"
   type        = string
-  default     = "minecraft"
 }
 
 variable "environment" {
   description = "The project environment"
   type        = string
-  default     = "dev"
 }
 
 ########################
@@ -55,36 +49,6 @@ variable "environment" {
 variable "git_branch" {
   description = "The name of the Git branch to use"
   type        = string
-}
-
-########################
-#     Minecraft        #
-########################
-variable "mc_port" {
-  description = "TCP port for minecraft"
-  type        = number
-  default     = 25565
-}
-
-# variable "mc_backup_freq" {
-#   description = "How often (mins) to sync to S3"
-#   type        = number
-#   default     = 5
-# }
-
-########################
-#    Systems Manager   #
-########################
-variable "bot_command_name" {
-  description = "SSM Store Containing the Command Fargate should run"
-  type        = string
-  default     = "mc_server/BOT_COMMAND"
-}
-
-variable "ssm_git_private_key_name" {
-  description = "Private Key name for Github SSH in Systems Manager Parameter Store"
-  type        = string
-  default     = "dark-mango-bot-private-key"
 }
 
 ########################
@@ -148,11 +112,29 @@ variable "architecture" {
   default = ["x86_64"]
 }
 
-variable "network_interface_id" {
-  type    = string
-  default = "network_id_from_aws"
+########################
+#     Minecraft        #
+########################
+variable "mc_port" {
+  description = "TCP port for minecraft"
+  type        = number
+  default     = 25565
 }
 
+########################
+#    Systems Manager   #
+########################
+variable "bot_command_name" {
+  description = "SSM Store Containing the Command Fargate should run"
+  type        = string
+  default     = "mc_server/BOT_COMMAND"
+}
+
+variable "ssm_git_private_key_name" {
+  description = "Private Key name for Github SSH in Systems Manager Parameter Store"
+  type        = string
+  default     = "dark-mango-bot-private-key"
+}
 
 ########################
 #        VPC           #
@@ -205,7 +187,3 @@ variable "logging_target_bucket" {
   type        = string
   default     = "general-purpose-storage-s3-gminaqhj"
 }
-
-
-
-
