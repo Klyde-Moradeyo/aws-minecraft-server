@@ -12,7 +12,6 @@ module "tags" {
   project     = var.project
   additional_tags = {
     git_branch   = var.git_branch
-    git_repo_url = "https://github.com/Klyde-Moradeyo/aws-minecraft-server"
   }
 }
 
