@@ -14,6 +14,11 @@ services:
     tty: true
     stdin_open: true
     restart: unless-stopped
+    healthcheck:
+      test: mc-health
+      start_period: 1m
+      interval: 5s
+      retries: 20
 
   cadvisor:
     container_name: cadvisor
