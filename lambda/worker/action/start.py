@@ -110,6 +110,9 @@ def handle(event_body, envs, ssm_util: SSMUtil, ec2_util: EC2Util, mc_server: Mi
     additional_configs["RCON_PORT"] = RCON_PORT
     additional_configs["RCON_PASSWORD"] = mc_server.generate_rcon_password(24)
 
+    # Configure JVM
+    additional_configs["USE_AIKAR_FLAGS"] = "true"
+
     # Generate Server Config and Copy to Remote machine
     server_config = mc_server.initialize_server_config(LOCAL_BASE_CONFIG_PATH, LOCAL_TEMPLATE_CONFIG_PATH, additional_configs)
     ssh_util.scp_to_machine(server_config, REMOTE_MC_SERVER_ENV_FILE_PATH)
