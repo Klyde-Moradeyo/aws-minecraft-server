@@ -23,7 +23,7 @@ class EnvironmentVariables:
                                 'S3_MC_ASSETS_URI', 'S3_MC_WORLD_URI',
 
                                 # API
-                                'API_GW_URL', 'SSM_REQUEST_LAMBDA_AUTH_TOKEN'
+                                'API_GW_URL',
                             ]
         return required_configs
 

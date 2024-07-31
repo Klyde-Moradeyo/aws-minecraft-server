@@ -13,7 +13,12 @@ services:
       - 24454:24454/udp # Simple Voice Chat Mod
     tty: true
     stdin_open: true
-    restart: unless-stopped
+    restart: always
+    healthcheck:
+      test: mc-health
+      start_period: 1m
+      interval: 5s
+      retries: 20
 
   cadvisor:
     container_name: cadvisor
@@ -25,7 +30,7 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     ports:
       - 9149:8080
-    restart: unless-stopped
+    restart: always
     mem_limit: 128M
     cpus: 0.1
 
@@ -37,7 +42,7 @@ services:
       - ./minecraft-data/world:/world:ro
     ports:
       - 9150:8000
-    restart: unless-stopped
+    restart: always
     mem_limit: 64M
     cpus: 0.02
 
@@ -47,7 +52,7 @@ services:
     env_file: config/.monitoring-env
     volumes:
       - ./minecraft-data:/app/logs/
-    restart: unless-stopped
+    restart: always
     mem_limit: 64M
     cpus: 0.02
 

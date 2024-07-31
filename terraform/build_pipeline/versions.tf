@@ -3,18 +3,18 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.25.0"
+      version = "~> 5.0"
     }
   }
 
   backend "s3" {
     bucket  = "terraform-state-s3-pfqdhvmq"
-    key     = "aws-minecraft-server/<GITHUB_BRANCH>/terraform.tfstate"
+    key     = "aws-minecraft-server/build-pipeline/terraform.tfstate"
     region  = "eu-west-2"
     encrypt = true
   }
 }
 
 provider "aws" {
-  region = var.aws_region
+  region = data.terraform_remote_state.my_state.outputs.aws_region
 }

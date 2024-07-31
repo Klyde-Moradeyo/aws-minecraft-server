@@ -13,11 +13,8 @@ class EnvironmentVariables:
 
     def get_required_vars(self):
         required_configs = [    
-                                # Minecraft Specifi\c Env Vars
+                                # Minecraft Specific Env Vars
                                 'MC_PORT', 'MC_SERVER_IP', 
-                                
-                                # Authorization Token
-                                'SSM_REQUEST_LAMBDA_AUTH_TOKEN',
 
                                 # Worker Lambda
                                 'WORKER_LAMBDA_NAME',
@@ -33,11 +30,6 @@ class EnvironmentVariables:
                                 'ECS_MC_ARCHIVE_TASK_DEFINITION_NAME', 
                                 'ECS_MC_ARCHIVE_CONTAINER_NAME',
                                 'ECS_SUBNET_ID',
-                                'ECS_SECURITY_GROUP_ID',
-
-                                # S3 (used for fargate task)
-                                'S3_MC_WORLD_URI',
-                                'S3_MC_ASSETS_URI'
                             ]
         return required_configs
 
@@ -85,9 +77,8 @@ class EnvironmentVariables:
             raise ValueError("Error decoding TAGS_JSON. Ensure it's a valid JSON string.")
 
         self.env_vars.update({
-            'TAG_NAME': tags.get('Name'),
             'TAG_NAMESPACE': tags.get('Namespace'),
-            'TAG_ENVIRONMENT': tags.get('Stage'),
+            'TAG_ENVIRONMENT': tags.get('Environment'),
             'TAG_RUNNING_COMMAND': self.action
         })
 
