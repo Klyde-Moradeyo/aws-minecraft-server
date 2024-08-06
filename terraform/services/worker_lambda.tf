@@ -61,7 +61,7 @@ module "worker_lambda_error_alarm" {
   statistic           = "Sum"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
-  period              = 300
+  period              = 60
   threshold           = 0 # Trigger the alarm if there is at least 1 error
 
   alarm_actions             = [module.sns.arn]
