@@ -9,7 +9,7 @@ terraform {
 
   backend "s3" {
     bucket         = "terraform-state-s3-pfqdhvmq"
-    key            = "aws-minecraft-server/service/dev/terraform.tfstate"
+    key            = "aws-minecraft-server/service/<GITHUB_BRANCH>/terraform.tfstate"
     region         = "eu-west-2"
     dynamodb_table = "terraform-state-alpha-db"
     encrypt        = true

@@ -32,3 +32,5 @@ resource "aws_sns_topic_subscription" "topic_subscription" {
   raw_message_delivery            = lookup(var.subscriptions[count.index], "raw_message_delivery", null)
   filter_policy                   = lookup(var.subscriptions[count.index], "filter_policy", null)
 }
+
+## Add cloudwatch group
