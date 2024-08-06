@@ -55,6 +55,7 @@ def lambda_handler(event, context):
         # Call the action handler function
         status, action, task_id, info = action_module.handle(event_body, envs, mc_server, ec2_util, logger)
         logger.info(f"STATUS: {status} | ACTION: {action} | TASK_ID: {task_id} | INFO: {info}")
+        raise Exception("Test Cloudwatch Alarm")
         return {
             'statusCode': 200,
             'body': json.dumps(ResponseFormatter.success_response(status, action, task_id, info))
