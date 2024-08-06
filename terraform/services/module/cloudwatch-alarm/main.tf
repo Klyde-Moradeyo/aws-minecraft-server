@@ -28,6 +28,6 @@ resource "aws_cloudwatch_metric_alarm" "default" {
   insufficient_data_actions = var.insufficient_data_actions
   tags                      = var.tags
 
-   dimensions = { for d in var.dimensions : d.name => d.value }
+  dimensions = { for d in var.dimensions : d.name => d.value }
 }
 

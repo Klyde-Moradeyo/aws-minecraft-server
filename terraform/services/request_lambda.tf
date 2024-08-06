@@ -54,6 +54,35 @@ module "request_lambda" {
   tags = module.tags.tags
 }
 
+####################################
+# Request Lambda CloudWatch Alarm  #
+####################################
+module "lambda_error_alarm" {
+  source = "./module/cloudwatch-alarm"
+
+  name                = "${var.name}-request-lambda-errors"
+  namespace           = "AWS/Lambda"
+  metric_name         = "Errors"
+  statistic           = "Sum"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  period              = 300
+  threshold           = 0 # Trigger the alarm if there is at least 1 error
+
+  alarm_actions             = [module.sns.arn]
+  ok_actions                = [module.sns.arn]
+  insufficient_data_actions = [module.sns.arn]
+
+  dimensions = [
+    {
+      name  = "FunctionName"
+      value = module.request_lambda.name
+    }
+  ]
+
+  tags = module.tags.tags
+}
+
 
 ####################################
 #   Request Lambda Event Bridge    #

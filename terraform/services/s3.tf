@@ -48,8 +48,8 @@ module "s3_mc_server_assets" {
       expiration_days         = null
       noncurrent_version_days = 35
       filter = {
-        prefix = "path/to/s3-mc-archive-bundle"
-        tags = []
+        prefix = "*/world_bck_up/*.bundle"
+        tags   = []
       }
     }
   ]

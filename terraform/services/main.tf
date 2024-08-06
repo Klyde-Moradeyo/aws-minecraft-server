@@ -11,7 +11,7 @@ module "tags" {
   owner       = var.owner
   project     = var.project
   additional_tags = {
-    git_branch   = var.git_branch
+    git_branch = var.git_branch
   }
 }
 
