@@ -9,8 +9,7 @@ from utils.env_manager import EnvironmentVariables
 from utils.ec2 import EC2Util
 from utils.minecraft import MinecraftServer
 from utils.response_format import ResponseFormatter
-
-def lambda_handler(event, context):
+dsadaada_handler(event, context):
     try:
         # Initialize variables
         status = None
@@ -23,7 +22,7 @@ def lambda_handler(event, context):
         event_parser = APIEventParser(event)
         event_body = event_parser.parse()
         action = event_body["action"] 
-        logger.info("Parsed Lambda Event")
+        logger.info("Parsed Lambda Event")S
 
         # Get the environment vars
         envs = EnvironmentVariables(action).get_vars()
