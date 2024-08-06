@@ -27,18 +27,11 @@ variable "policy" {
   default     = ""
 }
 
-variable "tags" {
-  type        = map(string)
-  description = "A mapping of tags to assign to the resource"
-  default     = {}
-}
-
 variable "subscriptions" {
-  type = list(map(string))
+  type        = list(map(string))
   description = "A list of subscription definitions"
   default     = []
 }
-
 
 ########################
 #         Tags         #
