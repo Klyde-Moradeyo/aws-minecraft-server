@@ -8,7 +8,7 @@ module "s3_mc_world" {
   name = "${var.name}-world-data"
 
   # S3 Bucket settings
-  force_destroy      = false
+  force_destroy      = var.environment == "prod" ? false : true
   versioning_enabled = true
   lifecycle_rules = [
     {
@@ -33,14 +33,24 @@ module "s3_mc_server_assets" {
   name = "${var.name}-assets"
 
   # S3 Bucket settings
-  force_destroy      = false
+  force_destroy      = var.environment == "prod" ? false : true
   versioning_enabled = true
   lifecycle_rules = [
     {
       id                      = "expire-older-versions"
       status                  = "Enabled"
       expiration_days         = null
+      noncurrent_version_days = 7
+    },
+    {
+      id                      = "expire-mc-archive-older-versions"
+      status                  = "Enabled"
+      expiration_days         = null
       noncurrent_version_days = 35
+      filter = {
+        prefix = "path/to/s3-mc-archive-bundle"
+        tags = []
+      }
     }
   ]
 
@@ -65,7 +75,7 @@ module "s3_access_logs" {
     {
       id                      = "clean-up-log-files"
       status                  = "Enabled"
-      expiration_days         = 90
+      expiration_days         = 30
       noncurrent_version_days = null
     }
   ]
