@@ -57,7 +57,7 @@ module "request_lambda" {
 ####################################
 # Request Lambda CloudWatch Alarm  #
 ####################################
-module "lambda_error_alarm" {
+module "request_lambda_error_alarm" {
   source = "./module/cloudwatch-alarm"
 
   name                = "${var.name}-request-lambda-errors"
